@@ -278,4 +278,38 @@
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
+
+  /* Window Control Enhancements */
+  .window-control-hover:hover {
+    transform: scale(1.1);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .window-control-close:hover {
+    background-color: #ef4444 !important;
+    color: white !important;
+  }
+
+  /* Layout Utilities */
+  .layout-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-transition {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Responsive Sidebar */
+  @media (max-width: 1023px) {
+    .sidebar-mobile {
+      position: fixed;
+      top: 2rem;
+      bottom: 0;
+      left: 0;
+      z-index: 50;
+    }
+  }
 }
