@@ -2,6 +2,13 @@ import { createRoute } from "@tanstack/react-router";
 import { RootRoute } from "./__root";
 import HomePage from "../pages/HomePage";
 import SecondPage from "@/pages/SecondPage";
+import DashboardPage from "@/pages/DashboardPage";
+import POSPage from "@/pages/POSPage";
+import ProductsPage from "@/pages/ProductsPage";
+import CategoriesPage from "@/pages/CategoriesPage";
+import UsersPage from "@/pages/UsersPage";
+import OrdersPage from "@/pages/OrdersPage";
+import ReportsPage from "@/pages/ReportsPage";
 
 // TODO: Steps to add a new route:
 // 1. Create a new page component in the '../pages/' directory (e.g., NewPage.tsx)
@@ -34,4 +41,56 @@ export const SecondPageRoute = createRoute({
   component: SecondPage,
 });
 
-export const rootTree = RootRoute.addChildren([HomeRoute, SecondPageRoute]);
+export const DashboardRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/dashboard",
+  component: DashboardPage,
+});
+
+export const POSRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/pos",
+  component: POSPage,
+});
+
+export const ProductsRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/products",
+  component: ProductsPage,
+});
+
+export const CategoriesRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/categories",
+  component: CategoriesPage,
+});
+
+export const UsersRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/users",
+  component: UsersPage,
+});
+
+export const OrdersRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/orders",
+  component: OrdersPage,
+});
+
+export const ReportsRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/reports",
+  component: ReportsPage,
+});
+
+export const rootTree = RootRoute.addChildren([
+  HomeRoute, 
+  SecondPageRoute, 
+  DashboardRoute, 
+  POSRoute, 
+  ProductsRoute, 
+  CategoriesRoute, 
+  UsersRoute,
+  OrdersRoute,
+  ReportsRoute
+]);

@@ -1,0 +1,1 @@
+﻿import React from 'react'; export default function UsersPage() { return <div className='p-6'><h1 className='text-3xl font-bold mb-6'>Users Management</h1><p>Users CRUD interface with role management (admin/client/supplier).</p></div>; }

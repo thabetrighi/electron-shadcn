@@ -18,7 +18,35 @@ interface ElectronWindow {
   close: () => Promise<void>;
 }
 
+interface DatabaseAPI {
+  initialize: () => Promise<{ success: boolean; error?: string }>;
+  users: {
+    getAll: (search?: string) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    getById: (id: number) => Promise<{ success: boolean; data?: any; error?: string }>;
+    create: (userData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    update: (id: number, userData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    delete: (id: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
+  };
+  products: {
+    getAll: (search?: string) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    getById: (id: number) => Promise<{ success: boolean; data?: any; error?: string }>;
+    create: (productData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    update: (id: number, productData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    delete: (id: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
+    getByCategory: (category: string) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+  };
+  orders: {
+    getAll: () => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    getById: (id: number) => Promise<{ success: boolean; data?: any; error?: string }>;
+    create: (orderData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    update: (id: number, orderData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    delete: (id: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
+    getByUser: (userId: number) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+  };
+}
+
 declare interface Window {
   themeMode: ThemeModeContext;
   electronWindow: ElectronWindow;
+  database: DatabaseAPI;
 }
