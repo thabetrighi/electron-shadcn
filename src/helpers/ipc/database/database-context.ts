@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { USER_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, DATABASE_CHANNELS } from './database-channels';
+import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, DATABASE_CHANNELS } from './database-channels';
 
 // Database API
 export const databaseAPI = {
@@ -13,6 +13,27 @@ export const databaseAPI = {
     create: (userData: any) => ipcRenderer.invoke(USER_CHANNELS.CREATE_USER, userData),
     update: (id: number, userData: any) => ipcRenderer.invoke(USER_CHANNELS.UPDATE_USER, id, userData),
     delete: (id: number) => ipcRenderer.invoke(USER_CHANNELS.DELETE_USER, id),
+  },
+
+  // Category operations
+  categories: {
+    getAll: (options?: any) => ipcRenderer.invoke(CATEGORY_CHANNELS.GET_ALL_CATEGORIES, options),
+    getById: (id: number) => ipcRenderer.invoke(CATEGORY_CHANNELS.GET_CATEGORY_BY_ID, id),
+    create: (categoryData: any) => ipcRenderer.invoke(CATEGORY_CHANNELS.CREATE_CATEGORY, categoryData),
+    update: (id: number, categoryData: any) => ipcRenderer.invoke(CATEGORY_CHANNELS.UPDATE_CATEGORY, id, categoryData),
+    delete: (id: number) => ipcRenderer.invoke(CATEGORY_CHANNELS.DELETE_CATEGORY, id),
+    getRootCategories: () => ipcRenderer.invoke(CATEGORY_CHANNELS.GET_ROOT_CATEGORIES),
+    getChildren: (parentId: number) => ipcRenderer.invoke(CATEGORY_CHANNELS.GET_CHILDREN_CATEGORIES, parentId),
+    updateSortOrder: (id: number, sortOrder: number) => ipcRenderer.invoke(CATEGORY_CHANNELS.UPDATE_SORT_ORDER, id, sortOrder),
+  },
+
+  // Unit operations
+  units: {
+    getAll: (options?: any) => ipcRenderer.invoke(UNIT_CHANNELS.GET_ALL_UNITS, options),
+    getById: (id: number) => ipcRenderer.invoke(UNIT_CHANNELS.GET_UNIT_BY_ID, id),
+    create: (unitData: any) => ipcRenderer.invoke(UNIT_CHANNELS.CREATE_UNIT, unitData),
+    update: (id: number, unitData: any) => ipcRenderer.invoke(UNIT_CHANNELS.UPDATE_UNIT, id, unitData),
+    delete: (id: number) => ipcRenderer.invoke(UNIT_CHANNELS.DELETE_UNIT, id),
   },
 
   // Product operations

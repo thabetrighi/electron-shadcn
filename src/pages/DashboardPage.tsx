@@ -1,206 +1,173 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Users, Package, ShoppingCart, DollarSign } from 'lucide-react';
-
-interface DashboardStats {
-  users: number;
-  products: number;
-  orders: number;
-  revenue: number;
-}
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Package, Tag, Users, Database, Loader2 } from 'lucide-react';
+import CrudManagement from '../components/dashboard/CrudManagement';
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats>({ users: 0, products: 0, orders: 0, revenue: 0 });
-  const [loading, setLoading] = useState(true);
+  const [dbStatus, setDbStatus] = useState<'loading' | 'connected' | 'error'>('loading');
+  const [stats, setStats] = useState({
+    products: 0,
+    categories: 0,
+    units: 0,
+    users: 0,
+  });
 
   useEffect(() => {
-    initializeAndFetchData();
+    initializeDatabase();
   }, []);
 
-  const initializeAndFetchData = async () => {
+  const initializeDatabase = async () => {
     try {
-      // Initialize database
-      await window.database.initialize();
+      setDbStatus('loading');
       
-      // Fetch data
-      const [usersResult, productsResult, ordersResult] = await Promise.all([
-        window.database.users.getAll(),
+      // Initialize database
+      const initResult = await window.database.initialize();
+      if (!initResult.success) {
+        throw new Error(initResult.error);
+      }
+
+      // Load stats
+      const [productsResult, categoriesResult, unitsResult, usersResult] = await Promise.all([
         window.database.products.getAll(),
-        window.database.orders.getAll(),
+        window.database.categories.getAll(),
+        window.database.units.getAll(),
+        window.database.users.getAll(),
       ]);
 
-      const users = usersResult.success ? usersResult.data || [] : [];
-      const products = productsResult.success ? productsResult.data || [] : [];
-      const orders = ordersResult.success ? ordersResult.data || [] : [];
-
-      const revenue = orders.reduce((sum: number, order: any) => sum + (order.totalAmount || 0), 0);
-
       setStats({
-        users: users.length,
-        products: products.length,
-        orders: orders.length,
-        revenue,
+        products: productsResult.success ? (productsResult.data?.length || 0) : 0,
+        categories: categoriesResult.success ? (categoriesResult.data?.length || 0) : 0,
+        units: unitsResult.success ? (unitsResult.data?.length || 0) : 0,
+        users: usersResult.success ? (usersResult.data?.length || 0) : 0,
       });
+
+      setDbStatus('connected');
     } catch (error) {
-      console.error('Failed to initialize or fetch data:', error);
-    } finally {
-      setLoading(false);
+      console.error('Database initialization failed:', error);
+      setDbStatus('error');
     }
   };
-
-  const createSampleData = async () => {
-    try {
-      // Create sample users
-      await window.database.users.create({
-        name: 'Admin User',
-        email: 'admin@pos.com',
-        role: 'admin',
-      });
-      await window.database.users.create({
-        name: 'John Doe',
-        email: 'john@example.com',
-        role: 'client',
-      });
-
-      // Create sample products
-      await window.database.products.create({
-        name: 'Coffee - Medium Roast',
-        description: 'Premium medium roast coffee beans',
-        sellingPrice: 12.99,
-        currentStock: 100,
-      });
-      await window.database.products.create({
-        name: 'Organic Tea - Earl Grey',
-        description: 'Organic Earl Grey tea blend',
-        sellingPrice: 8.99,
-        currentStock: 50,
-      });
-      await window.database.products.create({
-        name: 'Chocolate Croissant',
-        description: 'Fresh baked chocolate croissant',
-        sellingPrice: 3.50,
-        currentStock: 25,
-      });
-
-      initializeAndFetchData();
-    } catch (error) {
-      console.error('Failed to create sample data:', error);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="p-6">
-        <div className="text-center">Loading dashboard...</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <div className="space-x-2">
-          <Button onClick={createSampleData} variant="outline">
-            Create Sample Data
-          </Button>
-          <Button onClick={initializeAndFetchData}>
-            Refresh
-          </Button>
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-gray-600">Manage your POS system data</p>
         </div>
+        <Button onClick={initializeDatabase} disabled={dbStatus === 'loading'}>
+          {dbStatus === 'loading' ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Initializing...
+            </>
+          ) : (
+            <>
+              <Database className="w-4 h-4 mr-2" />
+              Refresh Database
+            </>
+          )}
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.users}</div>
-            <p className="text-xs text-muted-foreground">Registered users</p>
-          </CardContent>
-        </Card>
+      {/* Database Status */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Database className="w-5 h-5" />
+            <span>Database Status</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center space-x-2">
+            <div 
+              className={`w-3 h-3 rounded-full ${
+                dbStatus === 'connected' ? 'bg-green-500' : 
+                dbStatus === 'error' ? 'bg-red-500' : 'bg-yellow-500'
+              }`}
+            />
+            <span className="font-medium">
+              {dbStatus === 'connected' ? 'Connected' : 
+               dbStatus === 'error' ? 'Error' : 'Connecting...'}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+            <CardTitle className="text-sm font-medium">Products</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.products}</div>
-            <p className="text-xs text-muted-foreground">Available products</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.orders}</div>
-            <p className="text-xs text-muted-foreground">All orders</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.revenue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">From all orders</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Welcome to Your Dashboard</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              Your Electron app with mock database is now set up and ready to use! 
-              The database has been initialized and you can start managing users, products, and orders.
+            <p className="text-xs text-muted-foreground">
+              Total products in inventory
             </p>
-            <div className="mt-4 space-y-2">
-              <p className="text-sm font-medium">Features available:</p>
-              <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
-                <li>Complete CRUD operations via IPC</li>
-                <li>In-memory mock database</li>
-                <li>Clean architecture with service layer</li>
-                <li>shadcn/ui components for modern UI</li>
-                <li>Type-safe database operations</li>
-              </ul>
-            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Categories</CardTitle>
+            <Tag className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" onClick={() => createSampleData()}>
-                Create Sample Data
-              </Button>
-              <Button variant="outline" onClick={() => initializeAndFetchData()}>
-                Refresh Data
-              </Button>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              <p>Database Status: ✅ Connected</p>
-              <p>Tables: users, products, orders</p>
-              <p>Database: In-memory mock database</p>
-            </div>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.categories}</div>
+            <p className="text-xs text-muted-foreground">
+              Product categories
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Units</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.units}</div>
+            <p className="text-xs text-muted-foreground">
+              Measurement units
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Users</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.users}</div>
+            <p className="text-xs text-muted-foreground">
+              System users
+            </p>
           </CardContent>
         </Card>
       </div>
+
+      {/* CRUD Management */}
+      {dbStatus === 'connected' && <CrudManagement />}
+      
+      {dbStatus === 'error' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-red-600">Database Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-600">
+              Failed to connect to the database. Please check the console for more details.
+            </p>
+            <Button onClick={initializeDatabase} className="mt-4">
+              Retry Connection
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 } 

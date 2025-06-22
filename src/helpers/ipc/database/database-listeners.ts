@@ -5,7 +5,7 @@ import { CategoriesService } from '../../../database/services/categories.service
 import { UnitsService } from '../../../database/services/units.service';
 import { ProductsService } from '../../../database/services/products.service';
 import { OrdersService } from '../../../database/services/orders.service';
-import { USER_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, DATABASE_CHANNELS } from './database-channels';
+import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, DATABASE_CHANNELS } from './database-channels';
 
 export function addDatabaseEventListeners() {
   // Database initialization
@@ -59,6 +59,116 @@ export function addDatabaseEventListeners() {
   ipcMain.handle(USER_CHANNELS.DELETE_USER, async (_, id: number) => {
     try {
       const result = await UsersService.delete(id);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Category operations
+  ipcMain.handle(CATEGORY_CHANNELS.GET_ALL_CATEGORIES, async (_, options?: any) => {
+    try {
+      const result = await CategoriesService.getAll(options);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(CATEGORY_CHANNELS.GET_CATEGORY_BY_ID, async (_, id: number) => {
+    try {
+      const result = await CategoriesService.getById(id);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(CATEGORY_CHANNELS.CREATE_CATEGORY, async (_, categoryData: any) => {
+    try {
+      const result = await CategoriesService.create(categoryData);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(CATEGORY_CHANNELS.UPDATE_CATEGORY, async (_, id: number, categoryData: any) => {
+    try {
+      const result = await CategoriesService.update(id, categoryData);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(CATEGORY_CHANNELS.DELETE_CATEGORY, async (_, id: number) => {
+    try {
+      const result = await CategoriesService.delete(id);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(CATEGORY_CHANNELS.GET_ROOT_CATEGORIES, async () => {
+    try {
+      const result = await CategoriesService.getRootCategories();
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(CATEGORY_CHANNELS.GET_CHILDREN_CATEGORIES, async (_, parentId: number) => {
+    try {
+      const result = await CategoriesService.getChildren(parentId);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Unit operations
+  ipcMain.handle(UNIT_CHANNELS.GET_ALL_UNITS, async (_, options?: any) => {
+    try {
+      const result = await UnitsService.getAll(options);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(UNIT_CHANNELS.GET_UNIT_BY_ID, async (_, id: number) => {
+    try {
+      const result = await UnitsService.getById(id);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(UNIT_CHANNELS.CREATE_UNIT, async (_, unitData: any) => {
+    try {
+      const result = await UnitsService.create(unitData);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(UNIT_CHANNELS.UPDATE_UNIT, async (_, id: number, unitData: any) => {
+    try {
+      const result = await UnitsService.update(id, unitData);
+      return result;
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(UNIT_CHANNELS.DELETE_UNIT, async (_, id: number) => {
+    try {
+      const result = await UnitsService.delete(id);
       return result;
     } catch (error: any) {
       return { success: false, error: error.message };

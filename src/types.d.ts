@@ -27,6 +27,23 @@ interface DatabaseAPI {
     update: (id: number, userData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
     delete: (id: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
   };
+  categories: {
+    getAll: (options?: any) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    getById: (id: number) => Promise<{ success: boolean; data?: any; error?: string }>;
+    create: (categoryData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    update: (id: number, categoryData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    delete: (id: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
+    getRootCategories: () => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    getChildren: (parentId: number) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    updateSortOrder: (id: number, sortOrder: number) => Promise<{ success: boolean; data?: any; error?: string }>;
+  };
+  units: {
+    getAll: (options?: any) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    getById: (id: number) => Promise<{ success: boolean; data?: any; error?: string }>;
+    create: (unitData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    update: (id: number, unitData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    delete: (id: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
+  };
   products: {
     getAll: (search?: string) => Promise<{ success: boolean; data?: any[]; error?: string }>;
     getById: (id: number) => Promise<{ success: boolean; data?: any; error?: string }>;

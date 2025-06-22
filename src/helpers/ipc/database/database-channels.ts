@@ -7,6 +7,27 @@ export const USER_CHANNELS = {
   DELETE_USER: 'user:delete',
 } as const;
 
+// Category channels
+export const CATEGORY_CHANNELS = {
+  GET_ALL_CATEGORIES: 'category:get-all',
+  GET_CATEGORY_BY_ID: 'category:get-by-id',
+  CREATE_CATEGORY: 'category:create',
+  UPDATE_CATEGORY: 'category:update',
+  DELETE_CATEGORY: 'category:delete',
+  GET_ROOT_CATEGORIES: 'category:get-root',
+  GET_CHILDREN_CATEGORIES: 'category:get-children',
+  UPDATE_SORT_ORDER: 'category:update-sort-order',
+} as const;
+
+// Unit channels
+export const UNIT_CHANNELS = {
+  GET_ALL_UNITS: 'unit:get-all',
+  GET_UNIT_BY_ID: 'unit:get-by-id',
+  CREATE_UNIT: 'unit:create',
+  UPDATE_UNIT: 'unit:update',
+  DELETE_UNIT: 'unit:delete',
+} as const;
+
 // Product channels
 export const PRODUCT_CHANNELS = {
   GET_ALL_PRODUCTS: 'product:get-all',
