@@ -96,25 +96,28 @@ export default function MainLayout({ children }: MainLayoutProps) {
       {/* Main Layout Container */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop Sidebar */}
-        <div className={`hidden lg:block transition-all duration-300 ease-in-out ${
+        <div className={`hidden lg:flex flex-col transition-all duration-300 ease-in-out ${
           sidebarOpen ? 'w-64' : 'w-0'
         }`}>
-          <div className={`w-64 bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-xl flex-shrink-0 overflow-hidden transition-all duration-300 ${
+          <div className={`w-64 sidebar-gradient-bg backdrop-blur-sm border-r border-gray-200/50 shadow-xl flex-shrink-0 overflow-hidden transition-all duration-300 flex flex-col h-full ${
             sidebarOpen ? 'opacity-100' : 'opacity-0'
           }`}>
             {/* Sidebar Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200/50">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200/50 flex-shrink-0">
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                   <ShoppingCart className="w-4 h-4 text-white" />
                 </div>
-                <span className="ml-3 text-lg font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Navigation</span>
+                <div className="ml-3">
+                  <h1 className="text-lg font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">POS Pro</h1>
+                  <p className="text-xs text-gray-500 -mt-1">Point of Sale System</p>
+                </div>
               </div>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent mt-2 px-3">
-              <div className="space-y-1 pb-4">
+            <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent py-4 px-3">
+              <div className="space-y-1">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.href);
@@ -143,13 +146,54 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </nav>
 
             {/* Quick Actions */}
-            <div className="p-4 border-t border-gray-200/50 bg-gradient-to-r from-blue-50 to-purple-50">
+            <div className="p-4 border-t border-gray-200/50 bg-gradient-to-r from-blue-50 to-purple-50 flex-shrink-0">
               <Link to="/pos">
                 <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" size="lg">
                   <ShoppingCart className="w-5 h-5 mr-2" />
                   Quick POS
                 </Button>
               </Link>
+            </div>
+
+            {/* Sidebar Footer */}
+            <div className="p-4 border-t border-gray-200/50 sidebar-footer-gradient flex-shrink-0">
+              <div className="text-center">
+                {/* App Info */}
+                <div className="flex items-center justify-center mb-3">
+                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-sm status-indicator">
+                    <ShoppingCart className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="ml-2 text-sm font-semibold text-gray-700">POS Pro</span>
+                </div>
+                
+                {/* System Status */}
+                <div className="mb-3 p-2 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-center text-xs text-green-700">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                    System Online
+                  </div>
+                </div>
+
+                {/* Version & Copyright */}
+                <div className="text-xs text-gray-500 space-y-1 mb-3">
+                  <p className="font-medium">Version 1.0.0</p>
+                  <p className="text-gray-400">© 2024 Modern POS</p>
+                  <p className="text-gray-400">Electron + React</p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex justify-center space-x-2">
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-gray-200 rounded-full transition-all duration-200 hover:scale-110" title="Settings">
+                    <Settings className="w-3 h-3 text-gray-500" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-blue-100 hover:text-blue-600 rounded-full transition-all duration-200 hover:scale-110" title="Help & Support">
+                    <span className="text-xs font-bold">?</span>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-purple-100 hover:text-purple-600 rounded-full transition-all duration-200 hover:scale-110" title="About">
+                    <span className="text-xs font-bold">i</span>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -299,14 +343,17 @@ export default function MainLayout({ children }: MainLayoutProps) {
           />
           
           {/* Mobile Sidebar */}
-          <div className="fixed top-8 bottom-0 left-0 w-64 bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-xl transform transition-transform duration-300 ease-in-out">
+          <div className="fixed top-8 bottom-0 left-0 w-64 sidebar-gradient-bg backdrop-blur-sm border-r border-gray-200/50 shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col">
             {/* Sidebar Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200/50">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200/50 flex-shrink-0">
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                   <ShoppingCart className="w-4 h-4 text-white" />
                 </div>
-                <span className="ml-3 text-lg font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Navigation</span>
+                <div className="ml-3">
+                  <h1 className="text-lg font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">POS Pro</h1>
+                  <p className="text-xs text-gray-500 -mt-1">Point of Sale System</p>
+                </div>
               </div>
               <Button
                 variant="ghost"
@@ -319,8 +366,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent mt-2 px-3">
-              <div className="space-y-1 pb-4">
+            <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent py-4 px-3">
+              <div className="space-y-1">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.href);
@@ -350,13 +397,54 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </nav>
 
             {/* Quick Actions */}
-            <div className="p-4 border-t border-gray-200/50 bg-gradient-to-r from-blue-50 to-purple-50">
+            <div className="p-4 border-t border-gray-200/50 bg-gradient-to-r from-blue-50 to-purple-50 flex-shrink-0">
               <Link to="/pos" onClick={() => setSidebarOpen(false)}>
                 <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" size="lg">
                   <ShoppingCart className="w-5 h-5 mr-2" />
                   Quick POS
                 </Button>
               </Link>
+            </div>
+
+            {/* Mobile Sidebar Footer */}
+            <div className="p-4 border-t border-gray-200/50 sidebar-footer-gradient flex-shrink-0">
+              <div className="text-center">
+                {/* App Info */}
+                <div className="flex items-center justify-center mb-3">
+                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-sm status-indicator">
+                    <ShoppingCart className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="ml-2 text-sm font-semibold text-gray-700">POS Pro</span>
+                </div>
+                
+                {/* System Status */}
+                <div className="mb-3 p-2 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-center text-xs text-green-700">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                    System Online
+                  </div>
+                </div>
+
+                {/* Version & Copyright */}
+                <div className="text-xs text-gray-500 space-y-1 mb-3">
+                  <p className="font-medium">Version 1.0.0</p>
+                  <p className="text-gray-400">© 2024 Modern POS</p>
+                  <p className="text-gray-400">Electron + React</p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex justify-center space-x-2">
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-gray-200 rounded-full transition-all duration-200 hover:scale-110" title="Settings">
+                    <Settings className="w-3 h-3 text-gray-500" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-blue-100 hover:text-blue-600 rounded-full transition-all duration-200 hover:scale-110" title="Help & Support">
+                    <span className="text-xs font-bold">?</span>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-purple-100 hover:text-purple-600 rounded-full transition-all duration-200 hover:scale-110" title="About">
+                    <span className="text-xs font-bold">i</span>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
