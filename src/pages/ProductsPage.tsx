@@ -1,9 +1,13 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
+import { FormModal, createTextField, createNumberField, createSelectField, createTextareaField } from '../components/FormModal';
+import { AdvancedDataTable, renderCurrency, renderBoolean, createEditAction, createDeleteAction, createBulkDeleteAction, createBulkEditAction } from '../components/AdvancedDataTable';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../components/ui/alert-dialog';
 import { Package, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Product {
   id: number;
@@ -17,40 +21,96 @@ interface Product {
   isActive: boolean;
 }
 
+interface Category {
+  id: number;
+  name: string;
+  status: string;
+}
+
+interface Unit {
+  id: number;
+  name: string;
+  symbol: string;
+  status: string;
+}
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Modal states
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    loadProducts();
+    loadData();
   }, []);
 
-  const loadProducts = async () => {
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      
-      const result = await window.database.products.getAll();
-      
-      if (result.success) {
-        setProducts(result.data || []);
-      } else {
-        setError(result.error || 'Failed to load products');
-      }
+      await Promise.all([
+        loadProducts(),
+        loadCategories(),
+        loadUnits()
+      ]);
     } catch (err) {
-      setError('Error loading products');
-      console.error('Error loading products:', err);
+      setError('Failed to load data');
+      console.error('Error loading data:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (product.sku && product.sku.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const loadProducts = async () => {
+    try {
+      const result = await window.database.products.getAll();
+      if (result.success) {
+        setProducts(result.data || []);
+      } else {
+        console.error('Failed to load products:', result.error);
+      }
+    } catch (err) {
+      console.error('Error loading products:', err);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const result = await window.database.categories.getAll();
+      if (result.success) {
+        setCategories(result.data || []);
+      } else {
+        console.error('Failed to load categories:', result.error);
+      }
+    } catch (err) {
+      console.error('Error loading categories:', err);
+    }
+  };
+
+  const loadUnits = async () => {
+    try {
+      const result = await window.database.units.getAll();
+      if (result.success) {
+        setUnits(result.data || []);
+      } else {
+        console.error('Failed to load units:', result.error);
+      }
+    } catch (err) {
+      console.error('Error loading units:', err);
+    }
+  };
+
+  // Let AdvancedDataTable handle all filtering
+  // const filteredProducts = products;
 
   const deleteProduct = async (id: number) => {
     try {
@@ -66,170 +126,434 @@ export default function ProductsPage() {
     }
   };
 
-  if (loading) {
+  // Modal handlers
+  const handleAddProduct = () => {
+    setEditingProduct(null);
+    setIsFormModalOpen(true);
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setIsFormModalOpen(true);
+  };
+
+  const handleDeleteClick = (product: Product) => {
+    setDeletingProduct(product);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleFormSubmit = async (formData: Record<string, any>) => {
+    setSubmitting(true);
+    try {
+      const productData = {
+        ...formData,
+        sellingPrice: Number(formData.sellingPrice),
+        currentStock: Number(formData.currentStock),
+        categoryId: formData.categoryId ? Number(formData.categoryId) : null,
+        unitId: formData.unitId ? Number(formData.unitId) : null,
+        isActive: true,
+      };
+
+      if (editingProduct) {
+        const result = await window.database.products.update(editingProduct.id, productData);
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+        toast.success('Product updated successfully');
+      } else {
+        const result = await window.database.products.create(productData);
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+        toast.success('Product created successfully');
+      }
+      
+      setIsFormModalOpen(false);
+      await loadProducts();
+    } catch (error) {
+      toast.error('An error occurred');
+      console.error('CRUD operation error:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingProduct) return;
+    
+    setSubmitting(true);
+    try {
+      const result = await window.database.products.delete(deletingProduct.id);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      toast.success('Product deleted successfully');
+      setIsDeleteDialogOpen(false);
+      await loadProducts();
+    } catch (error) {
+      toast.error('An error occurred');
+      console.error('Delete error:', error);
+    } finally {
+      setSubmitting(false);
+      setDeletingProduct(null);
+    }
+  };
+
+  // Bulk actions handlers
+  const handleBulkDelete = async (selectedProducts: Product[]) => {
+    if (selectedProducts.length === 0) return;
+    
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${selectedProducts.length} product(s)? This action cannot be undone.`
+    );
+    
+    if (!confirmed) return;
+    
+    setSubmitting(true);
+    try {
+      const deletePromises = selectedProducts.map(product => 
+        window.database.products.delete(product.id)
+      );
+      
+      const results = await Promise.all(deletePromises);
+      const failedDeletes = results.filter(result => !result.success);
+      
+      if (failedDeletes.length === 0) {
+        toast.success(`Successfully deleted ${selectedProducts.length} product(s)`);
+      } else {
+        toast.error(`Failed to delete ${failedDeletes.length} product(s)`);
+      }
+      
+      await loadProducts();
+    } catch (error) {
+      toast.error('Error during bulk delete');
+      console.error('Bulk delete error:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleBulkStatusToggle = async (selectedProducts: Product[]) => {
+    if (selectedProducts.length === 0) return;
+    
+    setSubmitting(true);
+    try {
+      const updatePromises = selectedProducts.map(product => 
+        window.database.products.update(product.id, { 
+          ...product,
+          isActive: !product.isActive 
+        })
+      );
+      
+      const results = await Promise.all(updatePromises);
+      const failedUpdates = results.filter(result => !result.success);
+      
+      if (failedUpdates.length === 0) {
+        toast.success(`Successfully updated ${selectedProducts.length} product(s)`);
+      } else {
+        toast.error(`Failed to update ${failedUpdates.length} product(s)`);
+      }
+      
+      await loadProducts();
+    } catch (error) {
+      toast.error('Error during bulk update');
+      console.error('Bulk update error:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      const csvContent = products.map(product => 
+        `${product.name},${product.sku || ''},${product.sellingPrice},${product.currentStock},${product.isActive ? 'Active' : 'Inactive'}`
+      ).join('\n');
+      
+      const blob = new Blob([`Name,SKU,Price,Stock,Status\n${csvContent}`], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'products.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Products exported successfully');
+    } catch (error) {
+      toast.error('Failed to export products');
+    }
+  };
+
+  // Form fields configuration
+  const formFields = [
+    createTextField('name', 'Product Name', { required: true }),
+    createTextField('sku', 'SKU'),
+    createNumberField('sellingPrice', 'Price', { 
+      required: true, 
+      validation: { min: 0 },
+      placeholder: '0.00'
+    }),
+    createNumberField('currentStock', 'Stock', { 
+      required: true, 
+      validation: { min: 0 },
+      placeholder: '0'
+    }),
+    createSelectField('categoryId', 'Category', 
+      categories.map(cat => ({ value: cat.id, label: cat.name }))
+    ),
+    createSelectField('unitId', 'Unit', 
+      units.map(unit => ({ value: unit.id, label: `${unit.name} (${unit.symbol})` }))
+    ),
+    createTextareaField('description', 'Description')
+  ];
+
+  // Table columns configuration
+  const columns = [
+    { 
+      key: 'name' as keyof Product, 
+      header: 'Name', 
+      sortable: true, 
+      filterable: true 
+    },
+    { 
+      key: 'sku' as keyof Product, 
+      header: 'SKU', 
+      sortable: true, 
+      filterable: true 
+    },
+    { 
+      key: 'sellingPrice' as keyof Product, 
+      header: 'Price', 
+      sortable: true, 
+      render: (value: number) => (
+        <span className="font-mono text-green-600">${value.toFixed(2)}</span>
+      )
+    },
+    { 
+      key: 'currentStock' as keyof Product, 
+      header: 'Stock', 
+      sortable: true,
+      render: (value: number) => (
+        <span className={value > 0 ? 'text-green-600' : 'text-red-600'}>
+          {value}
+        </span>
+      )
+    },
+    { 
+      key: 'categoryId' as keyof Product, 
+      header: 'Category', 
+      render: (value: number) => {
+        const category = categories.find(cat => cat.id === value);
+        return category ? (
+          <Badge variant="outline">{category.name}</Badge>
+        ) : (
+          <span className="text-gray-400">-</span>
+        );
+      }
+    },
+    { 
+      key: 'isActive' as keyof Product, 
+      header: 'Status', 
+      render: (value: boolean) => (
+        <Badge variant={value ? 'default' : 'secondary'}>
+          {value ? 'Active' : 'Inactive'}
+        </Badge>
+      )
+    }
+  ];
+
+  // Filter fields
+  const filterFields = [
+    {
+      key: 'isActive',
+      label: 'Status',
+      type: 'select' as const,
+      options: [
+        { value: 'true', label: 'Active' },
+        { value: 'false', label: 'Inactive' }
+      ]
+    },
+    {
+      key: 'categoryId',
+      label: 'Category',
+      type: 'select' as const,
+      options: categories.map(cat => ({ value: cat.id.toString(), label: cat.name }))
+    }
+  ];
+
+  // Stats
+  const stats = [
+    {
+      label: 'Active Products',
+      value: products.filter(p => p.isActive).length,
+      icon: Package,
+      color: 'text-green-600'
+    },
+    {
+      label: 'Low Stock',
+      value: products.filter(p => p.currentStock <= 10).length,
+      icon: Package,
+      color: 'text-orange-600'
+    },
+    {
+      label: 'Total Value',
+      value: `$${products.reduce((sum, p) => sum + (p.sellingPrice * p.currentStock), 0).toFixed(2)}`,
+      icon: Package,
+      color: 'text-blue-600'
+    }
+  ];
+
+  // Table actions
+  const tableActions = [
+    createEditAction<Product>(handleEditProduct),
+    createDeleteAction<Product>(handleDeleteClick)
+  ];
+
+  // Bulk actions
+  const bulkActions = [
+    createBulkDeleteAction<Product>(handleBulkDelete),
+    {
+      label: 'Toggle Status',
+      icon: Package,
+      onClick: handleBulkStatusToggle,
+      variant: 'outline' as const
+    }
+  ];
+
+  const emptyState = {
+    title: 'No products yet',
+    description: 'Get started by adding your first product',
+    action: {
+      label: 'Add Your First Product',
+      onClick: handleAddProduct
+    }
+  };
+
+  // Custom card renderer
+  const cardRenderer = (product: Product) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-4">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="font-semibold text-lg">{product.name}</h3>
+              {product.sku && (
+                <p className="text-sm text-gray-600">SKU: {product.sku}</p>
+              )}
+            </div>
+            <Badge variant={product.isActive ? 'default' : 'secondary'}>
+              {product.isActive ? 'Active' : 'Inactive'}
+            </Badge>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-2xl font-bold text-green-600">
+              ${product.sellingPrice.toFixed(2)}
+            </span>
+            <span className={`text-sm ${product.currentStock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              Stock: {product.currentStock}
+            </span>
+          </div>
+
+          {product.description && (
+            <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
+          )}
+
+          <div className="flex space-x-2 pt-2 border-t">
+            <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEditProduct(product)}>
+              <Edit className="w-4 h-4 mr-1" />
+              Edit
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => handleDeleteClick(product)}>
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  if (error) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <Package className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-          <p>Loading products...</p>
-        </div>
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-6 text-center">
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button onClick={loadData} variant="outline">
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Products</h1>
-          <p className="text-gray-600">Manage your product inventory</p>
-        </div>
-        <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Product
-        </Button>
-      </div>
+      <Toaster position="top-right" />
+      
+      <AdvancedDataTable
+        data={products}
+        columns={columns}
+        actions={tableActions}
+        bulkActions={bulkActions}
+        loading={loading}
+        searchable={true}
+        filterable={true}
+        filterFields={filterFields}
+        stats={stats}
+        title="Products"
+        subtitle="Manage your product inventory"
+        onAdd={handleAddProduct}
+        onRefresh={loadData}
+        onExport={handleExport}
+        emptyState={emptyState}
+        cardRenderer={cardRenderer}
+        viewModes={['table', 'cards']}
+        selectable={true}
+        pageSizes={[10, 25, 50, 100]}
+      />
 
-      {error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-4">
-            <p className="text-red-600">{error}</p>
-            <Button onClick={loadProducts} variant="outline" className="mt-2">
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+      {/* Form Modal */}
+      <FormModal
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        onSubmit={handleFormSubmit}
+        title={editingProduct ? 'Edit Product' : 'Add Product'}
+        fields={formFields}
+        initialData={editingProduct || {}}
+        loading={submitting}
+        submitLabel={editingProduct ? 'Update' : 'Create'}
+        cancelLabel="Cancel"
+      />
 
-      {/* Search */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search products by name or SKU..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProducts.map((product) => (
-          <Card key={product.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
-                  <CardDescription>
-                    {product.sku && `SKU: ${product.sku}`}
-                  </CardDescription>
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this product? This action cannot be undone.
+              {deletingProduct && (
+                <div className="mt-2 p-2 bg-gray-50 rounded">
+                  <strong>{deletingProduct.name}</strong>
                 </div>
-                <Badge variant={product.isActive ? 'default' : 'secondary'}>
-                  {product.isActive ? 'Active' : 'Inactive'}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {product.description && (
-                  <p className="text-sm text-gray-600">{product.description}</p>
-                )}
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-green-600">
-                    ${product.sellingPrice.toFixed(2)}
-                  </span>
-                  <span className={`text-sm ${product.currentStock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    Stock: {product.currentStock}
-                  </span>
-                </div>
-                <div className="flex space-x-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="w-4 h-4 mr-1" />
-                    Edit
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    size="sm" 
-                    onClick={() => deleteProduct(product.id)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {filteredProducts.length === 0 && !loading && (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <Package className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchTerm ? 'No products found' : 'No products yet'}
-            </h3>
-            <p className="text-gray-600 mb-4">
-              {searchTerm 
-                ? 'Try adjusting your search terms'
-                : 'Get started by adding your first product'
-              }
-            </p>
-            {!searchTerm && (
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Your First Product
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Products</p>
-                <p className="text-2xl font-bold">{products.length}</p>
-              </div>
-              <Package className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Active Products</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {products.filter(p => p.isActive).length}
-                </p>
-              </div>
-              <Package className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Low Stock</p>
-                <p className="text-2xl font-bold text-red-600">
-                  {products.filter(p => p.currentStock <= 10).length}
-                </p>
-              </div>
-              <Package className="w-8 h-8 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={submitting}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={submitting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {submitting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
-}
+} 

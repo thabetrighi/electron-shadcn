@@ -3,7 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
+import { FormModal, createTextField, createTextareaField, createSelectField } from '../components/FormModal';
+import { AdvancedDataTable, renderStatus, createEditAction, createDeleteAction, createBulkDeleteAction } from '../components/AdvancedDataTable';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../components/ui/alert-dialog';
 import { Tag, Plus, Search, Edit, Trash2, Folder } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Category {
   id: number;
@@ -19,6 +23,13 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Modal states
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -63,210 +74,373 @@ export default function CategoriesPage() {
     }
   };
 
-  const rootCategories = filteredCategories.filter(c => !c.parentId);
-  const getSubcategories = (parentId: number) => 
-    filteredCategories.filter(c => c.parentId === parentId);
+  // Modal handlers
+  const handleAddCategory = () => {
+    setEditingCategory(null);
+    setIsFormModalOpen(true);
+  };
 
-  if (loading) {
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category);
+    setIsFormModalOpen(true);
+  };
+
+  const handleDeleteClick = (category: Category) => {
+    setDeletingCategory(category);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleFormSubmit = async (formData: Record<string, any>) => {
+    setSubmitting(true);
+    try {
+      const categoryData = {
+        ...formData,
+        status: formData.status || 'active',
+      };
+
+      if (editingCategory) {
+        const result = await window.database.categories.update(editingCategory.id, categoryData);
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+        toast.success('Category updated successfully');
+      } else {
+        const result = await window.database.categories.create(categoryData);
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+        toast.success('Category created successfully');
+      }
+      
+      setIsFormModalOpen(false);
+      await loadCategories();
+    } catch (error) {
+      toast.error('An error occurred');
+      console.error('CRUD operation error:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingCategory) return;
+    
+    setSubmitting(true);
+    try {
+      const result = await window.database.categories.delete(deletingCategory.id);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      toast.success('Category deleted successfully');
+      setIsDeleteDialogOpen(false);
+      await loadCategories();
+    } catch (error) {
+      toast.error('An error occurred');
+      console.error('Delete error:', error);
+    } finally {
+      setSubmitting(false);
+      setDeletingCategory(null);
+    }
+  };
+
+  // Bulk actions handlers
+  const handleBulkDelete = async (selectedCategories: Category[]) => {
+    if (selectedCategories.length === 0) return;
+    
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${selectedCategories.length} category/categories? This action cannot be undone.`
+    );
+    
+    if (!confirmed) return;
+    
+    setSubmitting(true);
+    try {
+      const deletePromises = selectedCategories.map(category => 
+        window.database.categories.delete(category.id)
+      );
+      
+      const results = await Promise.all(deletePromises);
+      const failedDeletes = results.filter(result => !result.success);
+      
+      if (failedDeletes.length === 0) {
+        toast.success(`Successfully deleted ${selectedCategories.length} category/categories`);
+      } else {
+        toast.error(`Failed to delete ${failedDeletes.length} category/categories`);
+      }
+      
+      await loadCategories();
+    } catch (error) {
+      toast.error('Error during bulk delete');
+      console.error('Bulk delete error:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleBulkStatusToggle = async (selectedCategories: Category[]) => {
+    if (selectedCategories.length === 0) return;
+    
+    setSubmitting(true);
+    try {
+      const updatePromises = selectedCategories.map(category => 
+        window.database.categories.update(category.id, { 
+          ...category,
+          status: category.status === 'active' ? 'inactive' : 'active'
+        })
+      );
+      
+      const results = await Promise.all(updatePromises);
+      const failedUpdates = results.filter(result => !result.success);
+      
+      if (failedUpdates.length === 0) {
+        toast.success(`Successfully updated ${selectedCategories.length} category/categories`);
+      } else {
+        toast.error(`Failed to update ${failedUpdates.length} category/categories`);
+      }
+      
+      await loadCategories();
+    } catch (error) {
+      toast.error('Error during bulk update');
+      console.error('Bulk update error:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      const csvContent = categories.map(category => 
+        `${category.name},${category.description || ''},${category.status}`
+      ).join('\n');
+      
+      const blob = new Blob([`Name,Description,Status\n${csvContent}`], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'categories.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Categories exported successfully');
+    } catch (error) {
+      toast.error('Failed to export categories');
+    }
+  };
+
+  // Form fields configuration
+  const formFields = [
+    createTextField('name', 'Category Name', { required: true }),
+    createTextareaField('description', 'Description'),
+    createSelectField('status', 'Status', [
+      { value: 'active', label: 'Active' },
+      { value: 'inactive', label: 'Inactive' }
+    ], { defaultValue: 'active' })
+  ];
+
+  // Table columns configuration
+  const columns = [
+    { 
+      key: 'name' as keyof Category, 
+      header: 'Name', 
+      sortable: true, 
+      filterable: true 
+    },
+    { 
+      key: 'description' as keyof Category, 
+      header: 'Description', 
+      sortable: true, 
+      filterable: true,
+      render: (value: string) => value || <span className="text-gray-400">-</span>
+    },
+    { 
+      key: 'status' as keyof Category, 
+      header: 'Status', 
+      sortable: true,
+      render: (value: string) => (
+        <Badge variant={value === 'active' ? 'default' : 'secondary'}>
+          {value === 'active' ? 'Active' : 'Inactive'}
+        </Badge>
+      )
+    }
+  ];
+
+  // Filter fields
+  const filterFields = [
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select' as const,
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' }
+      ]
+    }
+  ];
+
+  // Stats
+  const stats = [
+    {
+      label: 'Total Categories',
+      value: categories.length,
+      icon: Folder,
+      color: 'text-blue-600'
+    },
+    {
+      label: 'Active Categories',
+      value: categories.filter(c => c.status === 'active').length,
+      icon: Tag,
+      color: 'text-green-600'
+    },
+    {
+      label: 'Inactive Categories',
+      value: categories.filter(c => c.status === 'inactive').length,
+      icon: Tag,
+      color: 'text-gray-600'
+    }
+  ];
+
+  // Table actions
+  const tableActions = [
+    createEditAction<Category>(handleEditCategory),
+    createDeleteAction<Category>(handleDeleteClick)
+  ];
+
+  // Bulk actions
+  const bulkActions = [
+    createBulkDeleteAction<Category>(handleBulkDelete),
+    {
+      label: 'Toggle Status',
+      icon: Tag,
+      onClick: handleBulkStatusToggle,
+      variant: 'outline' as const
+    }
+  ];
+
+  const emptyState = {
+    title: 'No categories yet',
+    description: 'Get started by adding your first category',
+    action: {
+      label: 'Add Your First Category',
+      onClick: handleAddCategory
+    }
+  };
+
+  // Custom card renderer
+  const cardRenderer = (category: Category) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-4">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-3">
+              <Folder className="w-6 h-6 text-blue-500" />
+              <div>
+                <h3 className="font-semibold text-lg">{category.name}</h3>
+                {category.description && (
+                  <p className="text-sm text-gray-600 line-clamp-2">{category.description}</p>
+                )}
+              </div>
+            </div>
+            <Badge variant={category.status === 'active' ? 'default' : 'secondary'}>
+              {category.status === 'active' ? 'Active' : 'Inactive'}
+            </Badge>
+          </div>
+
+          <div className="flex space-x-2 pt-2 border-t">
+            <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEditCategory(category)}>
+              <Edit className="w-4 h-4 mr-1" />
+              Edit
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => handleDeleteClick(category)}>
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  if (error) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <Tag className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-          <p>Loading categories...</p>
-        </div>
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-6 text-center">
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button onClick={loadCategories} variant="outline">
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Categories</h1>
-          <p className="text-gray-600">Organize your products into categories</p>
-        </div>
-        <Button className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Category
-        </Button>
-      </div>
+      <Toaster position="top-right" />
+      
+      <AdvancedDataTable
+        data={categories}
+        columns={columns}
+        actions={tableActions}
+        bulkActions={bulkActions}
+        loading={loading}
+        searchable={true}
+        filterable={true}
+        filterFields={filterFields}
+        stats={stats}
+        title="Categories"
+        subtitle="Organize your products into categories"
+        onAdd={handleAddCategory}
+        onRefresh={loadCategories}
+        onExport={handleExport}
+        emptyState={emptyState}
+        cardRenderer={cardRenderer}
+        viewModes={['table', 'cards']}
+        selectable={true}
+        pageSizes={[10, 25, 50, 100]}
+      />
 
-      {error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-4">
-            <p className="text-red-600">{error}</p>
-            <Button onClick={loadCategories} variant="outline" className="mt-2">
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+      {/* Form Modal */}
+      <FormModal
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        onSubmit={handleFormSubmit}
+        title={editingCategory ? 'Edit Category' : 'Add Category'}
+        fields={formFields}
+        initialData={editingCategory || {}}
+        loading={submitting}
+        submitLabel={editingCategory ? 'Update' : 'Create'}
+        cancelLabel="Cancel"
+      />
 
-      {/* Search */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search categories by name or description..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Categories */}
-      <div className="space-y-4">
-        {rootCategories.map((category) => {
-          const subcategories = getSubcategories(category.id);
-          
-          return (
-            <Card key={category.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Folder className="w-6 h-6 text-blue-500" />
-                    <div>
-                      <CardTitle className="text-lg">{category.name}</CardTitle>
-                      <CardDescription>
-                        {category.description || 'No description'}
-                      </CardDescription>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant={category.status === 'active' ? 'default' : 'secondary'}>
-                      {category.status}
-                    </Badge>
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4 mr-1" />
-                      Edit
-                    </Button>
-                    <Button 
-                      variant="destructive" 
-                      size="sm" 
-                      onClick={() => deleteCategory(category.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Category</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this category? This action cannot be undone.
+              {deletingCategory && (
+                <div className="mt-2 p-2 bg-gray-50 rounded">
+                  <strong>{deletingCategory.name}</strong>
                 </div>
-              </CardHeader>
-              
-              {subcategories.length > 0 && (
-                <CardContent>
-                  <div className="pl-6 border-l-2 border-gray-200">
-                    <h4 className="text-sm font-medium text-gray-700 mb-3">
-                      Subcategories ({subcategories.length})
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {subcategories.map((subcategory) => (
-                        <div 
-                          key={subcategory.id}
-                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <Tag className="w-4 h-4 text-gray-500" />
-                            <div>
-                              <p className="font-medium text-sm">{subcategory.name}</p>
-                              <p className="text-xs text-gray-600">
-                                {subcategory.description || 'No description'}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Badge 
-                              variant={subcategory.status === 'active' ? 'default' : 'secondary'}
-                              className="text-xs"
-                            >
-                              {subcategory.status}
-                            </Badge>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => deleteCategory(subcategory.id)}
-                              className="h-6 w-6 p-0"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
               )}
-            </Card>
-          );
-        })}
-      </div>
-
-      {filteredCategories.length === 0 && !loading && (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <Tag className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchTerm ? 'No categories found' : 'No categories yet'}
-            </h3>
-            <p className="text-gray-600 mb-4">
-              {searchTerm 
-                ? 'Try adjusting your search terms'
-                : 'Get started by creating your first category'
-              }
-            </p>
-            {!searchTerm && (
-              <Button className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700">
-                <Plus className="w-4 h-4 mr-2" />
-                Create Your First Category
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Categories</p>
-                <p className="text-2xl font-bold">{categories.length}</p>
-              </div>
-              <Tag className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Root Categories</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {categories.filter(c => !c.parentId).length}
-                </p>
-              </div>
-              <Folder className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Active Categories</p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {categories.filter(c => c.status === 'active').length}
-                </p>
-              </div>
-              <Tag className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={submitting}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={submitting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {submitting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
