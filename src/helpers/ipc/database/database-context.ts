@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, DATABASE_CHANNELS } from './database-channels';
+import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS } from './database-channels';
 
 // Database API
 export const databaseAPI = {
@@ -54,6 +54,15 @@ export const databaseAPI = {
     update: (id: number, orderData: any) => ipcRenderer.invoke(ORDER_CHANNELS.UPDATE_ORDER, id, orderData),
     delete: (id: number) => ipcRenderer.invoke(ORDER_CHANNELS.DELETE_ORDER, id),
     getByUser: (userId: number) => ipcRenderer.invoke(ORDER_CHANNELS.GET_ORDERS_BY_USER, userId),
+  },
+
+  // Settings operations
+  settings: {
+    getAll: (filter?: any) => ipcRenderer.invoke(SETTINGS_CHANNELS.GET_ALL_SETTINGS, filter),
+    get: (key: string) => ipcRenderer.invoke(SETTINGS_CHANNELS.GET_SETTING, key),
+    set: (key: string, value: any) => ipcRenderer.invoke(SETTINGS_CHANNELS.SET_SETTING, key, value),
+    delete: (key: string) => ipcRenderer.invoke(SETTINGS_CHANNELS.DELETE_SETTING, key),
+    getByCategory: (category: string) => ipcRenderer.invoke(SETTINGS_CHANNELS.GET_BY_CATEGORY, category),
   },
 };
 

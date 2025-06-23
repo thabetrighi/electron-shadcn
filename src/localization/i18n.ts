@@ -31,6 +31,9 @@ i18n.use(initReactI18next).init({
         submit: "Submit",
         reset: "Reset",
         confirm: "Confirm",
+        print: "Print",
+        clearFilters: "Clear Filters",
+        showingXofY: "Showing {{start}}-{{end}} of {{total}}",
         
         // Table
         columns: "Columns",
@@ -83,14 +86,44 @@ i18n.use(initReactI18next).init({
         categoryStatus: "Status",
         
         // Units
-        units: "Units",
-        unit: "Unit",
-        addUnit: "Add Unit",
-        editUnit: "Edit Unit",
-        deleteUnit: "Delete Unit",
-        unitName: "Unit Name",
-        unitSymbol: "Symbol",
-        unitType: "Type",
+        units: {
+          units: "Units",
+          unit: "Unit",
+          addUnit: "Add Unit",
+          editUnit: "Edit Unit",
+          deleteUnit: "Delete Unit",
+          name: "Name",
+          nameEn: "English Name",
+          symbol: "Symbol",
+          type: "Type",
+          conversionRate: "Conversion Rate",
+          baseUnit: "Base Unit",
+          totalUnits: "Total Units",
+          activeUnits: "Active Units",
+          unitTypes: "Unit Types",
+          baseUnits: "Base Units",
+          description: "Manage measurement units for your products",
+          reportTitle: "Units Report",
+          searchPlaceholder: "Search units...",
+          noUnits: "No units found",
+          noUnitsDescription: "Start by adding your first unit of measurement",
+          addFirstUnit: "Add First Unit",
+          deleteConfirm: "Are you sure you want to delete this unit?",
+          bulkDeleteConfirm: "Are you sure you want to delete {{count}} units?",
+          bulkStatusUpdated: "{{count}} units updated successfully",
+          namePlaceholder: "Enter unit name",
+          nameEnPlaceholder: "Enter English name",
+          symbolPlaceholder: "Enter symbol (e.g., kg, pcs)",
+          conversionRateHelper: "Conversion rate to base unit",
+          baseUnitHelper: "Select base unit for conversion",
+          baseUnitSelf: "Base Unit",
+          types: {
+            weight: "Weight",
+            volume: "Volume",
+            piece: "Piece",
+            length: "Length"
+          }
+        },
         
         // Status
         active: "Active",
@@ -116,7 +149,49 @@ i18n.use(initReactI18next).init({
         
         // View modes
         tableView: "Table View",
-        cardsView: "Cards View"
+        cardsView: "Cards View",
+        
+        // Navigation
+        navigation: {
+          dashboard: "Dashboard",
+          products: "Products",
+          categories: "Categories",
+          units: "Units",
+          users: "Users",
+          orders: "Orders",
+          pos: "POS",
+          reports: "Reports",
+          settings: "Settings"
+        },
+        
+        // Common grouped properties
+        common: {
+          status: "Status",
+          active: "Active",
+          inactive: "Inactive",
+          activate: "Activate",
+          deactivate: "Deactivate",
+          delete: "Delete",
+          error: "An error occurred",
+          success: "Operation completed successfully",
+          loading: "Loading...",
+          save: "Save",
+          cancel: "Cancel",
+          edit: "Edit",
+          view: "View",
+          add: "Add",
+          create: "Create",
+          update: "Update",
+          search: "Search",
+          filter: "Filter",
+          export: "Export",
+          print: "Print",
+          refresh: "Refresh",
+          close: "Close",
+          submit: "Submit",
+          reset: "Reset",
+          confirm: "Confirm"
+        }
       },
     },
     "pt-BR": {
@@ -146,6 +221,9 @@ i18n.use(initReactI18next).init({
         submit: "Enviar",
         reset: "Resetar",
         confirm: "Confirmar",
+        print: "Imprimir",
+        clearFilters: "Limpar Filtros",
+        showingXofY: "Mostrando {{start}}-{{end}} de {{total}}",
         
         // Table
         columns: "Colunas",
@@ -198,14 +276,44 @@ i18n.use(initReactI18next).init({
         categoryStatus: "Status",
         
         // Units
-        units: "Unidades",
-        unit: "Unidade",
-        addUnit: "Adicionar Unidade",
-        editUnit: "Editar Unidade",
-        deleteUnit: "Excluir Unidade",
-        unitName: "Nome da Unidade",
-        unitSymbol: "Símbolo",
-        unitType: "Tipo",
+        units: {
+          units: "Unidades",
+          unit: "Unidade",
+          addUnit: "Adicionar Unidade",
+          editUnit: "Editar Unidade",
+          deleteUnit: "Excluir Unidade",
+          name: "Nome",
+          nameEn: "Nome em Inglês",
+          symbol: "Símbolo",
+          type: "Tipo",
+          conversionRate: "Taxa de Conversão",
+          baseUnit: "Unidade Base",
+          totalUnits: "Total de Unidades",
+          activeUnits: "Unidades Ativas",
+          unitTypes: "Tipos de Unidade",
+          baseUnits: "Unidades Base",
+          description: "Gerencie unidades de medida para seus produtos",
+          reportTitle: "Relatório de Unidades",
+          searchPlaceholder: "Pesquisar unidades...",
+          noUnits: "Nenhuma unidade encontrada",
+          noUnitsDescription: "Comece adicionando sua primeira unidade de medida",
+          addFirstUnit: "Adicionar Primeira Unidade",
+          deleteConfirm: "Tem certeza que deseja excluir esta unidade?",
+          bulkDeleteConfirm: "Tem certeza que deseja excluir {{count}} unidades?",
+          bulkStatusUpdated: "{{count}} unidades atualizadas com sucesso",
+          namePlaceholder: "Digite o nome da unidade",
+          nameEnPlaceholder: "Digite o nome em inglês",
+          symbolPlaceholder: "Digite o símbolo (ex: kg, pcs)",
+          conversionRateHelper: "Taxa de conversão para unidade base",
+          baseUnitHelper: "Selecione a unidade base para conversão",
+          baseUnitSelf: "Unidade Base",
+          types: {
+            weight: "Peso",
+            volume: "Volume",
+            piece: "Peça",
+            length: "Comprimento"
+          }
+        },
         
         // Status
         active: "Ativo",
@@ -231,8 +339,23 @@ i18n.use(initReactI18next).init({
         
         // View modes
         tableView: "Visualização em Tabela",
-        cardsView: "Visualização em Cards"
+        cardsView: "Visualização em Cards",
+        
+        // Navigation
+        navigation: {
+          dashboard: "Painel",
+          products: "Produtos",
+          categories: "Categorias",
+          units: "Unidades",
+          users: "Usuários",
+          orders: "Pedidos",
+          pos: "PDV",
+          reports: "Relatórios",
+          settings: "Configurações"
+        }
       },
     },
   },
 });
+
+export default i18n;

@@ -48,6 +48,15 @@ export const ORDER_CHANNELS = {
   GET_ORDERS_BY_USER: 'order:get-by-user',
 } as const;
 
+// Settings channels
+export const SETTINGS_CHANNELS = {
+  GET_ALL_SETTINGS: 'settings:get-all',
+  GET_SETTING: 'settings:get',
+  SET_SETTING: 'settings:set',
+  DELETE_SETTING: 'settings:delete',
+  GET_BY_CATEGORY: 'settings:get-by-category',
+} as const;
+
 // Database channels
 export const DATABASE_CHANNELS = {
   INITIALIZE: 'database:initialize',

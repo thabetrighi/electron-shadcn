@@ -60,6 +60,13 @@ interface DatabaseAPI {
     delete: (id: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
     getByUser: (userId: number) => Promise<{ success: boolean; data?: any[]; error?: string }>;
   };
+  settings: {
+    getAll: (filter?: any) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    get: (key: string) => Promise<{ success: boolean; data?: any; error?: string }>;
+    set: (key: string, value: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    delete: (key: string) => Promise<{ success: boolean; data?: boolean; error?: string }>;
+    getByCategory: (category: string) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+  };
 }
 
 declare interface Window {

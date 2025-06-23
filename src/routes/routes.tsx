@@ -9,6 +9,8 @@ import CategoriesPage from "@/pages/CategoriesPage";
 import UsersPage from "@/pages/UsersPage";
 import OrdersPage from "@/pages/OrdersPage";
 import ReportsPage from "@/pages/ReportsPage";
+import SettingsPage from "@/pages/SettingsPage";
+import UnitsPage from "@/pages/UnitsPage";
 
 // TODO: Steps to add a new route:
 // 1. Create a new page component in the '../pages/' directory (e.g., NewPage.tsx)
@@ -83,6 +85,18 @@ export const ReportsRoute = createRoute({
   component: ReportsPage,
 });
 
+export const SettingsRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/settings",
+  component: SettingsPage,
+});
+
+export const UnitsRoute = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/units",
+  component: UnitsPage,
+});
+
 export const rootTree = RootRoute.addChildren([
   HomeRoute, 
   SecondPageRoute, 
@@ -90,7 +104,9 @@ export const rootTree = RootRoute.addChildren([
   POSRoute, 
   ProductsRoute, 
   CategoriesRoute, 
+  UnitsRoute,
   UsersRoute,
   OrdersRoute,
-  ReportsRoute
+  ReportsRoute,
+  SettingsRoute
 ]);

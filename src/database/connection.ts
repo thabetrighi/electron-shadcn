@@ -198,134 +198,94 @@ async function createTablesManually() {
       "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
       "name" text NOT NULL,
       "name_en" text,
-      "name_fr" text,
-      "name_ar" text,
       "description" text,
-      "image" text,
       "parent_id" integer,
       "status" text DEFAULT 'active' NOT NULL,
-      "sort_order" integer DEFAULT 0,
       "created_at" text DEFAULT (datetime('now')),
-      "updated_at" text DEFAULT (datetime('now')),
-      FOREIGN KEY ("parent_id") REFERENCES "categories"("id")
-    )`,
-    
-    `CREATE TABLE IF NOT EXISTS "units" (
-      "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-      "name" text NOT NULL,
-      "name_en" text,
-      "name_fr" text,
-      "name_ar" text,
-      "symbol" text NOT NULL,
-      "type" text DEFAULT 'piece' NOT NULL,
-      "conversion_rate" real DEFAULT 1,
-      "base_unit" integer,
-      "status" text DEFAULT 'active' NOT NULL,
-      "created_at" text DEFAULT (datetime('now')),
-      "updated_at" text DEFAULT (datetime('now')),
-      FOREIGN KEY ("base_unit") REFERENCES "units"("id")
+      "updated_at" text DEFAULT (datetime('now'))
     )`,
     
     `CREATE TABLE IF NOT EXISTS "products" (
       "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
       "name" text NOT NULL,
-      "name_en" text,
-      "name_fr" text,
-      "name_ar" text,
-      "description" text,
       "sku" text,
-      "barcode" text,
+      "price" real NOT NULL,
+      "stock" integer DEFAULT 0 NOT NULL,
       "category_id" integer,
       "unit_id" integer,
-      "supplier_id" integer,
-      "purchase_price" real DEFAULT 0,
-      "selling_price" real NOT NULL,
-      "min_price" real DEFAULT 0,
-      "current_stock" integer DEFAULT 0,
-      "min_stock" integer DEFAULT 0,
-      "weight" real DEFAULT 0,
-      "color" text,
-      "size" text,
-      "image" text,
-      "tax_rate" real DEFAULT 0,
-      "discount_rate" real DEFAULT 0,
-      "is_active" integer DEFAULT 1,
-      "is_featured" integer DEFAULT 0,
-      "track_stock" integer DEFAULT 1,
+      "description" text,
+      "status" text DEFAULT 'active' NOT NULL,
       "created_at" text DEFAULT (datetime('now')),
-      "updated_at" text DEFAULT (datetime('now')),
-      FOREIGN KEY ("category_id") REFERENCES "categories"("id"),
-      FOREIGN KEY ("unit_id") REFERENCES "units"("id"),
-      FOREIGN KEY ("supplier_id") REFERENCES "users"("id")
+      "updated_at" text DEFAULT (datetime('now'))
     )`,
     
     `CREATE UNIQUE INDEX IF NOT EXISTS "products_sku_unique" ON "products" ("sku")`,
-    `CREATE UNIQUE INDEX IF NOT EXISTS "products_barcode_unique" ON "products" ("barcode")`,
+    
+    `CREATE TABLE IF NOT EXISTS "units" (
+      "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+      "name" text NOT NULL,
+      "name_en" text,
+      "symbol" text NOT NULL,
+      "type" text DEFAULT 'piece' NOT NULL,
+      "conversion_rate" real DEFAULT 1 NOT NULL,
+      "base_unit_id" integer,
+      "status" text DEFAULT 'active' NOT NULL,
+      "created_at" text DEFAULT (datetime('now')),
+      "updated_at" text DEFAULT (datetime('now'))
+    )`,
     
     `CREATE TABLE IF NOT EXISTS "orders" (
       "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
       "order_number" text NOT NULL,
       "customer_id" integer,
-      "staff_id" integer,
-      "subtotal" real DEFAULT 0 NOT NULL,
-      "tax_amount" real DEFAULT 0,
-      "discount_amount" real DEFAULT 0,
-      "total_amount" real NOT NULL,
-      "payment_method" text DEFAULT 'cash' NOT NULL,
-      "payment_status" text DEFAULT 'pending' NOT NULL,
-      "paid_amount" real DEFAULT 0,
-      "change_amount" real DEFAULT 0,
+      "total" real NOT NULL,
       "status" text DEFAULT 'pending' NOT NULL,
-      "order_type" text DEFAULT 'sale' NOT NULL,
-      "customer_name" text,
-      "customer_phone" text,
-      "customer_email" text,
-      "order_date" text DEFAULT (date('now')),
+      "payment_method" text,
+      "payment_status" text DEFAULT 'pending' NOT NULL,
+      "order_date" text DEFAULT (datetime('now')),
       "created_at" text DEFAULT (datetime('now')),
-      "updated_at" text DEFAULT (datetime('now')),
-      "notes" text,
-      "receipt_printed" integer DEFAULT 0,
-      FOREIGN KEY ("customer_id") REFERENCES "users"("id"),
-      FOREIGN KEY ("staff_id") REFERENCES "users"("id")
+      "updated_at" text DEFAULT (datetime('now'))
     )`,
     
     `CREATE UNIQUE INDEX IF NOT EXISTS "orders_order_number_unique" ON "orders" ("order_number")`,
     
-    `CREATE TABLE IF NOT EXISTS "order_items" (
+    `CREATE TABLE IF NOT EXISTS "settings" (
       "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-      "order_id" integer,
-      "product_id" integer,
-      "product_name" text NOT NULL,
-      "product_sku" text,
-      "quantity" integer NOT NULL,
-      "unit_price" real NOT NULL,
-      "discount_rate" real DEFAULT 0,
-      "discount_amount" real DEFAULT 0,
-      "tax_rate" real DEFAULT 0,
-      "tax_amount" real DEFAULT 0,
-      "total_price" real NOT NULL,
+      "key" text NOT NULL,
+      "value" text,
+      "type" text DEFAULT 'string' NOT NULL,
+      "category" text DEFAULT 'general' NOT NULL,
+      "label" text NOT NULL,
+      "description" text,
+      "default_value" text,
+      "is_required" integer DEFAULT 0 NOT NULL,
+      "is_public" integer DEFAULT 0 NOT NULL,
+      "sort_order" integer DEFAULT 0 NOT NULL,
       "created_at" text DEFAULT (datetime('now')),
-      FOREIGN KEY ("order_id") REFERENCES "orders"("id"),
-      FOREIGN KEY ("product_id") REFERENCES "products"("id")
-    )`
+      "updated_at" text DEFAULT (datetime('now'))
+    )`,
+    
+    `CREATE UNIQUE INDEX IF NOT EXISTS "settings_key_unique" ON "settings" ("key")`
   ];
   
-  for (const statement of createTableStatements) {
-    try {
+  try {
+    for (const statement of createTableStatements) {
       sqlite.exec(statement);
-    } catch (error) {
-      console.warn('Failed to create table:', error);
     }
+    console.log('✅ Tables created successfully');
+  } catch (error) {
+    console.error('❌ Failed to create tables:', error);
+    throw error;
   }
-  
-  console.log('Manual table creation completed');
 }
 
 // Close database connection
 export function closeDatabase() {
   try {
-    sqlite.close();
-    console.log('Database connection closed');
+    if (sqlite) {
+      sqlite.close();
+      console.log('Database connection closed');
+    }
   } catch (error) {
     console.error('Error closing database:', error);
   }
@@ -336,12 +296,13 @@ export function getDatabase() {
   return db;
 }
 
-// Health check
+// Check database health
 export function isDatabaseHealthy() {
   try {
-    const result = sqlite.prepare('SELECT 1').get();
-    return result !== undefined;
-  } catch {
+    sqlite.prepare('SELECT 1').get();
+    return true;
+  } catch (error) {
+    console.error('Database health check failed:', error);
     return false;
   }
 } 

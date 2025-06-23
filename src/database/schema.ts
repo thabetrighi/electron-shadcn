@@ -156,6 +156,23 @@ export const orderItems = sqliteTable("order_items", {
   createdAt: text("created_at").default(sql`(datetime('now'))`),
 });
 
+// Settings table for application configuration
+export const settings = sqliteTable("settings", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  key: text("key").notNull().unique(),
+  value: text("value"),
+  type: text("type", { enum: ["string", "number", "boolean", "json", "file"] }).notNull().default("string"),
+  category: text("category").notNull(), // e.g., "general", "printing", "pos", "appearance"
+  label: text("label").notNull(),
+  description: text("description"),
+  defaultValue: text("default_value"),
+  isRequired: integer("is_required", { mode: "boolean" }).default(false),
+  isPublic: integer("is_public", { mode: "boolean" }).default(false), // Can be accessed by frontend
+  sortOrder: integer("sort_order").default(0),
+  createdAt: text("created_at").default(sql`(datetime('now'))`),
+  updatedAt: text("updated_at").default(sql`(datetime('now'))`),
+});
+
 // Export types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -169,3 +186,5 @@ export type Order = typeof orders.$inferSelect;
 export type NewOrder = typeof orders.$inferInsert;
 export type OrderItem = typeof orderItems.$inferSelect;
 export type NewOrderItem = typeof orderItems.$inferInsert;
+export type Setting = typeof settings.$inferSelect;
+export type NewSetting = typeof settings.$inferInsert;

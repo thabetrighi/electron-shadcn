@@ -43,6 +43,55 @@ export default function NavigationMenu() {
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link to="/products">
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Products
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link to="/categories">
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Categories
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link to="/units">
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Units
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link to="/users">
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Users
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link to="/orders">
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Orders
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link to="/reports">
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Reports
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link to="/settings">
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Settings
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenuBase>
   );

@@ -12,8 +12,8 @@ const config: ForgeConfig = {
     asar: true,
   },
   rebuildConfig: {
-    extraModules: ['better-sqlite3'],
-    force: true
+    force: false,
+    onlyModules: ['better-sqlite3']
   },
   makers: [
     new MakerSquirrel({}),
