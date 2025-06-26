@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator } from './ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuSeparator, DropdownMenuLabel } from './ui/dropdown-menu';
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Checkbox } from './ui/checkbox';
@@ -27,7 +28,34 @@ import {
   ChevronDown,
   MoreVertical,
   CheckSquare,
-  Square
+  Square,
+  FileText,
+  FileSpreadsheet,
+  Printer,
+  Copy,
+  Archive,
+  Settings,
+  Calendar,
+  SortAsc,
+  SortDesc,
+  ExternalLink,
+  Mail,
+  Phone,
+  Globe,
+  MapPin,
+  Users,
+  Package,
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  BarChart3,
+  PieChart,
+  AlertCircle,
+  Info,
+  CheckCircle2,
+  Clock,
+  Star
 } from 'lucide-react';
 
 export interface Column<T> {
@@ -39,29 +67,49 @@ export interface Column<T> {
   visible?: boolean;
   width?: string;
   selectable?: boolean;
+  searchable?: boolean;
+  exportable?: boolean;
+  type?: 'text' | 'number' | 'date' | 'boolean' | 'currency' | 'status' | 'image' | 'link' | 'email' | 'phone';
+  align?: 'left' | 'center' | 'right';
+  sticky?: boolean;
+  tooltip?: string;
+  copyable?: boolean;
 }
 
 export interface FilterField {
   key: string;
   label: string;
-  type: 'text' | 'select' | 'date' | 'number';
-  options?: { value: string; label: string }[];
+  type: 'text' | 'select' | 'date' | 'number' | 'range' | 'multiselect' | 'daterange';
+  options?: { value: string; label: string; icon?: React.ComponentType<{ className?: string }> }[];
+  placeholder?: string;
+  validation?: {
+    min?: number;
+    max?: number;
+    required?: boolean;
+  };
 }
 
 export interface Action<T> {
   label: string;
   icon?: React.ComponentType<{ className?: string }>;
   onClick: (row: T) => void;
-  variant?: 'default' | 'destructive' | 'outline';
+  variant?: 'default' | 'destructive' | 'outline' | 'ghost' | 'secondary';
   condition?: (row: T) => boolean;
+  tooltip?: string;
+  shortcut?: string;
+  group?: string;
 }
 
 export interface BulkAction<T> {
   label: string;
   icon?: React.ComponentType<{ className?: string }>;
-  onClick: (selectedRows: T[]) => void;
-  variant?: 'default' | 'destructive' | 'outline';
+  onClick: (selectedRows: T[], clearSelection?: () => void) => void | Promise<void>;
+  variant?: 'default' | 'destructive' | 'outline' | 'ghost' | 'secondary';
   condition?: (selectedRows: T[]) => boolean;
+  confirmMessage?: string;
+  requiresConfirmation?: boolean;
+  tooltip?: string;
+  group?: string;
 }
 
 export interface Stats {
@@ -69,6 +117,26 @@ export interface Stats {
   value: string | number;
   icon?: React.ComponentType<{ className?: string }>;
   color?: string;
+  trend?: {
+    value: number;
+    direction: 'up' | 'down' | 'neutral';
+    label?: string;
+  };
+  clickable?: boolean;
+  onClick?: () => void;
+  format?: 'number' | 'currency' | 'percentage';
+  comparison?: {
+    value: number;
+    label: string;
+  };
+}
+
+export interface ExportOption {
+  format: 'csv' | 'excel' | 'pdf' | 'json' | 'print';
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  includeFilters?: boolean;
+  customFields?: string[];
 }
 
 interface AdvancedDataTableProps<T> {
@@ -84,16 +152,18 @@ interface AdvancedDataTableProps<T> {
   loading?: boolean;
   onAdd?: () => void;
   onRefresh?: () => void;
-  onExport?: () => void;
+  onExport?: (format: string, data: T[], columns: Column<T>[]) => void | Promise<void>;
   onImport?: () => void;
   title?: string;
   subtitle?: string;
   stats?: Stats[];
-  viewModes?: ('table' | 'cards')[];
+  viewModes?: ('table' | 'cards' | 'list')[];
   cardRenderer?: (item: T) => React.ReactNode;
+  listRenderer?: (item: T) => React.ReactNode;
   emptyState?: {
     title: string;
     description: string;
+    icon?: React.ComponentType<{ className?: string }>;
     action?: {
       label: string;
       onClick: () => void;
@@ -101,9 +171,29 @@ interface AdvancedDataTableProps<T> {
   };
   idField?: keyof T;
   selectable?: boolean;
+  multiSort?: boolean;
+  globalSearch?: boolean;
+  quickFilters?: { key: string; value: string; label: string }[];
+  exportOptions?: ExportOption[];
+  density?: 'compact' | 'comfortable' | 'spacious';
+  stickyHeader?: boolean;
+  virtualScrolling?: boolean;
+  rowSelection?: 'single' | 'multiple' | 'none';
+  expandableRows?: boolean;
+  rowExpansion?: (row: T) => React.ReactNode;
+  onRowClick?: (row: T) => void;
+  onRowDoubleClick?: (row: T) => void;
+  customToolbar?: React.ReactNode;
+  preserveSelection?: boolean;
+  autoRefresh?: boolean;
+  refreshInterval?: number;
+  showRowNumbers?: boolean;
+  groupBy?: keyof T;
+  aggregations?: { field: keyof T; type: 'sum' | 'avg' | 'count' | 'min' | 'max' }[];
 }
 
-type ViewMode = 'table' | 'cards';
+type ViewMode = 'table' | 'cards' | 'list';
+type SortConfig<T> = { key: keyof T; direction: 'asc' | 'desc' }[];
 
 export function AdvancedDataTable<T extends Record<string, any>>({
   data,
@@ -114,7 +204,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
   filterable = true,
   filterFields = [],
   paginated = true,
-  pageSizes = [10, 25, 50, 100],
+  pageSizes = [10, 25, 50, 100, 250],
   loading = false,
   onAdd,
   onRefresh,
@@ -125,120 +215,407 @@ export function AdvancedDataTable<T extends Record<string, any>>({
   stats = [],
   viewModes = ['table', 'cards'],
   cardRenderer,
+  listRenderer,
   emptyState,
   idField = 'id' as keyof T,
-  selectable = true
+  selectable = true,
+  multiSort = false,
+  globalSearch = true,
+  quickFilters = [],
+  exportOptions = [
+    { format: 'csv', label: 'CSV', icon: FileText, includeFilters: true },
+    { format: 'excel', label: 'Excel', icon: FileSpreadsheet, includeFilters: true },
+    { format: 'pdf', label: 'PDF', icon: FileText, includeFilters: false },
+    { format: 'print', label: 'Print', icon: Printer, includeFilters: false }
+  ],
+  density = 'comfortable',
+  stickyHeader = true,
+  virtualScrolling = false,
+  rowSelection = 'multiple',
+  expandableRows = false,
+  rowExpansion,
+  onRowClick,
+  onRowDoubleClick,
+  customToolbar,
+  preserveSelection = false,
+  autoRefresh = false,
+  refreshInterval = 30000,
+  showRowNumbers = false,
+  groupBy,
+  aggregations = []
 }: AdvancedDataTableProps<T>) {
+  const { t } = useTranslation();
+  
+  // State management
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(pageSizes[0]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState<Record<string, string>>({});
-  const [sortKey, setSortKey] = useState<keyof T | null>(null);
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [viewMode, setViewMode] = useState<ViewMode>('table');
+  const [globalSearchTerm, setGlobalSearchTerm] = useState('');
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [sortConfig, setSortConfig] = useState<SortConfig<T>>([]);
+  const [viewMode, setViewMode] = useState<ViewMode>(viewModes[0] || 'table');
   const [columns, setColumns] = useState(initialColumns);
   const [selectedRows, setSelectedRows] = useState<Set<string | number>>(new Set());
+  const [expandedRows, setExpandedRows] = useState<Set<string | number>>(new Set());
+  const [tableDensity, setTableDensity] = useState<'compact' | 'comfortable' | 'spacious'>(density);
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+  const [quickFilterActive, setQuickFilterActive] = useState<string>('');
 
-  // Filter and search data
+  // Auto refresh effect
+  React.useEffect(() => {
+    if (autoRefresh && onRefresh) {
+      const interval = setInterval(onRefresh, refreshInterval);
+      return () => clearInterval(interval);
+    }
+  }, [autoRefresh, onRefresh, refreshInterval]);
+
+  // Enhanced data filtering and searching
   const filteredData = useMemo(() => {
     return data.filter(row => {
-      // Search filter
+      // Global search
+      if (globalSearch && globalSearchTerm) {
+        const searchableColumns = columns.filter(col => col.searchable !== false);
+        const globalMatch = searchableColumns.some(col => {
+          const value = row[col.key];
+          return String(value || '').toLowerCase().includes(globalSearchTerm.toLowerCase());
+        });
+        if (!globalMatch) return false;
+      }
+
+      // Column-specific search
       if (searchTerm) {
         const searchMatch = Object.values(row).some(value => 
-          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+          String(value || '').toLowerCase().includes(searchTerm.toLowerCase())
         );
         if (!searchMatch) return false;
       }
 
-      // Column filters
-      for (const [key, value] of Object.entries(filters)) {
-        if (value && value !== 'all' && String(row[key]) !== value) {
+      // Quick filters
+      if (quickFilterActive) {
+        const quickFilter = quickFilters.find(qf => qf.key === quickFilterActive);
+        if (quickFilter && String(row[quickFilter.key as keyof T]) !== quickFilter.value) {
           return false;
+        }
+      }
+
+      // Advanced filters
+      for (const [key, value] of Object.entries(filters)) {
+        if (!value || value === 'all') continue;
+        
+        const filterField = filterFields.find(f => f.key === key);
+        if (!filterField) continue;
+
+        const rowValue = row[key as keyof T];
+        
+        switch (filterField.type) {
+          case 'multiselect':
+            if (Array.isArray(value) && value.length > 0) {
+              if (!value.includes(String(rowValue))) return false;
+            }
+            break;
+          case 'range':
+            if (typeof value === 'object' && value.min !== undefined && value.max !== undefined) {
+              const numValue = Number(rowValue);
+              if (numValue < value.min || numValue > value.max) return false;
+            }
+            break;
+          case 'daterange':
+            if (typeof value === 'object' && value.from && value.to) {
+              const rowDate = new Date(String(rowValue));
+              const fromDate = new Date(value.from);
+              const toDate = new Date(value.to);
+              if (rowDate < fromDate || rowDate > toDate) return false;
+            }
+            break;
+          default:
+            if (String(rowValue) !== String(value)) return false;
         }
       }
 
       return true;
     });
-  }, [data, searchTerm, filters]);
+  }, [data, searchTerm, globalSearchTerm, filters, quickFilterActive, columns, quickFilters, globalSearch]);
 
-  // Sort data
+  // Enhanced sorting with multi-column support
   const sortedData = useMemo(() => {
-    if (!sortKey) return filteredData;
+    if (sortConfig.length === 0) return filteredData;
     
     return [...filteredData].sort((a, b) => {
-      const aValue = a[sortKey];
-      const bValue = b[sortKey];
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      for (const { key, direction } of sortConfig) {
+        const aValue = a[key];
+        const bValue = b[key];
+        
+        // Handle null/undefined values
+        if (aValue == null && bValue == null) continue;
+        if (aValue == null) return direction === 'asc' ? 1 : -1;
+        if (bValue == null) return direction === 'asc' ? -1 : 1;
+        
+        // Type-specific comparisons
+        const column = columns.find(col => col.key === key);
+        if (column?.type === 'number' || column?.type === 'currency') {
+          const numA = Number(aValue) || 0;
+          const numB = Number(bValue) || 0;
+          if (numA !== numB) {
+            return direction === 'asc' ? numA - numB : numB - numA;
+          }
+        } else if (column?.type === 'date') {
+          const dateA = new Date(String(aValue)).getTime();
+          const dateB = new Date(String(bValue)).getTime();
+          if (dateA !== dateB) {
+            return direction === 'asc' ? dateA - dateB : dateB - dateA;
+          }
+        } else {
+          const strA = String(aValue).toLowerCase();
+          const strB = String(bValue).toLowerCase();
+          if (strA !== strB) {
+            return direction === 'asc' 
+              ? strA.localeCompare(strB)
+              : strB.localeCompare(strA);
+          }
+        }
+      }
       return 0;
     });
-  }, [filteredData, sortKey, sortDirection]);
+  }, [filteredData, sortConfig, columns]);
 
-  // Paginate data
+  // Group data if groupBy is specified
+  const groupedData = useMemo(() => {
+    if (!groupBy) return { '': sortedData };
+    
+    return sortedData.reduce((groups, row) => {
+      const groupKey = String(row[groupBy] || 'Ungrouped');
+      if (!groups[groupKey]) groups[groupKey] = [];
+      groups[groupKey].push(row);
+      return groups;
+    }, {} as Record<string, T[]>);
+  }, [sortedData, groupBy]);
+
+  // Pagination
   const totalPages = Math.ceil(sortedData.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, sortedData.length);
   const paginatedData = paginated ? sortedData.slice(startIndex, endIndex) : sortedData;
 
-  const handleSort = (key: keyof T) => {
+  // Enhanced statistics with automatic calculations
+  const enhancedStats = useMemo(() => {
+    const baseStats = [...stats];
+
+    // Auto-calculate total count
+    if (!stats.some(stat => stat.label.toLowerCase().includes('total'))) {
+      baseStats.unshift({
+        label: t('total', 'Total'),
+        value: data.length,
+        icon: Package,
+        color: 'text-blue-600',
+        format: 'number' as const
+      });
+    }
+
+    // Auto-calculate filtered count if different
+    if (filteredData.length !== data.length) {
+      baseStats.push({
+        label: t('filtered', 'Filtered'),
+        value: filteredData.length,
+        icon: Filter,
+        color: 'text-purple-600',
+        format: 'number' as const
+      });
+    }
+
+    // Auto-calculate selected count
+    if (selectedRows.size > 0) {
+      baseStats.push({
+        label: t('selected', 'Selected'),
+        value: selectedRows.size,
+        icon: CheckSquare,
+        color: 'text-green-600',
+        format: 'number' as const
+      });
+    }
+
+    // Auto-calculate aggregations
+    aggregations.forEach(agg => {
+      const values = filteredData
+        .map(row => Number(row[agg.field]) || 0)
+        .filter(val => !isNaN(val));
+      
+      let result = 0;
+      switch (agg.type) {
+        case 'sum':
+          result = values.reduce((sum, val) => sum + val, 0);
+          break;
+        case 'avg':
+          result = values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
+          break;
+        case 'count':
+          result = values.length;
+          break;
+        case 'min':
+          result = values.length > 0 ? Math.min(...values) : 0;
+          break;
+        case 'max':
+          result = values.length > 0 ? Math.max(...values) : 0;
+          break;
+      }
+
+      baseStats.push({
+        label: t(`${agg.type}_${String(agg.field)}`, `${agg.type.toUpperCase()} ${String(agg.field)}`),
+        value: result,
+        icon: BarChart3,
+        color: 'text-orange-600',
+        format: 'number' as const
+      });
+    });
+
+    return baseStats;
+  }, [data, filteredData, selectedRows, stats, aggregations, t]);
+
+  // Event handlers
+  const handleSort = useCallback((key: keyof T) => {
     const column = columns.find(col => col.key === key);
     if (!column?.sortable) return;
 
-    if (sortKey === key) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortKey(key);
-      setSortDirection('asc');
-    }
-  };
+    setSortConfig(prev => {
+      const existing = prev.find(s => s.key === key);
+      
+      if (!multiSort) {
+        // Single column sort
+        if (existing) {
+          return existing.direction === 'asc' 
+            ? [{ key, direction: 'desc' }]
+            : [];
+        } else {
+          return [{ key, direction: 'asc' }];
+        }
+      } else {
+        // Multi-column sort
+        if (existing) {
+          if (existing.direction === 'asc') {
+            return prev.map(s => s.key === key ? { ...s, direction: 'desc' as const } : s);
+          } else {
+            return prev.filter(s => s.key !== key);
+          }
+        } else {
+          return [...prev, { key, direction: 'asc' as const }];
+        }
+      }
+    });
+  }, [columns, multiSort]);
 
-  const handleFilter = (key: string, value: string) => {
+  const handleFilter = useCallback((key: string, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }));
     setCurrentPage(1);
-  };
+  }, []);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setFilters({});
     setSearchTerm('');
+    setGlobalSearchTerm('');
+    setQuickFilterActive('');
     setCurrentPage(1);
-  };
+  }, []);
 
-  const toggleColumnVisibility = (key: keyof T) => {
+  const handleExport = useCallback(async (format: string) => {
+    if (onExport) {
+      const exportData = selectedRows.size > 0 
+        ? data.filter(row => selectedRows.has(row[idField]))
+        : filteredData;
+      
+      const exportColumns = columns.filter(col => col.exportable !== false);
+      
+      try {
+        await onExport(format, exportData, exportColumns);
+      } catch (error) {
+        console.error('Export failed:', error);
+      }
+    }
+  }, [onExport, selectedRows, data, filteredData, columns, idField]);
+
+  const handleBulkAction = useCallback(async (action: BulkAction<T>) => {
+    const selectedData = getSelectedRowsData();
+    
+    if (action.requiresConfirmation && action.confirmMessage) {
+      if (!window.confirm(action.confirmMessage)) return;
+    }
+    
+    try {
+      await action.onClick(selectedData, () => setSelectedRows(new Set()));
+      if (!preserveSelection) {
+        setSelectedRows(new Set());
+      }
+    } catch (error) {
+      console.error('Bulk action failed:', error);
+    }
+  }, [preserveSelection]);
+
+  const toggleColumnVisibility = useCallback((key: keyof T) => {
     setColumns(prev => prev.map(col => 
       col.key === key ? { ...col, visible: !col.visible } : col
     ));
-  };
+  }, []);
 
   const visibleColumns = columns.filter(col => col.visible !== false);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  };
+  }, [totalPages]);
 
-  const handleSelectAll = (checked: boolean) => {
+  const handleSelectAll = useCallback((checked: boolean) => {
     if (checked) {
       const allIds = new Set(paginatedData.map(row => row[idField]));
       setSelectedRows(allIds);
     } else {
       setSelectedRows(new Set());
     }
-  };
+  }, [paginatedData, idField]);
 
-  const handleSelectRow = (id: string | number, checked: boolean) => {
-    const newSelected = new Set(selectedRows);
-    if (checked) {
-      newSelected.add(id);
-    } else {
-      newSelected.delete(id);
-    }
-    setSelectedRows(newSelected);
-  };
+  const handleSelectRow = useCallback((id: string | number, checked: boolean) => {
+    setSelectedRows(prev => {
+      const newSelected = new Set(prev);
+      if (checked) {
+        newSelected.add(id);
+      } else {
+        newSelected.delete(id);
+      }
+      return newSelected;
+    });
+  }, []);
 
-  const getSelectedRowsData = () => {
+  const getSelectedRowsData = useCallback(() => {
     return data.filter(row => selectedRows.has(row[idField]));
-  };
+  }, [data, selectedRows, idField]);
 
-  const activeFiltersCount = Object.values(filters).filter(value => value && value !== 'all').length + (searchTerm ? 1 : 0);
+  const toggleRowExpansion = useCallback((id: string | number) => {
+    setExpandedRows(prev => {
+      const newExpanded = new Set(prev);
+      if (newExpanded.has(id)) {
+        newExpanded.delete(id);
+      } else {
+        newExpanded.add(id);
+      }
+      return newExpanded;
+    });
+  }, []);
+
+  // Helper functions for formatting
+  const formatStatValue = useCallback((stat: Stats) => {
+    const value = typeof stat.value === 'number' ? stat.value : parseFloat(String(stat.value)) || 0;
+    
+    switch (stat.format) {
+      case 'currency':
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+      case 'percentage':
+        return `${value.toFixed(1)}%`;
+      case 'number':
+        return new Intl.NumberFormat().format(value);
+      default:
+        return String(stat.value);
+    }
+  }, []);
+
+  const activeFiltersCount = Object.values(filters).filter(value => 
+    value && value !== 'all' && (!Array.isArray(value) || value.length > 0)
+  ).length + (searchTerm ? 1 : 0) + (globalSearchTerm ? 1 : 0) + (quickFilterActive ? 1 : 0);
 
   const renderTableView = () => (
     <div className="rounded-lg border bg-white shadow-sm">
@@ -265,12 +642,10 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                   <span className="font-medium">{column.header}</span>
                   {column.sortable && (
                     <div className="flex flex-col">
-                      {sortKey === column.key ? (
+                      {sortConfig.some(s => s.key === column.key) && (
                         <span className="text-sm text-blue-600">
-                          {sortDirection === 'asc' ? '↑' : '↓'}
+                          {sortConfig.find(s => s.key === column.key)?.direction === 'asc' ? '↑' : '↓'}
                         </span>
-                      ) : (
-                        <span className="text-xs text-gray-400">↕</span>
                       )}
                     </div>
                   )}
@@ -467,7 +842,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
           {/* Stats */}
           {stats.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {stats.map((stat, index) => {
+              {enhancedStats.map((stat, index) => {
                 const Icon = stat.icon;
                 return (
                   <Card key={index} className="bg-gradient-to-br from-white to-gray-50 border-gray-200">
@@ -476,7 +851,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                         <div>
                           <p className="text-sm font-medium text-gray-600">{stat.label}</p>
                           <p className="text-3xl font-bold text-gray-900 mt-1" style={{ color: stat.color }}>
-                            {stat.value}
+                            {formatStatValue(stat)}
                           </p>
                         </div>
                         {Icon && (
@@ -609,8 +984,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                       <DropdownMenuItem
                         key={index}
                         onClick={() => {
-                          action.onClick(getSelectedRowsData());
-                          setSelectedRows(new Set());
+                          handleBulkAction(action);
                         }}
                         className={action.variant === 'destructive' ? 'text-red-600' : ''}
                       >
@@ -659,7 +1033,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                   onClick={() => setViewMode(mode)}
                   className="h-8 px-3 rounded-none first:rounded-l-md last:rounded-r-md"
                 >
-                  {mode === 'table' ? <List className="w-4 h-4" /> : <Grid className="w-4 h-4" />}
+                  {mode === 'table' ? <List className="w-4 h-4" /> : mode === 'cards' ? <Grid className="w-4 h-4" /> : 'List'}
                 </Button>
               ))}
             </div>
@@ -667,7 +1041,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
 
           {/* Action Buttons */}
           {onExport && (
-            <Button variant="outline" size="sm" onClick={onExport} className="border-gray-300">
+            <Button variant="outline" size="sm" onClick={() => handleExport('csv')} className="border-gray-300">
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
@@ -709,7 +1083,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
       </div>
 
       {/* Data View */}
-      {viewMode === 'table' ? renderTableView() : renderCardsView()}
+      {viewMode === 'table' ? renderTableView() : viewMode === 'cards' ? renderCardsView() : listRenderer ? listRenderer(paginatedData[0]) : null}
 
       {/* Enhanced Pagination */}
       {paginated && totalPages > 1 && (

@@ -1,446 +1,315 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Badge } from '../components/ui/badge';
-import { FormModal, createTextField, createTextareaField, createSelectField } from '../components/FormModal';
-import { AdvancedDataTable, renderStatus, createEditAction, createDeleteAction, createBulkDeleteAction } from '../components/AdvancedDataTable';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../components/ui/alert-dialog';
-import { Tag, Plus, Search, Edit, Trash2, Folder } from 'lucide-react';
-import toast, { Toaster } from 'react-hot-toast';
+﻿import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { CrudPageTemplate } from '../components/CrudPageTemplate';
+import { crudConfigurations } from '../components/enhanced-crud-configs';
+import { toast } from 'react-hot-toast';
 
 interface Category {
   id: number;
   name: string;
+  nameEn?: string;
+  nameFr?: string;
+  nameAr?: string;
   description?: string;
-  status: string;
   parentId?: number;
-  sortOrder?: number;
+  status: 'active' | 'inactive';
+  createdAt: string;
+  updatedAt: string;
+  parent?: { name: string };
+  productsCount?: number;
 }
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const { t } = useTranslation();
   
-  // Modal states
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
+  const config = crudConfigurations.categories;
 
-  const loadCategories = async () => {
+  // Update form fields with parent category options
+  const formFields = useMemo(() => {
+    const parentCategories = categories.filter(c => c.status === 'active').map(c => ({
+      value: c.id,
+      label: c.name
+    }));
+
+    return config.formFields.map(field => {
+      if (field.key === 'parentId') {
+        return {
+          ...field,
+          options: parentCategories
+        };
+      }
+      return field;
+    });
+  }, [categories, config.formFields]);
+
+  // Enhanced statistics
+  const stats = useMemo(() => {
+    const totalCategories = categories.length;
+    const activeCategories = categories.filter(c => c.status === 'active').length;
+    const parentCategories = categories.filter(c => !c.parentId).length;
+    const childCategories = categories.filter(c => c.parentId).length;
+    const totalProducts = categories.reduce((sum, c) => sum + (c.productsCount || 0), 0);
+
+    return [
+      {
+        label: t('stats.totalCategories', 'Total Categories'),
+        value: totalCategories,
+        icon: config.entityConfig.icon,
+        color: config.entityConfig.color,
+        format: 'number' as const,
+        clickable: true
+      },
+      {
+        label: t('stats.activeCategories', 'Active Categories'),
+        value: activeCategories,
+        icon: config.entityConfig.icon,
+        color: 'text-green-600',
+        format: 'number' as const,
+        comparison: {
+          value: totalCategories > 0 ? Math.round((activeCategories / totalCategories) * 100) : 0,
+          label: t('stats.ofTotal', 'of total')
+        }
+      },
+      {
+        label: t('stats.parentCategories', 'Parent Categories'),
+        value: parentCategories,
+        icon: config.entityConfig.icon,
+        color: 'text-blue-600',
+        format: 'number' as const
+      },
+      {
+        label: t('stats.childCategories', 'Sub Categories'),
+        value: childCategories,
+        icon: config.entityConfig.icon,
+        color: 'text-purple-600',
+        format: 'number' as const
+      },
+      {
+        label: t('stats.totalProducts', 'Total Products'),
+        value: totalProducts,
+        icon: config.entityConfig.icon,
+        color: 'text-orange-600',
+        format: 'number' as const
+      }
+    ];
+  }, [categories, t, config]);
+
+  // CRUD operations
+  const handleAdd = async (formData: Record<string, any>) => {
     try {
       setLoading(true);
-      setError(null);
       
-      const result = await window.database.categories.getAll();
+      const categoryData = {
+        ...formData,
+        parentId: formData.parentId || null
+      };
+
+      const response = await window.database.categories.create(categoryData);
+      if (!response.success) throw new Error(response.error);
       
-      if (result.success) {
-        setCategories(result.data || []);
-      } else {
-        setError(result.error || 'Failed to load categories');
-      }
-    } catch (err) {
-      setError('Error loading categories');
-      console.error('Error loading categories:', err);
+      setCategories(prev => [...prev, response.data]);
+      toast.success(t('messages.categoryCreated', 'Category created successfully'));
+      return response.data;
+    } catch (error) {
+      console.error('Failed to create category:', error);
+      toast.error(t('messages.createError', 'Failed to create category'));
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredCategories = categories.filter(category =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (category.description && category.description.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
-  const deleteCategory = async (id: number) => {
+  const handleEdit = async (id: string | number, formData: Record<string, any>) => {
     try {
-      const result = await window.database.categories.delete(id);
-      if (result.success) {
-        setCategories(categories.filter(c => c.id !== id));
-      } else {
-        setError(result.error || 'Failed to delete category');
-      }
-    } catch (err) {
-      setError('Error deleting category');
-      console.error('Error deleting category:', err);
-    }
-  };
-
-  // Modal handlers
-  const handleAddCategory = () => {
-    setEditingCategory(null);
-    setIsFormModalOpen(true);
-  };
-
-  const handleEditCategory = (category: Category) => {
-    setEditingCategory(category);
-    setIsFormModalOpen(true);
-  };
-
-  const handleDeleteClick = (category: Category) => {
-    setDeletingCategory(category);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleFormSubmit = async (formData: Record<string, any>) => {
-    setSubmitting(true);
-    try {
+      setLoading(true);
+      
       const categoryData = {
         ...formData,
-        status: formData.status || 'active',
+        parentId: formData.parentId || null
       };
 
-      if (editingCategory) {
-        const result = await window.database.categories.update(editingCategory.id, categoryData);
-        if (!result.success) {
-          throw new Error(result.error);
-        }
-        toast.success('Category updated successfully');
-      } else {
-        const result = await window.database.categories.create(categoryData);
-        if (!result.success) {
-          throw new Error(result.error);
-        }
-        toast.success('Category created successfully');
-      }
+      const response = await window.database.categories.update(Number(id), categoryData);
+      if (!response.success) throw new Error(response.error);
       
-      setIsFormModalOpen(false);
-      await loadCategories();
+      setCategories(prev => prev.map(c => c.id === id ? response.data : c));
+      toast.success(t('messages.categoryUpdated', 'Category updated successfully'));
+      return response.data;
     } catch (error) {
-      toast.error('An error occurred');
-      console.error('CRUD operation error:', error);
+      console.error('Failed to update category:', error);
+      toast.error(t('messages.updateError', 'Failed to update category'));
+      throw error;
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!deletingCategory) return;
-    
-    setSubmitting(true);
+  const handleDelete = async (id: string | number) => {
     try {
-      const result = await window.database.categories.delete(deletingCategory.id);
-      if (!result.success) {
-        throw new Error(result.error);
-      }
-      toast.success('Category deleted successfully');
-      setIsDeleteDialogOpen(false);
-      await loadCategories();
+      setLoading(true);
+      
+      const response = await window.database.categories.delete(Number(id));
+      if (!response.success) throw new Error(response.error);
+      
+      setCategories(prev => prev.filter(c => c.id !== id));
+      toast.success(t('messages.categoryDeleted', 'Category deleted successfully'));
     } catch (error) {
-      toast.error('An error occurred');
-      console.error('Delete error:', error);
+      console.error('Failed to delete category:', error);
+      toast.error(t('messages.deleteError', 'Failed to delete category'));
+      throw error;
     } finally {
-      setSubmitting(false);
-      setDeletingCategory(null);
+      setLoading(false);
     }
   };
 
-  // Bulk actions handlers
-  const handleBulkDelete = async (selectedCategories: Category[]) => {
-    if (selectedCategories.length === 0) return;
-    
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${selectedCategories.length} category/categories? This action cannot be undone.`
-    );
-    
-    if (!confirmed) return;
-    
-    setSubmitting(true);
+  const handleBulkDelete = async (ids: (string | number)[]) => {
     try {
-      const deletePromises = selectedCategories.map(category => 
-        window.database.categories.delete(category.id)
-      );
+      setLoading(true);
       
-      const results = await Promise.all(deletePromises);
-      const failedDeletes = results.filter(result => !result.success);
-      
-      if (failedDeletes.length === 0) {
-        toast.success(`Successfully deleted ${selectedCategories.length} category/categories`);
-      } else {
-        toast.error(`Failed to delete ${failedDeletes.length} category/categories`);
-      }
-      
-      await loadCategories();
+      await Promise.all(ids.map(id => window.database.categories.delete(Number(id))));
+      setCategories(prev => prev.filter(c => !ids.includes(c.id)));
+      toast.success(t('messages.categoriesDeleted', '{{count}} categories deleted successfully', { count: ids.length }));
     } catch (error) {
-      toast.error('Error during bulk delete');
-      console.error('Bulk delete error:', error);
+      console.error('Failed to delete categories:', error);
+      toast.error(t('messages.bulkDeleteError', 'Failed to delete categories'));
+      throw error;
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
-  const handleBulkStatusToggle = async (selectedCategories: Category[]) => {
-    if (selectedCategories.length === 0) return;
-    
-    setSubmitting(true);
+  const handleRefresh = async () => {
     try {
-      const updatePromises = selectedCategories.map(category => 
-        window.database.categories.update(category.id, { 
-          ...category,
-          status: category.status === 'active' ? 'inactive' : 'active'
-        })
-      );
+      setLoading(true);
+      setError(undefined);
       
-      const results = await Promise.all(updatePromises);
-      const failedUpdates = results.filter(result => !result.success);
+      const response = await window.database.categories.getAll();
+      if (!response.success) throw new Error(response.error);
       
-      if (failedUpdates.length === 0) {
-        toast.success(`Successfully updated ${selectedCategories.length} category/categories`);
-      } else {
-        toast.error(`Failed to update ${failedUpdates.length} category/categories`);
-      }
-      
-      await loadCategories();
+      setCategories(response.data || []);
     } catch (error) {
-      toast.error('Error during bulk update');
-      console.error('Bulk update error:', error);
+      console.error('Failed to fetch categories:', error);
+      setError(t('messages.fetchError', 'Failed to load categories'));
+      toast.error(t('messages.fetchError', 'Failed to load categories'));
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
-  const handleExport = async () => {
-    try {
-      const csvContent = categories.map(category => 
-        `${category.name},${category.description || ''},${category.status}`
-      ).join('\n');
-      
-      const blob = new Blob([`Name,Description,Status\n${csvContent}`], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'categories.csv';
-      a.click();
-      window.URL.revokeObjectURL(url);
-      
-      toast.success('Categories exported successfully');
-    } catch (error) {
-      toast.error('Failed to export categories');
-    }
-  };
-
-  // Form fields configuration
-  const formFields = [
-    createTextField('name', 'Category Name', { required: true }),
-    createTextareaField('description', 'Description'),
-    createSelectField('status', 'Status', [
-      { value: 'active', label: 'Active' },
-      { value: 'inactive', label: 'Inactive' }
-    ], { defaultValue: 'active' })
-  ];
-
-  // Table columns configuration
-  const columns = [
-    { 
-      key: 'name' as keyof Category, 
-      header: 'Name', 
-      sortable: true, 
-      filterable: true 
-    },
-    { 
-      key: 'description' as keyof Category, 
-      header: 'Description', 
-      sortable: true, 
-      filterable: true,
-      render: (value: string) => value || <span className="text-gray-400">-</span>
-    },
-    { 
-      key: 'status' as keyof Category, 
-      header: 'Status', 
-      sortable: true,
-      render: (value: string) => (
-        <Badge variant={value === 'active' ? 'default' : 'secondary'}>
-          {value === 'active' ? 'Active' : 'Inactive'}
-        </Badge>
-      )
-    }
-  ];
-
-  // Filter fields
-  const filterFields = [
-    {
-      key: 'status',
-      label: 'Status',
-      type: 'select' as const,
-      options: [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' }
-      ]
-    }
-  ];
-
-  // Stats
-  const stats = [
-    {
-      label: 'Total Categories',
-      value: categories.length,
-      icon: Folder,
-      color: 'text-blue-600'
-    },
-    {
-      label: 'Active Categories',
-      value: categories.filter(c => c.status === 'active').length,
-      icon: Tag,
-      color: 'text-green-600'
-    },
-    {
-      label: 'Inactive Categories',
-      value: categories.filter(c => c.status === 'inactive').length,
-      icon: Tag,
-      color: 'text-gray-600'
-    }
-  ];
-
-  // Table actions
-  const tableActions = [
-    createEditAction<Category>(handleEditCategory),
-    createDeleteAction<Category>(handleDeleteClick)
-  ];
-
-  // Bulk actions
-  const bulkActions = [
-    createBulkDeleteAction<Category>(handleBulkDelete),
-    {
-      label: 'Toggle Status',
-      icon: Tag,
-      onClick: handleBulkStatusToggle,
-      variant: 'outline' as const
-    }
-  ];
-
-  const emptyState = {
-    title: 'No categories yet',
-    description: 'Get started by adding your first category',
-    action: {
-      label: 'Add Your First Category',
-      onClick: handleAddCategory
-    }
-  };
+  // Load data on component mount
+  useEffect(() => {
+    handleRefresh();
+  }, []);
 
   // Custom card renderer
   const cardRenderer = (category: Category) => (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardContent className="p-4">
-        <div className="space-y-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-3">
-              <Folder className="w-6 h-6 text-blue-500" />
-              <div>
-                <h3 className="font-semibold text-lg">{category.name}</h3>
-                {category.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2">{category.description}</p>
-                )}
-              </div>
-            </div>
-            <Badge variant={category.status === 'active' ? 'default' : 'secondary'}>
-              {category.status === 'active' ? 'Active' : 'Inactive'}
-            </Badge>
+    <div className="space-y-3">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center text-white text-sm">
+            {config.entityConfig.icon && React.createElement(config.entityConfig.icon, { className: 'w-5 h-5' })}
           </div>
-
-          <div className="flex space-x-2 pt-2 border-t">
-            <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEditCategory(category)}>
-              <Edit className="w-4 h-4 mr-1" />
-              Edit
-            </Button>
-            <Button variant="destructive" size="sm" onClick={() => handleDeleteClick(category)}>
-              <Trash2 className="w-4 h-4" />
-            </Button>
+          <div>
+            <h3 className="font-semibold text-lg">{category.name}</h3>
+            {category.parent && (
+              <p className="text-sm text-gray-500">Under: {category.parent.name}</p>
+            )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4 text-sm">
+        {category.nameEn && (
+          <div>
+            <span className="text-gray-500">English Name:</span>
+            <div className="font-medium">{category.nameEn}</div>
+          </div>
+        )}
+        <div>
+          <span className="text-gray-500">Products:</span>
+          <div className="font-medium">{category.productsCount || 0}</div>
+        </div>
+      </div>
+      
+      {category.description && (
+        <p className="text-sm text-gray-600 line-clamp-2">{category.description}</p>
+      )}
+    </div>
   );
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-6 text-center">
-            <p className="text-red-600 mb-4">{error}</p>
-            <Button onClick={loadCategories} variant="outline">
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      <Toaster position="top-right" />
+    <CrudPageTemplate
+      // Core data
+      data={categories}
+      loading={loading}
+      error={error}
       
-      <AdvancedDataTable
-        data={categories}
-        columns={columns}
-        actions={tableActions}
-        bulkActions={bulkActions}
-        loading={loading}
-        searchable={true}
-        filterable={true}
-        filterFields={filterFields}
-        stats={stats}
-        title="Categories"
-        subtitle="Organize your products into categories"
-        onAdd={handleAddCategory}
-        onRefresh={loadCategories}
-        onExport={handleExport}
-        emptyState={emptyState}
-        cardRenderer={cardRenderer}
-        viewModes={['table', 'cards']}
-        selectable={true}
-        pageSizes={[10, 25, 50, 100]}
-      />
-
-      {/* Form Modal */}
-      <FormModal
-        isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
-        onSubmit={handleFormSubmit}
-        title={editingCategory ? 'Edit Category' : 'Add Category'}
-        fields={formFields}
-        initialData={editingCategory || {}}
-        loading={submitting}
-        submitLabel={editingCategory ? 'Update' : 'Create'}
-        cancelLabel="Cancel"
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Category</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this category? This action cannot be undone.
-              {deletingCategory && (
-                <div className="mt-2 p-2 bg-gray-50 rounded">
-                  <strong>{deletingCategory.name}</strong>
-                </div>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={submitting}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteConfirm}
-              disabled={submitting}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              {submitting ? 'Deleting...' : 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+      // Entity configuration
+      entityName="category"
+      entityNamePlural="categories"
+      entityConfig={config.entityConfig}
+      
+      // Table configuration
+      columns={config.columns}
+      filterFields={config.filterFields}
+      stats={stats}
+      
+      // Display options
+      searchable={true}
+      filterable={true}
+      sortable={true}
+      paginated={true}
+      selectable={true}
+      exportable={true}
+      
+      // View modes
+      viewModes={['table', 'cards']}
+      defaultViewMode="table"
+      cardRenderer={cardRenderer}
+      
+      // Form configuration
+      formFields={formFields}
+      formSections={[
+        {
+          title: t('sections.basicInfo', 'Basic Information'),
+          fields: ['name', 'description']
+        },
+        {
+          title: t('sections.multilingual', 'Multi-language Names'),
+          fields: ['nameEn', 'nameFr', 'nameAr']
+        },
+        {
+          title: t('sections.hierarchy', 'Category Hierarchy'),
+          fields: ['parentId', 'status']
+        }
+      ]}
+      
+      // CRUD operations
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      onBulkDelete={handleBulkDelete}
+      onRefresh={handleRefresh}
+      
+      // Customization
+      title={t('categories.title', 'Categories')}
+      subtitle={t('categories.subtitle', 'Organize products into categories')}
+      
+      // Advanced features
+      enableAnalytics={true}
+      idField="id"
+      titleField="name"
+      statusField="status"
+      dateField="createdAt"
+      
+      // Configuration
+      autoRefresh={true}
+      refreshInterval={60000}
+      preserveSelection={false}
+      density="comfortable"
+    />
   );
 }
