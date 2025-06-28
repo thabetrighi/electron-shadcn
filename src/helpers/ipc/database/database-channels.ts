@@ -55,6 +55,7 @@ export const SETTINGS_CHANNELS = {
   SET_SETTING: 'settings:set',
   DELETE_SETTING: 'settings:delete',
   GET_BY_CATEGORY: 'settings:get-by-category',
+  INITIALIZE_DEFAULTS: 'settings:initialize-defaults',
 } as const;
 
 // Database channels

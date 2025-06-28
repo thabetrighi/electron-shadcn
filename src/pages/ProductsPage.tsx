@@ -4,9 +4,9 @@ import { CrudPageTemplate } from '../components/CrudPageTemplate';
 import { Column, Action, BulkAction, Stats, FilterField } from '../components/AdvancedDataTable';
 import { FormField, createTextField, createNumberField, createSelectField, createTextareaField, createCurrencyField } from '../components/FormModal';
 import { Badge } from '../components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { toast } from 'react-hot-toast';
 import { exportData } from '../utils/export';
-import { formatCurrency, renderStock, renderStatus } from '../components/enhanced-crud-configs';
 import { 
   Package, 
   Edit, 
@@ -27,12 +27,15 @@ import {
   BarChart3,
   XCircle
 } from 'lucide-react';
+import { formatCurrency, formatNumber } from '../utils/formatters';
+import { renderCurrency, renderDate, renderStock, renderStatus } from '../utils/renderers';
 
 // Enhanced Product interface
 interface Product {
   id: number;
   name: string;
   sku?: string;
+  image?: string;
   sellingPrice: number;
   currentStock: number;
   categoryId?: number;
@@ -53,21 +56,6 @@ interface Product {
   lowStockThreshold?: number;
 }
 
-// Enhanced rendering functions
-const renderCurrency = (amount: number) => (
-  <span className="font-mono font-medium text-green-600">
-    {formatCurrency(amount)}
-  </span>
-);
-
-const renderDate = (date: string) => {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-};
-
 export default function ProductsPage() {
   const { t } = useTranslation();
   
@@ -80,6 +68,22 @@ export default function ProductsPage() {
 
   // Enhanced columns configuration
   const columns: Column<Product>[] = [
+    {
+      key: 'image',
+      header: t('products.image', 'Image'),
+      render: (image: string, product: Product) => (
+        <div className="flex items-center justify-center">
+          <Avatar className="w-10 h-10">
+            <AvatarImage src={image} alt={product.name} />
+            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-xs">
+              {product.name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+      ),
+      width: '80px',
+      align: 'center'
+    },
     {
       key: 'name',
       header: t('products.name', 'Product Name'),
@@ -108,7 +112,7 @@ export default function ProductsPage() {
       key: 'sellingPrice',
       header: t('products.price', 'Price'),
       sortable: true,
-      render: renderCurrency,
+      render: (price: number) => renderCurrency(price),
       type: 'currency',
       exportable: true,
       align: 'right'
@@ -662,10 +666,6 @@ export default function ProductsPage() {
       onDuplicate={handleDuplicate}
       onRefresh={handleRefresh}
       onExport={handleExport}
-      
-      // Customization
-      title={t('products.title', 'Products')}
-      subtitle={t('products.subtitle', 'Manage your product inventory')}
       
       // Advanced features
       enableAnalytics={true}

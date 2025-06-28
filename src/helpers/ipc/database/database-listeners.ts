@@ -167,5 +167,9 @@ export function registerDatabaseListeners() {
     return await SettingsService.getByCategory(category);
   });
 
+  ipcMain.handle(SETTINGS_CHANNELS.INITIALIZE_DEFAULTS, async () => {
+    return await SettingsService.initializeDefaults();
+  });
+
   console.log('Database IPC listeners registered successfully');
 } 

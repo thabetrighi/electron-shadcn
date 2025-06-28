@@ -23,28 +23,21 @@ export interface SettingDefinition {
 
 // Default settings for the application
 export const DEFAULT_SETTINGS: SettingDefinition[] = [
-  // General Settings
-  {
-    key: 'app_name',
-    value: 'POS System',
-    type: 'string',
-    category: 'general',
-    label: 'Application Name',
-    description: 'The name of your POS application',
-    defaultValue: 'POS System',
-    isPublic: true,
-    sortOrder: 1
-  },
+  // =====================================
+  // GENERAL SETTINGS
+  // =====================================
+  
+  // Company Information
   {
     key: 'company_name',
-    value: 'Your Company',
+    value: 'My Business',
     type: 'string',
     category: 'general',
     label: 'Company Name',
-    description: 'Your company or business name',
-    defaultValue: 'Your Company',
+    description: 'Your business name',
+    defaultValue: 'My Business',
     isPublic: true,
-    sortOrder: 2
+    sortOrder: 1
   },
   {
     key: 'company_address',
@@ -52,10 +45,10 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     type: 'string',
     category: 'general',
     label: 'Company Address',
-    description: 'Your business address',
+    description: 'Business address for receipts',
     defaultValue: '',
     isPublic: true,
-    sortOrder: 3
+    sortOrder: 2
   },
   {
     key: 'company_phone',
@@ -63,10 +56,10 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     type: 'string',
     category: 'general',
     label: 'Phone Number',
-    description: 'Your business phone number',
+    description: 'Business phone number',
     defaultValue: '',
     isPublic: true,
-    sortOrder: 4
+    sortOrder: 3
   },
   {
     key: 'company_email',
@@ -74,95 +67,423 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     type: 'string',
     category: 'general',
     label: 'Email Address',
-    description: 'Your business email address',
+    description: 'Business email address',
+    defaultValue: '',
+    isPublic: true,
+    sortOrder: 4
+  },
+  {
+    key: 'tax_number',
+    value: '',
+    type: 'string',
+    category: 'general',
+    label: 'Tax Number',
+    description: 'Business tax/VAT number',
     defaultValue: '',
     isPublic: true,
     sortOrder: 5
+  },
+  
+  // Regional & Localization Settings
+  {
+    key: 'language',
+    value: 'en',
+    type: 'string',
+    category: 'general',
+    label: 'Language',
+    description: 'Application language',
+    defaultValue: 'en',
+    isPublic: true,
+    sortOrder: 6
+  },
+  {
+    key: 'timezone',
+    value: 'UTC',
+    type: 'string',
+    category: 'general',
+    label: 'Timezone',
+    description: 'Business timezone',
+    defaultValue: 'UTC',
+    isPublic: true,
+    sortOrder: 7
+  },
+  {
+    key: 'date_format',
+    value: 'MM/DD/YYYY',
+    type: 'string',
+    category: 'general',
+    label: 'Date Format',
+    description: 'How dates are displayed',
+    defaultValue: 'MM/DD/YYYY',
+    isPublic: true,
+    sortOrder: 8
+  },
+  {
+    key: 'time_format',
+    value: '12h',
+    type: 'string',
+    category: 'general',
+    label: 'Time Format',
+    description: '12-hour or 24-hour time',
+    defaultValue: '12h',
+    isPublic: true,
+    sortOrder: 9
+  },
+  {
+    key: 'week_start',
+    value: 'sunday',
+    type: 'string',
+    category: 'general',
+    label: 'Week Starts On',
+    description: 'First day of the week',
+    defaultValue: 'sunday',
+    isPublic: true,
+    sortOrder: 10
+  },
+  {
+    key: 'region',
+    value: 'US',
+    type: 'string',
+    category: 'general',
+    label: 'Region',
+    description: 'Regional settings for formatting',
+    defaultValue: 'US',
+    isPublic: true,
+    sortOrder: 11
+  },
+
+  // =====================================
+  // CURRENCY SETTINGS
+  // =====================================
+  
+  // Currency Display
+  {
+    key: 'currency_code',
+    value: 'USD',
+    type: 'string',
+    category: 'currency',
+    label: 'Primary Currency',
+    description: 'Default currency for transactions',
+    defaultValue: 'USD',
+    isPublic: true,
+    sortOrder: 1
   },
   {
     key: 'currency_symbol',
     value: '$',
     type: 'string',
-    category: 'general',
+    category: 'currency',
     label: 'Currency Symbol',
     description: 'Currency symbol to display',
     defaultValue: '$',
     isPublic: true,
-    sortOrder: 6
+    sortOrder: 2
   },
   {
-    key: 'currency_code',
-    value: 'USD',
+    key: 'currency_position',
+    value: 'before',
     type: 'string',
-    category: 'general',
-    label: 'Currency Code',
-    description: 'ISO currency code',
-    defaultValue: 'USD',
+    category: 'currency',
+    label: 'Symbol Position',
+    description: 'Where to place currency symbol',
+    defaultValue: 'before',
+    isPublic: true,
+    sortOrder: 3
+  },
+  {
+    key: 'number_format',
+    value: 'comma_dot',
+    type: 'string',
+    category: 'currency',
+    label: 'Number Format',
+    description: 'How to format numbers',
+    defaultValue: 'comma_dot',
+    isPublic: true,
+    sortOrder: 4
+  },
+  {
+    key: 'decimal_places',
+    value: '2',
+    type: 'number',
+    category: 'currency',
+    label: 'Decimal Places',
+    description: 'Number of decimal places',
+    defaultValue: '2',
+    isPublic: true,
+    sortOrder: 5
+  },
+  {
+    key: 'round_to_nearest',
+    value: '0.01',
+    type: 'string',
+    category: 'currency',
+    label: 'Round to Nearest',
+    description: 'Round prices to nearest value',
+    defaultValue: '0.01',
+    isPublic: true,
+    sortOrder: 6
+  },
+  
+  // Tax Configuration
+  {
+    key: 'default_tax_rate',
+    value: '10.0',
+    type: 'number',
+    category: 'currency',
+    label: 'Default Tax Rate (%)',
+    description: 'Standard tax rate percentage',
+    defaultValue: '10.0',
     isPublic: true,
     sortOrder: 7
   },
   {
-    key: 'tax_rate',
-    value: '0',
-    type: 'number',
-    category: 'general',
-    label: 'Default Tax Rate (%)',
-    description: 'Default tax rate percentage',
-    defaultValue: '0',
+    key: 'tax_calculation',
+    value: 'exclusive',
+    type: 'string',
+    category: 'currency',
+    label: 'Tax Calculation',
+    description: 'How tax is calculated',
+    defaultValue: 'exclusive',
     isPublic: true,
     sortOrder: 8
   },
-
-  // Printing Settings
   {
-    key: 'receipt_printer_name',
-    value: '',
+    key: 'tax_display',
+    value: 'inclusive',
     type: 'string',
-    category: 'printing',
-    label: 'Receipt Printer Name',
-    description: 'Name of the receipt printer',
-    defaultValue: '',
-    sortOrder: 1
+    category: 'currency',
+    label: 'Tax Display',
+    description: 'How tax is displayed to customers',
+    defaultValue: 'inclusive',
+    isPublic: true,
+    sortOrder: 9
   },
   {
-    key: 'receipt_width',
-    value: '80',
+    key: 'tax_rounding',
+    value: 'standard',
+    type: 'string',
+    category: 'currency',
+    label: 'Tax Rounding',
+    description: 'How tax amounts are rounded',
+    defaultValue: 'standard',
+    isPublic: true,
+    sortOrder: 10
+  },
+  
+  // Pricing & Business Rules
+  {
+    key: 'allow_negative_inventory',
+    value: 'false',
+    type: 'boolean',
+    category: 'currency',
+    label: 'Allow Negative Inventory',
+    description: 'Allow sales when stock is zero',
+    defaultValue: 'false',
+    isPublic: true,
+    sortOrder: 11
+  },
+  {
+    key: 'price_change_tracking',
+    value: 'true',
+    type: 'boolean',
+    category: 'currency',
+    label: 'Track Price Changes',
+    description: 'Log all price modifications',
+    defaultValue: 'true',
+    isPublic: true,
+    sortOrder: 12
+  },
+  {
+    key: 'auto_calculate_margin',
+    value: 'true',
+    type: 'boolean',
+    category: 'currency',
+    label: 'Auto Calculate Margin',
+    description: 'Automatically calculate profit margins',
+    defaultValue: 'true',
+    isPublic: true,
+    sortOrder: 13
+  },
+  {
+    key: 'markup_percentage',
+    value: '50',
     type: 'number',
-    category: 'printing',
-    label: 'Receipt Width (mm)',
-    description: 'Width of receipt paper in millimeters',
-    defaultValue: '80',
-    sortOrder: 2
+    category: 'currency',
+    label: 'Default Markup (%)',
+    description: 'Default markup percentage for new products',
+    defaultValue: '50',
+    isPublic: true,
+    sortOrder: 14
   },
-  {
-    key: 'receipt_header',
-    value: '',
-    type: 'string',
-    category: 'printing',
-    label: 'Receipt Header',
-    description: 'Custom header text for receipts',
-    defaultValue: '',
-    sortOrder: 3
-  },
-  {
-    key: 'receipt_footer',
-    value: 'Thank you for your business!',
-    type: 'string',
-    category: 'printing',
-    label: 'Receipt Footer',
-    description: 'Custom footer text for receipts',
-    defaultValue: 'Thank you for your business!',
-    sortOrder: 4
-  },
+
+  // =====================================
+  // PRINTING SETTINGS
+  // =====================================
+  
+  // Printer Configuration
   {
     key: 'auto_print_receipt',
     value: 'true',
     type: 'boolean',
     category: 'printing',
     label: 'Auto Print Receipt',
-    description: 'Automatically print receipt after sale',
+    description: 'Automatically print receipt after checkout',
     defaultValue: 'true',
+    sortOrder: 1
+  },
+  {
+    key: 'printer_name',
+    value: '',
+    type: 'string',
+    category: 'printing',
+    label: 'Default Printer',
+    description: 'Select your default printer',
+    defaultValue: '',
+    sortOrder: 2
+  },
+  {
+    key: 'printer_type',
+    value: 'thermal',
+    type: 'string',
+    category: 'printing',
+    label: 'Printer Type',
+    description: 'Type of printer',
+    defaultValue: 'thermal',
+    sortOrder: 3
+  },
+  {
+    key: 'paper_size',
+    value: '80mm',
+    type: 'string',
+    category: 'printing',
+    label: 'Paper Size',
+    description: 'Receipt paper size',
+    defaultValue: '80mm',
+    sortOrder: 4
+  },
+  {
+    key: 'print_quality',
+    value: 'standard',
+    type: 'string',
+    category: 'printing',
+    label: 'Print Quality',
+    description: 'Print quality setting',
+    defaultValue: 'standard',
     sortOrder: 5
+  },
+  {
+    key: 'print_speed',
+    value: 'normal',
+    type: 'string',
+    category: 'printing',
+    label: 'Print Speed',
+    description: 'Print speed setting',
+    defaultValue: 'normal',
+    sortOrder: 6
+  },
+  
+  // Ticket Configuration
+  {
+    key: 'ticket_width',
+    value: '80',
+    type: 'number',
+    category: 'printing',
+    label: 'Ticket Width (mm)',
+    description: 'Width of the receipt in millimeters',
+    defaultValue: '80',
+    sortOrder: 7
+  },
+  {
+    key: 'ticket_margin_top',
+    value: '5',
+    type: 'number',
+    category: 'printing',
+    label: 'Top Margin (mm)',
+    description: 'Top margin in millimeters',
+    defaultValue: '5',
+    sortOrder: 8
+  },
+  {
+    key: 'ticket_margin_bottom',
+    value: '10',
+    type: 'number',
+    category: 'printing',
+    label: 'Bottom Margin (mm)',
+    description: 'Bottom margin in millimeters',
+    defaultValue: '10',
+    sortOrder: 9
+  },
+  {
+    key: 'ticket_margin_left',
+    value: '2',
+    type: 'number',
+    category: 'printing',
+    label: 'Left Margin (mm)',
+    description: 'Left margin in millimeters',
+    defaultValue: '2',
+    sortOrder: 10
+  },
+  {
+    key: 'ticket_margin_right',
+    value: '2',
+    type: 'number',
+    category: 'printing',
+    label: 'Right Margin (mm)',
+    description: 'Right margin in millimeters',
+    defaultValue: '2',
+    sortOrder: 11
+  },
+  {
+    key: 'ticket_font_size',
+    value: '12',
+    type: 'string',
+    category: 'printing',
+    label: 'Ticket Font Size',
+    description: 'Font size for receipt text',
+    defaultValue: '12',
+    sortOrder: 12
+  },
+  
+  // Receipt Content Settings
+  {
+    key: 'receipt_header',
+    value: 'Thank you for your business!',
+    type: 'string',
+    category: 'printing',
+    label: 'Receipt Header',
+    description: 'Text at top of receipt',
+    defaultValue: 'Thank you for your business!',
+    sortOrder: 13
+  },
+  {
+    key: 'receipt_footer',
+    value: 'Please come again!',
+    type: 'string',
+    category: 'printing',
+    label: 'Receipt Footer',
+    description: 'Text at bottom of receipt',
+    defaultValue: 'Please come again!',
+    sortOrder: 14
+  },
+  {
+    key: 'print_logo',
+    value: 'false',
+    type: 'boolean',
+    category: 'printing',
+    label: 'Print Logo',
+    description: 'Print company logo on receipt',
+    defaultValue: 'false',
+    sortOrder: 15
+  },
+  {
+    key: 'logo_size',
+    value: 'medium',
+    type: 'string',
+    category: 'printing',
+    label: 'Logo Size',
+    description: 'Size of company logo on receipt',
+    defaultValue: 'medium',
+    sortOrder: 16
   },
   {
     key: 'print_customer_copy',
@@ -170,21 +491,195 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     type: 'boolean',
     category: 'printing',
     label: 'Print Customer Copy',
-    description: 'Print customer copy of receipt',
+    description: 'Print customer copy by default',
     defaultValue: 'true',
-    sortOrder: 6
+    sortOrder: 17
+  },
+  {
+    key: 'print_merchant_copy',
+    value: 'false',
+    type: 'boolean',
+    category: 'printing',
+    label: 'Print Merchant Copy',
+    description: 'Print merchant copy automatically',
+    defaultValue: 'false',
+    sortOrder: 18
+  },
+  {
+    key: 'print_barcode',
+    value: 'false',
+    type: 'boolean',
+    category: 'printing',
+    label: 'Print Order Barcode',
+    description: 'Print barcode on receipt for order tracking',
+    defaultValue: 'false',
+    sortOrder: 19
+  },
+  {
+    key: 'print_qr_code',
+    value: 'false',
+    type: 'boolean',
+    category: 'printing',
+    label: 'Print QR Code',
+    description: 'Print QR code for digital receipt',
+    defaultValue: 'false',
+    sortOrder: 20
+  },
+  
+  // Invoice/A4 Print Settings
+  {
+    key: 'invoice_printer',
+    value: '',
+    type: 'string',
+    category: 'printing',
+    label: 'Invoice Printer',
+    description: 'Printer for invoices and reports',
+    defaultValue: '',
+    sortOrder: 21
+  },
+  {
+    key: 'invoice_paper_size',
+    value: 'A4',
+    type: 'string',
+    category: 'printing',
+    label: 'Invoice Paper Size',
+    description: 'Paper size for invoices',
+    defaultValue: 'A4',
+    sortOrder: 22
+  },
+  {
+    key: 'invoice_orientation',
+    value: 'portrait',
+    type: 'string',
+    category: 'printing',
+    label: 'Invoice Orientation',
+    description: 'Page orientation for invoices',
+    defaultValue: 'portrait',
+    sortOrder: 23
+  },
+  {
+    key: 'invoice_margin_top',
+    value: '20',
+    type: 'number',
+    category: 'printing',
+    label: 'Invoice Top Margin (mm)',
+    description: 'Top margin for invoices',
+    defaultValue: '20',
+    sortOrder: 24
+  },
+  {
+    key: 'invoice_margin_bottom',
+    value: '20',
+    type: 'number',
+    category: 'printing',
+    label: 'Invoice Bottom Margin (mm)',
+    description: 'Bottom margin for invoices',
+    defaultValue: '20',
+    sortOrder: 25
+  },
+  {
+    key: 'invoice_margin_left',
+    value: '15',
+    type: 'number',
+    category: 'printing',
+    label: 'Invoice Left Margin (mm)',
+    description: 'Left margin for invoices',
+    defaultValue: '15',
+    sortOrder: 26
+  },
+  {
+    key: 'invoice_margin_right',
+    value: '15',
+    type: 'number',
+    category: 'printing',
+    label: 'Invoice Right Margin (mm)',
+    description: 'Right margin for invoices',
+    defaultValue: '15',
+    sortOrder: 27
+  },
+  {
+    key: 'invoice_font_size',
+    value: '10',
+    type: 'string',
+    category: 'printing',
+    label: 'Invoice Font Size',
+    description: 'Font size for invoice text',
+    defaultValue: '10',
+    sortOrder: 28
+  },
+  {
+    key: 'invoice_logo_position',
+    value: 'top-left',
+    type: 'string',
+    category: 'printing',
+    label: 'Invoice Logo Position',
+    description: 'Position of logo on invoice',
+    defaultValue: 'top-left',
+    sortOrder: 29
+  },
+  {
+    key: 'auto_print_invoice',
+    value: 'false',
+    type: 'boolean',
+    category: 'printing',
+    label: 'Auto Print Invoice',
+    description: 'Automatically print invoice for orders above threshold',
+    defaultValue: 'false',
+    sortOrder: 30
+  },
+  {
+    key: 'invoice_threshold',
+    value: '100',
+    type: 'number',
+    category: 'printing',
+    label: 'Invoice Threshold',
+    description: 'Minimum amount to auto-print invoice',
+    defaultValue: '100',
+    sortOrder: 31
   },
 
-  // POS Settings
+  // =====================================
+  // POS SETTINGS
+  // =====================================
   {
     key: 'pos_layout',
     value: 'grid',
     type: 'string',
     category: 'pos',
-    label: 'POS Layout',
-    description: 'Layout style for POS interface',
+    label: 'Default Layout',
+    description: 'Default product view layout',
     defaultValue: 'grid',
     sortOrder: 1
+  },
+  {
+    key: 'products_per_page',
+    value: '50',
+    type: 'number',
+    category: 'pos',
+    label: 'Products Per Page',
+    description: 'Number of products to display',
+    defaultValue: '50',
+    sortOrder: 2
+  },
+  {
+    key: 'enable_barcode_scanner',
+    value: 'true',
+    type: 'boolean',
+    category: 'pos',
+    label: 'Enable Barcode Scanner',
+    description: 'Enable barcode scanning',
+    defaultValue: 'true',
+    sortOrder: 3
+  },
+  {
+    key: 'sound_effects',
+    value: 'true',
+    type: 'boolean',
+    category: 'pos',
+    label: 'Sound Effects',
+    description: 'Play sounds for actions',
+    defaultValue: 'true',
+    sortOrder: 4
   },
   {
     key: 'show_product_images',
@@ -192,53 +687,44 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     type: 'boolean',
     category: 'pos',
     label: 'Show Product Images',
-    description: 'Display product images in POS',
+    description: 'Display product images',
     defaultValue: 'true',
-    sortOrder: 2
+    sortOrder: 5
   },
   {
-    key: 'enable_barcode_scanner',
+    key: 'enable_quick_sale',
+    value: 'true',
+    type: 'boolean',
+    category: 'pos',
+    label: 'Enable Quick Sale',
+    description: 'Allow quick sale without customer details',
+    defaultValue: 'true',
+    sortOrder: 6
+  },
+  {
+    key: 'require_customer_info',
     value: 'false',
     type: 'boolean',
     category: 'pos',
-    label: 'Enable Barcode Scanner',
-    description: 'Enable barcode scanning functionality',
+    label: 'Require Customer Info',
+    description: 'Require customer information for sales',
     defaultValue: 'false',
-    sortOrder: 3
-  },
-  {
-    key: 'low_stock_alert',
-    value: '10',
-    type: 'number',
-    category: 'pos',
-    label: 'Low Stock Alert Threshold',
-    description: 'Alert when stock falls below this number',
-    defaultValue: '10',
-    sortOrder: 4
+    sortOrder: 7
   },
 
-  // Appearance Settings
+  // =====================================
+  // APPEARANCE SETTINGS
+  // =====================================
   {
     key: 'theme_mode',
     value: 'light',
     type: 'string',
     category: 'appearance',
     label: 'Theme Mode',
-    description: 'Application theme (light/dark)',
+    description: 'Light or dark theme',
     defaultValue: 'light',
     isPublic: true,
     sortOrder: 1
-  },
-  {
-    key: 'primary_color',
-    value: '#3b82f6',
-    type: 'string',
-    category: 'appearance',
-    label: 'Primary Color',
-    description: 'Primary brand color',
-    defaultValue: '#3b82f6',
-    isPublic: true,
-    sortOrder: 2
   },
   {
     key: 'font_size',
@@ -249,7 +735,7 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     description: 'Application font size',
     defaultValue: 'medium',
     isPublic: true,
-    sortOrder: 3
+    sortOrder: 2
   },
   {
     key: 'compact_mode',
@@ -257,10 +743,100 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     type: 'boolean',
     category: 'appearance',
     label: 'Compact Mode',
-    description: 'Use compact interface layout',
+    description: 'Use compact interface',
     defaultValue: 'false',
     isPublic: true,
+    sortOrder: 3
+  },
+  {
+    key: 'show_animations',
+    value: 'true',
+    type: 'boolean',
+    category: 'appearance',
+    label: 'Show Animations',
+    description: 'Enable interface animations',
+    defaultValue: 'true',
+    isPublic: true,
     sortOrder: 4
+  },
+  {
+    key: 'sidebar_position',
+    value: 'left',
+    type: 'string',
+    category: 'appearance',
+    label: 'Sidebar Position',
+    description: 'Position of the navigation sidebar',
+    defaultValue: 'left',
+    isPublic: true,
+    sortOrder: 5
+  },
+  {
+    key: 'color_scheme',
+    value: 'blue',
+    type: 'string',
+    category: 'appearance',
+    label: 'Accent Color',
+    description: 'Primary accent color for the interface',
+    defaultValue: 'blue',
+    isPublic: true,
+    sortOrder: 6
+  },
+  {
+    key: 'layout_density',
+    value: 'comfortable',
+    type: 'string',
+    category: 'appearance',
+    label: 'Layout Density',
+    description: 'How compact the interface should be',
+    defaultValue: 'comfortable',
+    isPublic: true,
+    sortOrder: 7
+  },
+
+  // =====================================
+  // LEGACY SETTINGS (for compatibility)
+  // =====================================
+  {
+    key: 'app_name',
+    value: 'POS System',
+    type: 'string',
+    category: 'general',
+    label: 'Application Name',
+    description: 'The name of your POS application',
+    defaultValue: 'POS System',
+    isPublic: true,
+    sortOrder: 50
+  },
+  {
+    key: 'receipt_printer_name',
+    value: '',
+    type: 'string',
+    category: 'printing',
+    label: 'Receipt Printer Name',
+    description: 'Name of the receipt printer',
+    defaultValue: '',
+    sortOrder: 50
+  },
+  {
+    key: 'receipt_width',
+    value: '80',
+    type: 'number',
+    category: 'printing',
+    label: 'Receipt Width (mm)',
+    description: 'Width of receipt paper in millimeters',
+    defaultValue: '80',
+    sortOrder: 51
+  },
+  {
+    key: 'tax_rate',
+    value: '0',
+    type: 'number',
+    category: 'general',
+    label: 'Legacy Tax Rate (%)',
+    description: 'Legacy tax rate percentage',
+    defaultValue: '0',
+    isPublic: true,
+    sortOrder: 51
   }
 ];
 

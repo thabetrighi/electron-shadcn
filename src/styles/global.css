@@ -127,26 +127,31 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
 
-    --muted: 210 40% 96.1%;
+    --muted: 210 40% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 221.2 83.2% 53.3%;
 
     --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 
   .dark {
@@ -159,8 +164,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -176,7 +181,12 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 224.3 76.3% 94.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
 
@@ -365,4 +375,249 @@
     border-radius: 0.75rem;
     z-index: -1;
   }
+}
+
+/* Custom settings styles */
+.settings-container {
+  @apply min-h-screen bg-gradient-to-br from-gray-50 to-gray-100;
+}
+
+.dark .settings-container {
+  @apply from-gray-900 to-gray-800;
+}
+
+/* Compact mode styles */
+.compact-mode {
+  --spacing-unit: 0.75rem;
+}
+
+.compact-mode .space-y-6 > * + * {
+  margin-top: calc(var(--spacing-unit) * 3);
+}
+
+.compact-mode .space-y-4 > * + * {
+  margin-top: calc(var(--spacing-unit) * 2);
+}
+
+.compact-mode .space-y-3 > * + * {
+  margin-top: var(--spacing-unit);
+}
+
+.compact-mode .p-6 {
+  padding: calc(var(--spacing-unit) * 2);
+}
+
+.compact-mode .p-4 {
+  padding: var(--spacing-unit);
+}
+
+.compact-mode .text-lg {
+  font-size: 1rem;
+}
+
+.compact-mode .text-base {
+  font-size: 0.875rem;
+}
+
+/* Enhanced input focus styles */
+.enhanced-input:focus {
+  @apply ring-2 ring-offset-2 border-transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Settings card animations */
+.settings-card {
+  transition: all 0.3s ease-in-out;
+}
+
+.settings-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Currency preview animation */
+.currency-preview {
+  @apply inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-md text-sm font-medium;
+  animation: slideIn 0.3s ease-out;
+}
+
+.dark .currency-preview {
+  @apply bg-green-900 text-green-200;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Settings success indicator */
+.setting-success {
+  @apply relative;
+}
+
+.setting-success::after {
+  content: '✓';
+  @apply absolute -top-1 -right-1 w-4 h-4 bg-green-500 text-white text-xs rounded-full flex items-center justify-center;
+  animation: checkmark 0.5s ease-out;
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0) rotate(180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Tab navigation enhancement */
+.settings-tab {
+  transition: all 0.2s ease-in-out;
+}
+
+.settings-tab:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.settings-tab.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+/* Enhanced switch styling */
+.enhanced-switch {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.enhanced-switch[data-state="checked"] {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* Printer detection animation */
+.printer-detecting {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* RTL Support for Arabic */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl .ml-auto {
+  margin-left: unset !important;
+  margin-right: auto !important;
+}
+
+.rtl .mr-auto {
+  margin-right: unset !important;
+  margin-left: auto !important;
+}
+
+.rtl .ml-2 {
+  margin-left: unset !important;
+  margin-right: 0.5rem !important;
+}
+
+.rtl .mr-2 {
+  margin-right: unset !important;
+  margin-left: 0.5rem !important;
+}
+
+.rtl .ml-1 {
+  margin-left: unset !important;
+  margin-right: 0.25rem !important;
+}
+
+.rtl .mr-1 {
+  margin-right: unset !important;
+  margin-left: 0.25rem !important;
+}
+
+/* RTL support for flexbox */
+.rtl .flex-row {
+  flex-direction: row-reverse;
+}
+
+.rtl .space-x-2 > * + * {
+  margin-left: unset !important;
+  margin-right: 0.5rem !important;
+}
+
+.rtl .space-x-1 > * + * {
+  margin-left: unset !important;
+  margin-right: 0.25rem !important;
+}
+
+/* RTL support for text alignment */
+.rtl .text-left {
+  text-align: right !important;
+}
+
+.rtl .text-right {
+  text-align: left !important;
+}
+
+/* RTL support for positioning */
+.rtl .left-0 {
+  left: unset !important;
+  right: 0 !important;
+}
+
+.rtl .right-0 {
+  right: unset !important;
+  left: 0 !important;
+}
+
+/* RTL support for borders */
+.rtl .border-l {
+  border-left: unset !important;
+  border-right: 1px solid !important;
+}
+
+.rtl .border-r {
+  border-right: unset !important;
+  border-left: 1px solid !important;
+}
+
+/* RTL support for padding */
+.rtl .pl-2 {
+  padding-left: unset !important;
+  padding-right: 0.5rem !important;
+}
+
+.rtl .pr-2 {
+  padding-right: unset !important;
+  padding-left: 0.5rem !important;
+}
+
+.rtl .pl-1 {
+  padding-left: unset !important;
+  padding-right: 0.25rem !important;
+}
+
+.rtl .pr-1 {
+  padding-right: unset !important;
+  padding-left: 0.25rem !important;
 }

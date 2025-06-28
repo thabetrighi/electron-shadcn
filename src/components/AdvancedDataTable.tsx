@@ -12,7 +12,6 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Search, 
-  MoreHorizontal, 
   Plus, 
   Eye, 
   Edit, 
@@ -28,34 +27,11 @@ import {
   ChevronDown,
   MoreVertical,
   CheckSquare,
-  Square,
   FileText,
   FileSpreadsheet,
   Printer,
-  Copy,
-  Archive,
-  Settings,
-  Calendar,
-  SortAsc,
-  SortDesc,
-  ExternalLink,
-  Mail,
-  Phone,
-  Globe,
-  MapPin,
-  Users,
   Package,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Activity,
   BarChart3,
-  PieChart,
-  AlertCircle,
-  Info,
-  CheckCircle2,
-  Clock,
-  Star
 } from 'lucide-react';
 
 export interface Column<T> {
@@ -828,7 +804,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       {/* Header with Stats */}
       {(title || stats.length > 0) && (
         <div className="space-y-6">
@@ -1167,9 +1143,14 @@ export const renderStatus = (status: string) => (
   </Badge>
 );
 
-export const renderCurrency = (amount: number) => (
-  <span className="font-mono font-medium text-green-600">${amount.toFixed(2)}</span>
-);
+export const renderCurrency = (amount: number | null | undefined) => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return <span className="font-mono font-medium text-gray-400">$0.00</span>;
+  }
+  return (
+    <span className="font-mono font-medium text-green-600">${amount.toFixed(2)}</span>
+  );
+};
 
 export const renderDate = (date: string) => (
   <span className="text-gray-900">{new Date(date).toLocaleDateString()}</span>

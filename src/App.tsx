@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { syncThemeWithLocal } from "./helpers/theme_helpers";
 import { useTranslation } from "react-i18next";
-import "./localization/i18n";
+import i18n from "./localization/i18n";
 import { updateAppLanguage } from "./helpers/language_helpers";
 import { router } from "./routes/router";
 import { RouterProvider } from "@tanstack/react-router";
@@ -65,7 +65,7 @@ class ErrorBoundary extends React.Component<
 }
 
 export default function App() {
-  const { i18n } = useTranslation();
+  const { i18n: i18nHook } = useTranslation();
   const [appReady, setAppReady] = React.useState(false);
   const [initError, setInitError] = React.useState<string | null>(null);
 
@@ -80,16 +80,38 @@ export default function App() {
         syncThemeWithLocal();
         console.log('Theme initialized');
         
-        // Initialize language
-        updateAppLanguage(i18n);
-        console.log('Language initialized');
+        // Update language from storage
+        const langResult = await updateAppLanguage(i18nHook);
+        console.log('Language updated from storage:', langResult);
         
-        // Database is initialized in the main process, not here
-        // The renderer process should use IPC to communicate with the database
-        console.log('Database initialization handled by main process');
+        // Add language change listener
+        const handleLanguageChange = () => {
+          console.log('Language changed, updating app...');
+          document.documentElement.lang = i18nHook.language;
+          document.documentElement.dir = i18nHook.dir();
+          if (i18nHook.language === 'ar') {
+            document.documentElement.classList.add('rtl');
+          } else {
+            document.documentElement.classList.remove('rtl');
+          }
+          // Dispatch custom event for components
+          window.dispatchEvent(new CustomEvent('languageChanged', { 
+            detail: { language: i18nHook.language } 
+          }));
+        };
+        
+        // Apply initial language settings
+        handleLanguageChange();
+        
+        i18nHook.on('languageChanged', handleLanguageChange);
+        console.log('Language change listener added');
         
         console.log('App initialization completed');
         setAppReady(true);
+        
+        return () => {
+          i18nHook.off('languageChanged', handleLanguageChange);
+        };
       } catch (error) {
         console.error('Error during app initialization:', error);
         setInitError(error instanceof Error ? error.message : 'Unknown error');
@@ -99,7 +121,7 @@ export default function App() {
     };
 
     initializeApp();
-  }, [i18n]);
+  }, [i18nHook]);
 
   console.log('App component rendering, appReady:', appReady);
 
@@ -184,5 +206,5 @@ console.log('Creating root and rendering app');
 root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 );

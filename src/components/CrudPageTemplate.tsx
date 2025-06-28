@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
   AdvancedDataTable,
@@ -23,7 +23,6 @@ import {
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import toast from "react-hot-toast";
 import { exportData, createBulkOperations } from "../utils/export";
 import {
@@ -34,33 +33,19 @@ import {
   Copy,
   Archive,
   Download,
-  Upload,
   FileText,
   FileSpreadsheet,
   Printer,
-  Mail,
-  MessageSquare,
-  Settings,
-  Filter,
-  Search,
-  Plus,
   RefreshCw,
-  BarChart3,
-  PieChart,
-  TrendingUp,
-  TrendingDown,
   Activity,
   Users,
-  DollarSign,
   ShoppingCart,
-  Star,
   AlertCircle,
   CheckCircle2,
   Clock,
   Target,
   Loader2,
   Calendar,
-  XCircle,
 } from "lucide-react";
 
 // Enhanced interfaces for better type safety and functionality
@@ -574,20 +559,25 @@ export function CrudPageTemplate<T extends Record<string, any>>({
 
   // Enhanced export options
   const exportOptions: ExportOption[] = [
-    { format: 'csv', label: 'CSV', icon: FileText, includeFilters: true },
-    { format: 'excel', label: 'Excel', icon: FileSpreadsheet, includeFilters: true },
-    { format: 'pdf', label: 'PDF', icon: FileText, includeFilters: false },
-    { format: 'json', label: 'JSON', icon: FileText, includeFilters: true },
-    { format: 'print', label: 'Print', icon: Printer, includeFilters: false }
+    { format: "csv", label: "CSV", icon: FileText, includeFilters: true },
+    {
+      format: "excel",
+      label: "Excel",
+      icon: FileSpreadsheet,
+      includeFilters: true,
+    },
+    { format: "pdf", label: "PDF", icon: FileText, includeFilters: false },
+    { format: "json", label: "JSON", icon: FileText, includeFilters: true },
+    { format: "print", label: "Print", icon: Printer, includeFilters: false },
   ];
 
   // Currency formatting utility
-  const formatCurrency = useCallback((amount: number, currency = 'USD') => {
-    return new Intl.NumberFormat(navigator.language || 'en-US', {
-      style: 'currency',
+  const formatCurrency = useCallback((amount: number, currency = "USD") => {
+    return new Intl.NumberFormat(navigator.language || "en-US", {
+      style: "currency",
       currency: currency,
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(amount || 0);
   }, []);
 
@@ -893,7 +883,7 @@ export function CrudPageTemplate<T extends Record<string, any>>({
   return (
     <div className="space-y-6">
       {/* Enhanced Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {entityConfig.icon && (
             <div
@@ -903,12 +893,12 @@ export function CrudPageTemplate<T extends Record<string, any>>({
             </div>
           )}
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-1">
+            <h1 className="mb-1 text-4xl font-bold tracking-tight text-gray-900">
               {title || t(entityNamePlural)}
             </h1>
             {subtitle && <p className="text-lg text-gray-600">{subtitle}</p>}
             {entityConfig.description && (
-              <p className="mt-2 text-sm text-gray-500 max-w-2xl">
+              <p className="mt-2 max-w-2xl text-sm text-gray-500">
                 {entityConfig.description}
               </p>
             )}
@@ -918,7 +908,10 @@ export function CrudPageTemplate<T extends Record<string, any>>({
         <div className="flex items-center space-x-3">
           {headerActions}
           {autoRefresh && (
-            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+            <Badge
+              variant="outline"
+              className="border-green-200 bg-green-50 text-xs text-green-700"
+            >
               <Activity className="mr-1 h-3 w-3" />
               {t("autoRefresh", "Auto-refresh")}
             </Badge>
@@ -927,7 +920,7 @@ export function CrudPageTemplate<T extends Record<string, any>>({
       </div>
 
       {/* Main Data Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         <AdvancedDataTable
           data={data}
           columns={columns}
@@ -938,14 +931,8 @@ export function CrudPageTemplate<T extends Record<string, any>>({
           filterable={filterable}
           filterFields={[...filterFields, ...customFilters]}
           stats={enhancedStats}
-          title={title || t(entityNamePlural)}
-          subtitle={
-            subtitle ||
-            t(
-              `manage${entityNamePlural.charAt(0).toUpperCase() + entityNamePlural.slice(1)}`,
-              `Manage your ${entityNamePlural}`,
-            )
-          }
+          title={title}
+          subtitle={subtitle}
           onAdd={permissions.create ? handleAdd : undefined}
           onRefresh={onRefresh}
           onExport={permissions.export ? handleExport : undefined}
@@ -973,16 +960,27 @@ export function CrudPageTemplate<T extends Record<string, any>>({
         isOpen={isFormModalOpen}
         onClose={() => setIsFormModalOpen(false)}
         onSubmit={handleFormSubmit}
-        title={editingItem 
-          ? t(`edit${entityName.charAt(0).toUpperCase() + entityName.slice(1)}`, `Edit ${entityName.charAt(0).toUpperCase() + entityName.slice(1)}`)
-          : t(`add${entityName.charAt(0).toUpperCase() + entityName.slice(1)}`, `Add ${entityName.charAt(0).toUpperCase() + entityName.slice(1)}`)
+        title={
+          editingItem
+            ? t(
+                `edit${entityName.charAt(0).toUpperCase() + entityName.slice(1)}`,
+                `Edit ${entityName.charAt(0).toUpperCase() + entityName.slice(1)}`,
+              )
+            : t(
+                `add${entityName.charAt(0).toUpperCase() + entityName.slice(1)}`,
+                `Add ${entityName.charAt(0).toUpperCase() + entityName.slice(1)}`,
+              )
         }
         fields={formFields}
         sections={formSections}
         initialData={editingItem || {}}
         loading={submitting}
-        submitLabel={editingItem ? t('actions.update', 'Update') : t('actions.create', 'Create')}
-        cancelLabel={t('actions.cancel', 'Cancel')}
+        submitLabel={
+          editingItem
+            ? t("actions.update", "Update")
+            : t("actions.create", "Create")
+        }
+        cancelLabel={t("actions.cancel", "Cancel")}
         size="lg"
         validateOnChange={true}
         showProgress={false}

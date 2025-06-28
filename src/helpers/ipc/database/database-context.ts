@@ -63,6 +63,7 @@ export const databaseAPI = {
     set: (key: string, value: any) => ipcRenderer.invoke(SETTINGS_CHANNELS.SET_SETTING, key, value),
     delete: (key: string) => ipcRenderer.invoke(SETTINGS_CHANNELS.DELETE_SETTING, key),
     getByCategory: (category: string) => ipcRenderer.invoke(SETTINGS_CHANNELS.GET_BY_CATEGORY, category),
+    initializeDefaults: () => ipcRenderer.invoke(SETTINGS_CHANNELS.INITIALIZE_DEFAULTS),
   },
 };
 

@@ -1,10 +1,13 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrudPageTemplate } from '../components/CrudPageTemplate';
-import { crudConfigurations } from '../components/enhanced-crud-configs';
+import { FormField, createTextField, createSelectField, createEmailField, createTextareaField } from '../components/FormModal';
+import { Column } from '../components/AdvancedDataTable';
+import { Badge } from '../components/ui/badge';
+import { Users, Phone, Mail, CheckCircle2, Clock, Archive, XCircle, Crown, UserCheck, Building } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { renderStatus, renderUserRole, renderPhone, renderEmail, renderDateTime, renderDate } from '../utils/renderers';
 
-// Enhanced User interface
 interface User {
   id: number;
   name: string;
@@ -18,16 +21,113 @@ interface User {
   lastLoginAt?: string;
 }
 
+// Users columns configuration
+const usersColumns: Column<Record<string, any>>[] = [
+  {
+    key: 'name',
+    header: 'Name',
+    sortable: true,
+    filterable: true,
+    searchable: true,
+    exportable: true,
+    sticky: true,
+    width: '250px',
+    render: (name: string, user: Record<string, any>) => (
+      <div className="flex items-center space-x-3">
+        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm shadow-md">
+          {name?.charAt(0)?.toUpperCase() || '?'}
+        </div>
+        <div>
+          <div className="font-medium text-gray-900">{name}</div>
+          <div className="text-sm text-gray-500">{user.email}</div>
+        </div>
+      </div>
+    )
+  },
+  {
+    key: 'role',
+    header: 'Role',
+    render: renderUserRole,
+    sortable: true,
+    filterable: true,
+    exportable: true
+  },
+  {
+    key: 'phone',
+    header: 'Phone',
+    render: renderPhone,
+    exportable: true
+  },
+  {
+    key: 'status',
+    header: 'Status',
+    render: renderStatus,
+    sortable: true,
+    filterable: true,
+    exportable: true
+  },
+  {
+    key: 'lastLoginAt',
+    header: 'Last Login',
+    render: (date: string) => date ? renderDateTime(date) : <span className="text-gray-400">Never</span>,
+    sortable: true,
+    type: 'date',
+    exportable: true
+  },
+  {
+    key: 'createdAt',
+    header: 'Created',
+    render: renderDate,
+    sortable: true,
+    type: 'date',
+    exportable: true
+  }
+];
+
+// Form fields configuration
+const usersFormFields: FormField[] = [
+  createTextField('name', 'Full Name', {
+    validation: { required: true, minLength: 2, maxLength: 100 },
+    placeholder: 'Enter full name',
+    width: 'full'
+  }),
+  createEmailField('email', 'Email Address', {
+    validation: { required: true, email: true },
+    placeholder: 'user@example.com',
+    width: 'half'
+  }),
+  createTextField('phone', 'Phone Number', {
+    placeholder: '+1 (555) 123-4567',
+    width: 'half'
+  }),
+  createSelectField('role', 'Role', [
+    { value: 'client', label: 'Client' },
+    { value: 'supplier', label: 'Supplier' },
+    { value: 'admin', label: 'Administrator' }
+  ], {
+    defaultValue: 'client',
+    width: 'half'
+  }),
+  createSelectField('status', 'Status', [
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
+  ], {
+    defaultValue: 'active',
+    width: 'half'
+  }),
+  createTextareaField('address', 'Address', {
+    rows: 3,
+    placeholder: 'Enter full address (optional)',
+    width: 'full'
+  })
+];
+
 export default function UsersPage() {
   const { t } = useTranslation();
   
-  // State management
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-
-  // Get configuration
-  const config = crudConfigurations.users;
 
   // Enhanced statistics
   const stats = useMemo(() => {
@@ -41,15 +141,15 @@ export default function UsersPage() {
       {
         label: t('stats.totalUsers', 'Total Users'),
         value: totalUsers,
-        icon: config.entityConfig.icon,
-        color: config.entityConfig.color,
+        icon: Users,
+        color: 'text-green-600',
         format: 'number' as const,
         clickable: true
       },
       {
         label: t('stats.activeUsers', 'Active Users'),
         value: activeUsers,
-        icon: config.entityConfig.icon,
+        icon: Users,
         color: 'text-green-600',
         format: 'number' as const,
         comparison: {
@@ -60,26 +160,26 @@ export default function UsersPage() {
       {
         label: t('stats.administrators', 'Administrators'),
         value: adminUsers,
-        icon: config.entityConfig.icon,
+        icon: Crown,
         color: 'text-purple-600',
         format: 'number' as const
       },
       {
         label: t('stats.clients', 'Clients'),
         value: clientUsers,
-        icon: config.entityConfig.icon,
+        icon: UserCheck,
         color: 'text-blue-600',
         format: 'number' as const
       },
       {
         label: t('stats.suppliers', 'Suppliers'),
         value: supplierUsers,
-        icon: config.entityConfig.icon,
+        icon: Building,
         color: 'text-orange-600',
         format: 'number' as const
       }
     ];
-  }, [users, t, config]);
+  }, [users, t]);
 
   // CRUD operations
   const handleAdd = async (formData: Record<string, any>) => {
@@ -177,120 +277,80 @@ export default function UsersPage() {
     handleRefresh();
   }, []);
 
-  // Custom card renderer
-  const cardRenderer = (user: User) => (
-    <div className="space-y-3">
+  // Enhanced card renderer
+  const cardRenderer = (user: Record<string, any>) => (
+    <div className="space-y-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-lg shadow-md">
             {user.name?.charAt(0)?.toUpperCase() || '?'}
           </div>
           <div>
-            <h3 className="font-semibold text-lg">{user.name}</h3>
+            <h3 className="font-semibold text-lg text-gray-900">{user.name}</h3>
             <p className="text-sm text-gray-500">{user.email}</p>
           </div>
         </div>
+        <div className="text-right space-y-1">
+          {renderStatus(user.status)}
+          {renderUserRole(user.role)}
+        </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <span className="text-gray-500">Role:</span>
-          <div>{config.columns[1].render?.(user.role, user)}</div>
-        </div>
+      <div className="grid grid-cols-2 gap-4">
         {user.phone && (
-          <div>
-            <span className="text-gray-500">Phone:</span>
-            <div className="font-medium">{user.phone}</div>
+          <div className="space-y-1">
+            <span className="text-gray-500 text-sm font-medium">Phone:</span>
+            <div>{renderPhone(user.phone)}</div>
           </div>
         )}
-        <div>
-          <span className="text-gray-500">Status:</span>
-          <div>{config.columns[3].render?.(user.status, user)}</div>
-        </div>
         {user.lastLoginAt && (
-          <div>
-            <span className="text-gray-500">Last Login:</span>
-            <div className="font-medium">{config.columns[4].render?.(user.lastLoginAt, user)}</div>
+          <div className="space-y-1">
+            <span className="text-gray-500 text-sm font-medium">Last Login:</span>
+            <div className="text-sm">{renderDateTime(user.lastLoginAt)}</div>
           </div>
         )}
       </div>
-      
+
       {user.address && (
-        <p className="text-sm text-gray-600 line-clamp-2">{user.address}</p>
+        <div className="pt-3 border-t border-gray-100">
+          <span className="text-gray-500 text-sm font-medium">Address:</span>
+          <p className="mt-1 text-sm text-gray-700 line-clamp-2">{user.address}</p>
+        </div>
       )}
+
+      <div className="pt-2 border-t border-gray-100">
+        <div className="flex justify-between text-sm text-gray-500">
+          <span>Member since</span>
+          <span>{renderDate(user.createdAt)}</span>
+        </div>
+      </div>
     </div>
   );
 
   return (
     <CrudPageTemplate
-      // Core data
       data={users}
       loading={loading}
       error={error}
-      
-      // Entity configuration
       entityName="user"
       entityNamePlural="users"
-      entityConfig={config.entityConfig}
-      
-      // Table configuration
-      columns={config.columns}
-      filterFields={config.filterFields}
+      entityConfig={{
+        icon: Users,
+        color: "text-green-600",
+        description: t("pages.usersSubtitle", "Manage system users and their roles"),
+        category: "administration",
+      }}
+      columns={usersColumns}
       stats={stats}
-      
-      // Display options
-      searchable={true}
-      filterable={true}
-      sortable={true}
-      paginated={true}
-      selectable={true}
-      exportable={true}
-      
-      // View modes
-      viewModes={['table', 'cards']}
-      defaultViewMode="table"
+      formFields={usersFormFields}
       cardRenderer={cardRenderer}
-      
-      // Form configuration
-      formFields={config.formFields}
-      formSections={[
-        {
-          title: t('sections.basicInfo', 'Basic Information'),
-          fields: ['name', 'email', 'phone']
-        },
-        {
-          title: t('sections.roleAndStatus', 'Role & Status'),
-          fields: ['role', 'status']
-        },
-        {
-          title: t('sections.additionalInfo', 'Additional Information'),
-          fields: ['address']
-        }
-      ]}
-      
-      // CRUD operations
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
       onBulkDelete={handleBulkDelete}
       onRefresh={handleRefresh}
-      
-      // Customization
-      title={t('users.title', 'Users')}
-      subtitle={t('users.subtitle', 'Manage system users and their roles')}
-      
-      // Advanced features
-      enableAnalytics={true}
-      idField="id"
-      titleField="name"
-      statusField="status"
-      dateField="createdAt"
-      
-      // Configuration
-      autoRefresh={true}
-      refreshInterval={60000}
-      preserveSelection={false}
-      density="comfortable"
+      title={t("pages.users", "Users")}
+      subtitle={t("pages.usersSubtitle", "Manage system users and their roles")}
     />
   );
 }

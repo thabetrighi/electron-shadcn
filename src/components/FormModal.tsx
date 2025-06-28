@@ -13,19 +13,12 @@ import {
   AlertCircle, 
   Check, 
   X, 
-  Upload, 
-  Calendar, 
   Clock, 
   Eye, 
   EyeOff,
   Plus,
-  Minus,
-  Star,
   Info,
   Loader2,
-  Image as ImageIcon,
-  File,
-  Link as LinkIcon,
   ChevronDown
 } from 'lucide-react';
 
@@ -741,7 +734,7 @@ export function FormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className={`max-w-${size === 'full' ? 'screen' : size} max-h-[90vh] overflow-y-auto bg-white border-0 shadow-2xl`}>
+      <DialogContent className={`max-w-${size === 'full' ? 'screen' : size} max-h-[90vh] bg-white border-0 shadow-2xl overflow-hidden flex flex-col`}>
         <DialogHeader className="pb-6 border-b border-gray-100">
           <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
@@ -768,7 +761,8 @@ export function FormModal({
           )}
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400 pr-2">
+          <form onSubmit={handleSubmit} className="space-y-6 p-1">
           {sections.length > 0 ? (
             // Render sections
             sections.map((section, index) => {
@@ -834,7 +828,8 @@ export function FormModal({
               </CardContent>
             </Card>
           )}
-        </form>
+          </form>
+        </div>
 
         <DialogFooter className="flex justify-between items-center pt-6 border-t bg-gray-50/50 rounded-b-lg -m-6 mt-6 p-6">
           <div className="flex items-center space-x-3">

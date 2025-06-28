@@ -2,10 +2,9 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Button } from './button';
 import { Input } from './input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './dropdown-menu';
 import { Badge } from './badge';
-import { ChevronLeft, ChevronRight, Search, MoreHorizontal, Plus, Eye, Edit, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, MoreHorizontal, Plus, Edit, Trash2 } from 'lucide-react';
 
 export interface Column<T> {
   key: keyof T;
@@ -277,11 +276,16 @@ export const renderStatus = (status: string) => (
   </Badge>
 );
 
-export const renderCurrency = (amount: number) => (
-  <span className="font-medium">
-    ${typeof amount === 'number' ? amount.toFixed(2) : '0.00'}
-  </span>
-);
+export const renderCurrency = (amount: number | null | undefined) => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return <span className="font-medium text-gray-400">$0.00</span>;
+  }
+  return (
+    <span className="font-medium text-green-600">
+      ${amount.toFixed(2)}
+    </span>
+  );
+};
 
 export const renderDate = (date: string) => (
   <span className="text-sm text-muted-foreground">

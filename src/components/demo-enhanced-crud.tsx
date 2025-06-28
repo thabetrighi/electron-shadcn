@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CrudPageTemplate } from './CrudPageTemplate';
-import { Column, Action, BulkAction, Stats, FilterField } from './AdvancedDataTable';
-import { FormField, createTextField, createNumberField, createSelectField, createCurrencyField, createEmailField } from './FormModal';
-import { Package, Users, ShoppingCart, Archive, Target, CheckCircle2, Clock, DollarSign, TrendingUp } from 'lucide-react';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { CrudPageTemplate } from "./CrudPageTemplate";
+import { Column, Stats, FilterField } from "./AdvancedDataTable";
+import {
+  FormField,
+  createTextField,
+  createNumberField,
+  createSelectField,
+  createCurrencyField,
+  createEmailField,
+} from "./FormModal";
+import { Package, Users, DollarSign } from "lucide-react";
+import toast from "react-hot-toast";
 
 // =============================================
 // DEMO: Enhanced CRUD System Usage Examples
@@ -19,99 +26,105 @@ export function EnhancedProductsPage() {
   // Enhanced columns with modern features
   const columns: Column<any>[] = [
     {
-      key: 'name',
-      header: 'Product Name',
+      key: "name",
+      header: "Product Name",
       sortable: true,
       searchable: true,
       exportable: true,
-      sticky: true
+      sticky: true,
     },
     {
-      key: 'price',
-      header: 'Price',
+      key: "price",
+      header: "Price",
       sortable: true,
       render: (value) => `$${value.toFixed(2)}`,
-      type: 'currency',
-      align: 'right'
+      type: "currency",
+      align: "right",
     },
     {
-      key: 'stock',
-      header: 'Stock',
+      key: "stock",
+      header: "Stock",
       sortable: true,
       render: (value) => (
-        <span className={`font-medium ${value <= 0 ? 'text-red-600' : value <= 10 ? 'text-yellow-600' : 'text-green-600'}`}>
+        <span
+          className={`font-medium ${value <= 0 ? "text-red-600" : value <= 10 ? "text-yellow-600" : "text-green-600"}`}
+        >
           {value}
         </span>
       ),
-      type: 'number'
+      type: "number",
     },
     {
-      key: 'status',
-      header: 'Status',
+      key: "status",
+      header: "Status",
       render: (status) => (
-        <span className={`px-2 py-1 rounded text-xs ${
-          status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span
+          className={`rounded px-2 py-1 text-xs ${
+            status === "active"
+              ? "bg-green-100 text-green-800"
+              : "bg-gray-100 text-gray-800"
+          }`}
+        >
           {status}
         </span>
       ),
-      filterable: true
-    }
+      filterable: true,
+    },
   ];
 
   // Enhanced form fields with validation
   const formFields: FormField[] = [
-    createTextField('name', 'Product Name', {
+    createTextField("name", "Product Name", {
       validation: { required: true, minLength: 2 },
-      placeholder: 'Enter product name'
+      placeholder: "Enter product name",
     }),
-    createCurrencyField('price', 'Price', {
-      validation: { required: true, positive: true }
+    createCurrencyField("price", "Price", {
+      validation: { required: true, positive: true },
     }),
-    createNumberField('stock', 'Stock', {
-      validation: { required: true, min: 0, integer: true }
+    createNumberField("stock", "Stock", {
+      validation: { required: true, min: 0, integer: true },
     }),
-    createSelectField('status', 'Status', [
-      { value: 'active', label: 'Active' },
-      { value: 'inactive', label: 'Inactive' }
-    ])
+    createSelectField("status", "Status", [
+      { value: "active", label: "Active" },
+      { value: "inactive", label: "Inactive" },
+    ]),
   ];
 
   // Advanced filter fields
   const filterFields: FilterField[] = [
     {
-      key: 'status',
-      label: 'Status',
-      type: 'multiselect',
+      key: "status",
+      label: "Status",
+      type: "multiselect",
       options: [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' }
-      ]
+        { value: "active", label: "Active" },
+        { value: "inactive", label: "Inactive" },
+      ],
     },
     {
-      key: 'price',
-      label: 'Price Range',
-      type: 'range',
-      validation: { min: 0 }
-    }
+      key: "price",
+      label: "Price Range",
+      type: "range",
+      validation: { min: 0 },
+    },
   ];
 
   // Enhanced statistics
   const stats: Stats[] = [
     {
-      label: 'Total Products',
+      label: "Total Products",
       value: products.length,
       icon: Package,
-      color: 'text-blue-600',
-      format: 'number'
+      color: "text-blue-600",
+      format: "number",
     },
     {
-      label: 'Total Value',
-      value: products.reduce((sum, p) => sum + (p.price * p.stock), 0),
+      label: "Total Value",
+      value: products.reduce((sum, p) => sum + p.price * p.stock, 0),
       icon: DollarSign,
-      color: 'text-green-600',
-      format: 'currency'
-    }
+      color: "text-green-600",
+      format: "currency",
+    },
   ];
 
   return (
@@ -119,21 +132,18 @@ export function EnhancedProductsPage() {
       // Core data
       data={products}
       loading={loading}
-      
       // Entity configuration
       entityName="product"
       entityNamePlural="products"
       entityConfig={{
         icon: Package,
-        color: 'text-blue-600',
-        description: 'Manage your product inventory'
+        color: "text-blue-600",
+        description: "Manage your product inventory",
       }}
-      
       // Table configuration
       columns={columns}
       filterFields={filterFields}
       stats={stats}
-      
       // Modern features enabled
       searchable={true}
       filterable={true}
@@ -141,67 +151,59 @@ export function EnhancedProductsPage() {
       paginated={true}
       selectable={true}
       exportable={true}
-      
       // View modes
-      viewModes={['table', 'cards']}
+      viewModes={["table", "cards"]}
       defaultViewMode="table"
-      
       // Form configuration
       formFields={formFields}
       formSections={[
         {
-          title: 'Basic Information',
-          fields: ['name', 'status']
+          title: "Basic Information",
+          fields: ["name", "status"],
         },
         {
-          title: 'Pricing & Inventory',
-          fields: ['price', 'stock']
-        }
+          title: "Pricing & Inventory",
+          fields: ["price", "stock"],
+        },
       ]}
-      
       // CRUD operations
       onAdd={async (data) => {
         // API call to create product
-        console.log('Creating product:', data);
-        toast.success('Product created successfully');
+        console.log("Creating product:", data);
+        toast.success("Product created successfully");
         return data;
       }}
       onEdit={async (id, data) => {
         // API call to update product
-        console.log('Updating product:', id, data);
-        toast.success('Product updated successfully');
+        console.log("Updating product:", id, data);
+        toast.success("Product updated successfully");
         return data;
       }}
       onDelete={async (id) => {
         // API call to delete product
-        console.log('Deleting product:', id);
-        toast.success('Product deleted successfully');
+        console.log("Deleting product:", id);
+        toast.success("Product deleted successfully");
       }}
       onBulkDelete={async (ids) => {
         // API call to delete multiple products
-        console.log('Bulk deleting products:', ids);
+        console.log("Bulk deleting products:", ids);
         toast.success(`${ids.length} products deleted successfully`);
       }}
       onExport={async (format, data, columns) => {
         // Custom export logic
-        console.log('Exporting data:', format, data.length, 'items');
-        toast.success('Export completed successfully');
+        console.log("Exporting data:", format, data.length, "items");
+        toast.success("Export completed successfully");
       }}
       onRefresh={async () => {
         setLoading(true);
         // API call to refresh data
         setTimeout(() => setLoading(false), 1000);
       }}
-      
       // Advanced features
       enableAnalytics={true}
       autoRefresh={true}
       refreshInterval={60000}
       density="comfortable"
-      
-      // Customization
-      title="Products"
-      subtitle="Manage your product inventory"
     />
   );
 }
@@ -212,19 +214,19 @@ export function EnhancedUsersPage() {
   const [users, setUsers] = useState([]);
 
   const columns: Column<any>[] = [
-    { key: 'name', header: 'Name', sortable: true, searchable: true },
-    { key: 'email', header: 'Email', sortable: true, searchable: true },
-    { key: 'role', header: 'Role', filterable: true },
-    { key: 'status', header: 'Status', filterable: true }
+    { key: "name", header: "Name", sortable: true, searchable: true },
+    { key: "email", header: "Email", sortable: true, searchable: true },
+    { key: "role", header: "Role", filterable: true },
+    { key: "status", header: "Status", filterable: true },
   ];
 
   const formFields: FormField[] = [
-    createTextField('name', 'Full Name', { validation: { required: true } }),
-    createEmailField('email', 'Email', { validation: { required: true } }),
-    createSelectField('role', 'Role', [
-      { value: 'admin', label: 'Administrator' },
-      { value: 'user', label: 'User' }
-    ])
+    createTextField("name", "Full Name", { validation: { required: true } }),
+    createEmailField("email", "Email", { validation: { required: true } }),
+    createSelectField("role", "Role", [
+      { value: "admin", label: "Administrator" },
+      { value: "user", label: "User" },
+    ]),
   ];
 
   return (
@@ -234,7 +236,7 @@ export function EnhancedUsersPage() {
       entityNamePlural="users"
       entityConfig={{
         icon: Users,
-        color: 'text-green-600'
+        color: "text-green-600",
       }}
       columns={columns}
       formFields={formFields}
@@ -354,4 +356,4 @@ USAGE IN PAGES:
 - UnitsPage: Unit management
 - OrdersPage: Order processing
 - Any custom entity: Just configure and use!
-*/ 
+*/
