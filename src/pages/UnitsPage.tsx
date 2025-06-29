@@ -121,6 +121,97 @@ export default function UnitsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
 
+  // Enhanced columns configuration with translations
+  const columns: Column<Record<string, any>>[] = useMemo(() => [
+    {
+      key: 'name',
+      header: t('units.name', 'Unit Name'),
+      sortable: true,
+      filterable: true,
+      searchable: true,
+      exportable: true,
+      sticky: true,
+      width: '200px',
+      render: (name: string, unit: Record<string, any>) => (
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-mono shadow-sm">
+            {unit.symbol}
+          </div>
+          <div>
+            <div className="font-medium text-gray-900">{name}</div>
+            <div className="text-sm text-gray-500 capitalize">{unit.type}</div>
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'nameEn',
+      header: 'English Name',
+      render: (nameEn: string) => (
+        <span className="text-gray-700">{nameEn || '-'}</span>
+      ),
+      exportable: true
+    },
+    {
+      key: 'symbol',
+      header: t('units.symbol', 'Symbol'),
+      render: (symbol: string) => (
+        <span className="font-mono bg-gray-100 px-2 py-1 rounded text-sm font-medium">{symbol}</span>
+      ),
+      exportable: true
+    },
+    {
+      key: 'type',
+      header: t('units.type', 'Type'),
+      render: (type: string) => {
+        const typeColors = {
+          piece: 'bg-blue-100 text-blue-800',
+          weight: 'bg-purple-100 text-purple-800',
+          volume: 'bg-green-100 text-green-800',
+          length: 'bg-orange-100 text-orange-800'
+        };
+        return (
+          <Badge variant="outline" className={`${typeColors[type as keyof typeof typeColors]} border-0`}>
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Badge>
+        );
+      },
+      sortable: true,
+      filterable: true,
+      exportable: true
+    },
+    {
+      key: 'conversionRate',
+      header: 'Conversion Rate',
+      render: (rate: number) => (
+        <span className="font-mono text-right block">{rate.toFixed(2)}</span>
+      ),
+      sortable: true,
+      type: 'number',
+      exportable: true,
+      align: 'right'
+    },
+    {
+      key: 'baseUnit',
+      header: 'Base Unit',
+      render: (baseUnit: any) => baseUnit ? (
+        <div className="flex items-center space-x-2">
+          <span className="font-medium">{baseUnit.name}</span>
+          <span className="font-mono bg-gray-100 px-1 py-0.5 rounded text-xs">({baseUnit.symbol})</span>
+        </div>
+      ) : <span className="text-gray-400">-</span>,
+      exportable: true
+    },
+    {
+      key: 'status',
+      header: t('units.status', 'Status'),
+      render: renderStatus,
+      sortable: true,
+      filterable: true,
+      exportable: true
+    }
+  ], [t]);
+
   // Form fields with dynamic base units
   const formFields = useMemo((): FormField[] => {
     const baseUnits = units
@@ -131,27 +222,28 @@ export default function UnitsPage() {
       }));
 
     return [
-      createTextField('name', 'Unit Name', {
+      createTextField('name', t('units.name', 'Unit Name'), {
         validation: { required: true, minLength: 1, maxLength: 50 },
-        placeholder: 'Enter unit name',
+        placeholder: t('units.namePlaceholder', 'Enter unit name (e.g., Kilogram)'),
         width: 'half'
       }),
       createTextField('nameEn', 'English Name', {
         placeholder: 'Enter English name',
         width: 'half'
       }),
-      createTextField('symbol', 'Symbol', {
+      createTextField('symbol', t('units.symbol', 'Symbol'), {
         validation: { required: true, maxLength: 10 },
-        placeholder: 'Enter unit symbol (e.g., kg, m, L)',
+        placeholder: t('units.symbolPlaceholder', 'Enter unit symbol (e.g., kg)'),
         width: 'half'
       }),
-      createSelectField('type', 'Type', [
+      createSelectField('type', t('units.type', 'Type'), [
         { value: 'piece', label: 'Piece' },
         { value: 'weight', label: 'Weight' },
         { value: 'volume', label: 'Volume' },
         { value: 'length', label: 'Length' }
       ], {
         validation: { required: true },
+        placeholder: t('units.selectType', 'Select unit type'),
         defaultValue: 'piece',
         width: 'half'
       }),
@@ -168,15 +260,15 @@ export default function UnitsPage() {
         clearable: true,
         width: 'half'
       }),
-      createSelectField('status', 'Status', [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' }
+      createSelectField('status', t('units.status', 'Status'), [
+        { value: 'active', label: t('status.active', 'Active') },
+        { value: 'inactive', label: t('status.inactive', 'Inactive') }
       ], {
         defaultValue: 'active',
         width: 'half'
       })
     ];
-  }, [units]);
+  }, [units, t]);
 
   const stats = useMemo(() => {
     const totalUnits = units.length;
@@ -401,7 +493,7 @@ export default function UnitsPage() {
         description: t("pages.unitsSubtitle", "Manage measurement units for products"),
         category: "configuration",
       }}
-      columns={unitsColumns}
+      columns={columns}
       stats={stats}
       formFields={formFields}
       cardRenderer={cardRenderer}

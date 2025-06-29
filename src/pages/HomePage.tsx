@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Link } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import {
   ShoppingCart,
   Package,
@@ -58,6 +59,8 @@ interface TopProduct {
 }
 
 export default function HomePage() {
+  const { t } = useTranslation();
+  
   const [stats, setStats] = useState<DashboardStats>({
     totalRevenue: 0,
     totalOrders: 0,
@@ -233,7 +236,7 @@ export default function HomePage() {
             <span className={isPositive ? 'text-green-500' : 'text-red-500'}>
               {Math.abs(change)}%
             </span>
-            <span className="ml-1">from last month</span>
+            <span className="ml-1">{t('home.fromLastMonth')}</span>
           </div>
         </CardContent>
       </Card>
@@ -246,6 +249,7 @@ export default function HomePage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <p className="text-center text-muted-foreground mt-4">{t('home.loading')}</p>
       </div>
     );
   }
@@ -255,20 +259,20 @@ export default function HomePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">{t('home.title')}</h1>
           <p className="text-muted-foreground text-sm sm:text-base">
-            Welcome back! Here's what's happening with your store today.
+            {t('home.welcomeMessage')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm" className="hidden sm:flex">
             <Calendar className="h-4 w-4 mr-2" />
-            Last 30 days
+            {t('home.last30Days')}
           </Button>
           <Link to="/pos">
             <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              New Sale
+              {t('home.newSale')}
             </Button>
           </Link>
         </div>
@@ -277,7 +281,7 @@ export default function HomePage() {
       {/* Main Stats */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Total Revenue"
+          title={t('home.totalRevenue')}
           value={stats.totalRevenue}
           change={stats.revenueChange}
           icon={DollarSign}
@@ -285,21 +289,21 @@ export default function HomePage() {
           href="/reports"
         />
         <StatCard
-          title="Total Orders"
+          title={t('home.totalOrders')}
           value={stats.totalOrders}
           change={stats.ordersChange}
           icon={ShoppingCart}
           href="/orders"
         />
         <StatCard
-          title="Products"
+          title={t('home.productsLabel')}
           value={stats.totalProducts}
           change={stats.productsChange}
           icon={Package}
           href="/products"
         />
         <StatCard
-          title="Customers"
+          title={t('home.customers')}
           value={stats.totalUsers}
           change={stats.usersChange}
           icon={Users}
@@ -311,52 +315,52 @@ export default function HomePage() {
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Orders</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('home.todaysOrders')}</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.todayOrders}</div>
             <p className="text-xs text-muted-foreground">
-              {stats.pendingOrders} pending
+              {stats.pendingOrders} {t('home.pending')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Low Stock Alert</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('home.lowStockAlert')}</CardTitle>
             <AlertTriangle className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">{stats.lowStockItems}</div>
             <p className="text-xs text-muted-foreground">
-              Items need restock
+              {t('home.itemsNeedRestock')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Featured Products</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('home.featuredProducts')}</CardTitle>
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.featuredProducts}</div>
             <p className="text-xs text-muted-foreground">
-              Currently featured
+              {t('home.currentlyFeatured')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('home.conversionRate')}</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3.2%</div>
             <p className="text-xs text-muted-foreground">
-              +0.5% from last week
+              +0.5% {t('home.fromLastWeek')}
             </p>
           </CardContent>
         </Card>
@@ -368,11 +372,11 @@ export default function HomePage() {
         <Card className="lg:col-span-4 hover:shadow-lg transition-shadow">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Recent Orders</CardTitle>
+              <CardTitle>{t('home.recentOrders')}</CardTitle>
               <Link to="/orders">
                 <Button variant="outline" size="sm" className="hover:bg-gray-50">
                   <Eye className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">View All</span>
+                  <span className="hidden sm:inline">{t('home.viewAll')}</span>
                 </Button>
               </Link>
             </div>
@@ -393,7 +397,7 @@ export default function HomePage() {
                   <div className="text-right">
                     <p className="font-medium">{formatCurrency(order.total)}</p>
                     <Badge className={getStatusColor(order.status)}>
-                      {order.status}
+                      {t(`home.${order.status}`)}
                     </Badge>
                   </div>
                 </div>
@@ -406,11 +410,11 @@ export default function HomePage() {
         <Card className="lg:col-span-3 hover:shadow-lg transition-shadow">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Top Products</CardTitle>
+              <CardTitle>{t('home.topProducts')}</CardTitle>
               <Link to="/products">
                 <Button variant="outline" size="sm" className="hover:bg-gray-50">
                   <Eye className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">View All</span>
+                  <span className="hidden sm:inline">{t('home.viewAll')}</span>
                 </Button>
               </Link>
             </div>
@@ -426,14 +430,14 @@ export default function HomePage() {
                     <div>
                       <p className="font-medium text-sm">{product.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {product.sales} sold
+                        {product.sales} {t('home.sold')}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="font-medium text-sm">{formatCurrency(product.revenue)}</p>
                     <p className="text-xs text-muted-foreground">
-                      {product.stock} in stock
+                      {product.stock} {t('home.inStock')}
                     </p>
                   </div>
                 </div>
@@ -446,32 +450,32 @@ export default function HomePage() {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
+          <CardTitle>{t('home.quickActions')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link to="/pos">
               <Button variant="outline" className="w-full h-20 flex flex-col">
                 <ShoppingCart className="h-6 w-6 mb-2" />
-                New Sale
+                {t('home.newSale')}
               </Button>
             </Link>
             <Link to="/products">
               <Button variant="outline" className="w-full h-20 flex flex-col">
                 <Plus className="h-6 w-6 mb-2" />
-                Add Product
+                {t('home.addProduct')}
               </Button>
             </Link>
             <Link to="/reports">
               <Button variant="outline" className="w-full h-20 flex flex-col">
                 <BarChart3 className="h-6 w-6 mb-2" />
-                View Reports
+                {t('home.viewReports')}
               </Button>
             </Link>
             <Link to="/users">
               <Button variant="outline" className="w-full h-20 flex flex-col">
                 <Users className="h-6 w-6 mb-2" />
-                Manage Users
+                {t('home.manageUsers')}
               </Button>
             </Link>
           </div>

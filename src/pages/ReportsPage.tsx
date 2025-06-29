@@ -3,25 +3,28 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { BarChart3, Download, Calendar } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 export default function ReportsPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Reports</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('reports.title')}</h1>
           <p className="text-muted-foreground">
-            Analytics and insights for your business
+            {t('reports.subtitle')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm">
             <Calendar className="h-4 w-4 mr-2" />
-            Date Range
+            {t('filters.dateRange')}
           </Button>
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
-            Export
+            {t('export')}
           </Button>
         </div>
       </div>
@@ -31,13 +34,13 @@ export default function ReportsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <BarChart3 className="h-5 w-5 mr-2" />
-              Sales Reports
+              {t('reports.salesReport')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center py-8">
               <BarChart3 className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">Coming Soon</p>
+              <p className="text-sm text-muted-foreground">{t('reports.comingSoon')}</p>
             </div>
           </CardContent>
         </Card>
@@ -46,13 +49,13 @@ export default function ReportsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <BarChart3 className="h-5 w-5 mr-2" />
-              Inventory Reports
+              {t('reports.inventoryReport')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center py-8">
               <BarChart3 className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">Coming Soon</p>
+              <p className="text-sm text-muted-foreground">{t('reports.comingSoon')}</p>
             </div>
           </CardContent>
         </Card>
@@ -61,13 +64,13 @@ export default function ReportsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <BarChart3 className="h-5 w-5 mr-2" />
-              Customer Reports
+              {t('reports.customerReport')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center py-8">
               <BarChart3 className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">Coming Soon</p>
+              <p className="text-sm text-muted-foreground">{t('reports.comingSoon')}</p>
             </div>
           </CardContent>
         </Card>
@@ -75,19 +78,19 @@ export default function ReportsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Reports Dashboard</CardTitle>
+          <CardTitle>{t('reports.dashboard')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-12">
             <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Advanced Reports Coming Soon</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('reports.advancedReportsComingSoon')}</h3>
             <p className="text-muted-foreground mb-4">
-              This page will include detailed analytics, charts, and exportable reports for sales, inventory, and customer data.
+              {t('reports.description')}
             </p>
             <Link to="/dashboard">
               <Button>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                View Dashboard
+                {t('reports.viewDashboard')}
               </Button>
             </Link>
           </div>

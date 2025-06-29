@@ -24,90 +24,6 @@ interface Order {
   itemsCount?: number;
 }
 
-// Orders columns configuration
-const ordersColumns: Column<Record<string, any>>[] = [
-  {
-    key: 'orderNumber',
-    header: 'Order Number',
-    sortable: true,
-    filterable: true,
-    searchable: true,
-    exportable: true,
-    sticky: true,
-    width: '150px',
-    render: (orderNumber: string) => (
-      <div className="flex items-center space-x-2">
-        <Hash className="w-4 h-4 text-gray-400" />
-        <span className="font-mono font-medium text-blue-600">{orderNumber}</span>
-      </div>
-    )
-  },
-  {
-    key: 'customer',
-    header: 'Customer',
-    render: (customer: any) => customer ? (
-      <div>
-        <div className="font-medium text-gray-900">{customer.name}</div>
-        <div className="text-sm text-gray-500">{customer.email}</div>
-      </div>
-    ) : <span className="text-gray-400">-</span>,
-    filterable: true,
-    exportable: true
-  },
-  {
-    key: 'total',
-    header: 'Total',
-    render: (total: number) => (
-      <span className="font-semibold text-green-600 text-lg">
-        {formatCurrency(total)}
-      </span>
-    ),
-    sortable: true,
-    type: 'currency',
-    exportable: true,
-    align: 'right'
-  },
-  {
-    key: 'itemsCount',
-    header: 'Items',
-    render: (count: number) => (
-      <div className="flex items-center justify-center">
-        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-          {count || 0}
-        </span>
-      </div>
-    ),
-    sortable: true,
-    type: 'number',
-    exportable: true,
-    align: 'center'
-  },
-  {
-    key: 'status',
-    header: 'Order Status',
-    render: renderStatus,
-    sortable: true,
-    filterable: true,
-    exportable: true
-  },
-  {
-    key: 'paymentStatus',
-    header: 'Payment',
-    render: renderStatus,
-    sortable: true,
-    filterable: true,
-    exportable: true
-  },
-  {
-    key: 'orderDate',
-    header: 'Order Date',
-    render: renderDate,
-    sortable: true,
-    type: 'date',
-    exportable: true
-  }
-];
-
 export default function OrdersPage() {
   const { t } = useTranslation();
   
@@ -116,7 +32,91 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
 
-  // Form fields with dynamic customer options
+  // Enhanced columns configuration with translations
+  const columns: Column<Record<string, any>>[] = useMemo(() => [
+    {
+      key: 'orderNumber',
+      header: t('orders.orderNumber', 'Order Number'),
+      sortable: true,
+      filterable: true,
+      searchable: true,
+      exportable: true,
+      sticky: true,
+      width: '150px',
+      render: (orderNumber: string) => (
+        <div className="flex items-center space-x-2">
+          <Hash className="w-4 h-4 text-gray-400" />
+          <span className="font-mono font-medium text-blue-600">{orderNumber}</span>
+        </div>
+      )
+    },
+    {
+      key: 'customer',
+      header: t('orders.customer', 'Customer'),
+      render: (customer: any) => customer ? (
+        <div>
+          <div className="font-medium text-gray-900">{customer.name}</div>
+          <div className="text-sm text-gray-500">{customer.email}</div>
+        </div>
+      ) : <span className="text-gray-400">-</span>,
+      filterable: true,
+      exportable: true
+    },
+    {
+      key: 'total',
+      header: t('orders.total', 'Total'),
+      render: (total: number) => (
+        <span className="font-semibold text-green-600 text-lg">
+          {formatCurrency(total)}
+        </span>
+      ),
+      sortable: true,
+      type: 'currency',
+      exportable: true,
+      align: 'right'
+    },
+    {
+      key: 'itemsCount',
+      header: t('orders.items', 'Items'),
+      render: (count: number) => (
+        <div className="flex items-center justify-center">
+          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+            {count || 0}
+          </span>
+        </div>
+      ),
+      sortable: true,
+      type: 'number',
+      exportable: true,
+      align: 'center'
+    },
+    {
+      key: 'status',
+      header: t('orders.status', 'Order Status'),
+      render: renderStatus,
+      sortable: true,
+      filterable: true,
+      exportable: true
+    },
+    {
+      key: 'paymentStatus',
+      header: 'Payment',
+      render: renderStatus,
+      sortable: true,
+      filterable: true,
+      exportable: true
+    },
+    {
+      key: 'orderDate',
+      header: t('orders.date', 'Order Date'),
+      render: renderDate,
+      sortable: true,
+      type: 'date',
+      exportable: true
+    }
+  ], [t]);
+
+  // Form fields with dynamic customer options and translations
   const formFields = useMemo((): FormField[] => {
     const customerOptions = customers.map(c => ({
       value: c.id,
@@ -124,18 +124,18 @@ export default function OrdersPage() {
     }));
 
     return [
-      createTextField('orderNumber', 'Order Number', {
+      createTextField('orderNumber', t('orders.orderNumber', 'Order Number'), {
         validation: { required: true },
         placeholder: 'ORD-001',
         width: 'half'
       }),
-      createSelectField('customerId', 'Customer', customerOptions, {
+      createSelectField('customerId', t('orders.customer', 'Customer'), customerOptions, {
         validation: { required: true },
         placeholder: 'Select customer',
         searchable: true,
         width: 'half'
       }),
-      createCurrencyField('total', 'Total Amount', {
+      createCurrencyField('total', t('orders.total', 'Total Amount'), {
         validation: { required: true, positive: true },
         placeholder: '0.00',
         width: 'half'
@@ -149,19 +149,19 @@ export default function OrdersPage() {
         placeholder: 'Select payment method',
         width: 'half'
       }),
-      createSelectField('status', 'Order Status', [
-        { value: 'pending', label: 'Pending' },
+      createSelectField('status', t('orders.status', 'Order Status'), [
+        { value: 'pending', label: t('status.pending', 'Pending') },
         { value: 'confirmed', label: 'Confirmed' },
         { value: 'processing', label: 'Processing' },
         { value: 'shipped', label: 'Shipped' },
         { value: 'delivered', label: 'Delivered' },
-        { value: 'cancelled', label: 'Cancelled' }
+        { value: 'cancelled', label: t('status.cancelled', 'Cancelled') }
       ], {
         defaultValue: 'pending',
         width: 'half'
       }),
       createSelectField('paymentStatus', 'Payment Status', [
-        { value: 'pending', label: 'Pending' },
+        { value: 'pending', label: t('status.pending', 'Pending') },
         { value: 'paid', label: 'Paid' },
         { value: 'failed', label: 'Failed' },
         { value: 'refunded', label: 'Refunded' }
@@ -169,13 +169,13 @@ export default function OrdersPage() {
         defaultValue: 'pending',
         width: 'half'
       }),
-      createDateField('orderDate', 'Order Date', {
+      createDateField('orderDate', t('orders.date', 'Order Date'), {
         validation: { required: true },
         defaultValue: new Date().toISOString().split('T')[0],
         width: 'half'
       })
     ];
-  }, [customers]);
+  }, [customers, t]);
 
   // Enhanced statistics
   const stats = useMemo(() => {
@@ -429,7 +429,7 @@ export default function OrdersPage() {
         description: t("pages.ordersSubtitle", "Manage customer orders and transactions"),
         category: "sales",
       }}
-      columns={ordersColumns}
+      columns={columns}
       stats={stats}
       formFields={formFields}
       cardRenderer={cardRenderer}

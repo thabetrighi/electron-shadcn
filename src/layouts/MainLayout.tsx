@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
+import { setAppLanguage } from '../helpers/language_helpers';
 import { 
   Menu, 
   X, 
@@ -32,22 +34,11 @@ import {
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
 import { Badge } from '../components/ui/badge';
+import toast from 'react-hot-toast';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
-
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'POS', href: '/pos', icon: ShoppingCart, badge: 2 },
-  { name: 'Products', href: '/products', icon: Package },
-  { name: 'Categories', href: '/categories', icon: FolderTree },
-  { name: 'Units', href: '/units', icon: Ruler },
-  { name: 'Users', href: '/users', icon: Users },
-  { name: 'Orders', href: '/orders', icon: FileText },
-  { name: 'Reports', href: '/reports', icon: BarChart3 },
-  { name: 'Settings', href: '/settings', icon: Settings },
-];
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -58,8 +49,21 @@ const languages = [
 export default function MainLayout({ children }: MainLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
-  const [currentLang, setCurrentLang] = useState('en');
   const location = useLocation();
+  const { t, i18n } = useTranslation();
+
+  // Navigation items with translations
+  const navigation = [
+    { name: t('navigation.dashboard', 'Dashboard'), href: '/', icon: Home },
+    { name: t('navigation.pos', 'POS'), href: '/pos', icon: ShoppingCart, badge: 2 },
+    { name: t('navigation.products', 'Products'), href: '/products', icon: Package },
+    { name: t('navigation.categories', 'Categories'), href: '/categories', icon: FolderTree },
+    { name: t('navigation.units', 'Units'), href: '/units', icon: Ruler },
+    { name: t('navigation.users', 'Users'), href: '/users', icon: Users },
+    { name: t('navigation.orders', 'Orders'), href: '/orders', icon: FileText },
+    { name: t('navigation.reports', 'Reports'), href: '/reports', icon: BarChart3 },
+    { name: t('navigation.settings', 'Settings'), href: '/settings', icon: Settings },
+  ];
 
   // Close sidebar on mobile by default, but keep open on desktop
   useEffect(() => {
@@ -78,7 +82,41 @@ export default function MainLayout({ children }: MainLayoutProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Listen for language changes from other parts of the app
+  useEffect(() => {
+    const handleLanguageChanged = (event: CustomEvent) => {
+      // Force re-render when language changes
+      console.log('Language changed in MainLayout:', event.detail.language);
+    };
+
+    window.addEventListener('languageChanged', handleLanguageChanged as EventListener);
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChanged as EventListener);
+    };
+  }, []);
+
   const isActive = (href: string) => location.pathname === href;
+
+  // Handle language change with proper error handling and feedback
+  const handleLanguageChange = async (langCode: string) => {
+    if (langCode === i18n.language) return;
+    
+    try {
+      const success = await setAppLanguage(langCode, i18n);
+      if (success) {
+        const langName = languages.find(l => l.code === langCode)?.name || langCode;
+        toast.success(`Language changed to ${langName}`, {
+          icon: '🌐',
+          duration: 2000
+        });
+      } else {
+        throw new Error('Failed to change language');
+      }
+    } catch (error) {
+      console.error('Failed to change language:', error);
+      toast.error('Failed to change language');
+    }
+  };
 
   return (
     <div className={`h-screen flex flex-col overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 ${darkMode ? 'dark bg-gradient-to-br from-gray-900 to-gray-800' : ''}`}>
@@ -216,13 +254,16 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   <Menu className="w-5 h-5" />
                 </Button>
 
-                {/* Search */}
-                <div className="relative hidden md:block">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search anything..."
-                    className="pl-10 w-64 bg-gray-50/50 border-gray-200/50 focus:bg-white focus:border-blue-300 transition-all duration-200"
-                  />
+                {/* Search Bar */}
+                <div className="flex-1 max-w-md">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      type="text"
+                      placeholder={t('layout.searchPlaceholder', 'Search anything...')}
+                      className="pl-10 pr-4 py-2 w-full bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -241,7 +282,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="hover:bg-gray-100 rounded-full">
                       <Globe className="w-4 h-4 mr-2" />
-                      {languages.find(l => l.code === currentLang)?.flag}
+                      {languages.find(l => l.code === i18n.language)?.flag}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -250,12 +291,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
                     {languages.map((lang) => (
                       <DropdownMenuItem
                         key={lang.code}
-                        onClick={() => setCurrentLang(lang.code)}
+                        onClick={() => handleLanguageChange(lang.code)}
                         className="flex items-center"
                       >
                         <span className="mr-2">{lang.flag}</span>
                         {lang.name}
-                        {currentLang === lang.code && (
+                        {i18n.language === lang.code && (
                           <span className="ml-auto text-blue-600">✓</span>
                         )}
                       </DropdownMenuItem>

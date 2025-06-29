@@ -126,43 +126,43 @@ export default function CategoriesPage() {
     }));
 
     return [
-      createTextField('name', 'Category Name', {
+      createTextField('name', t('categories.name', 'Category Name'), {
         validation: { required: true, minLength: 2, maxLength: 100 },
-        placeholder: 'Enter category name',
+        placeholder: t('categories.namePlaceholder', 'Enter category name'),
         width: 'full'
       }),
-      createTextField('nameEn', 'English Name', {
-        placeholder: 'Enter English name',
+      createTextField('nameEn', t('categories.englishName', 'English Name'), {
+        placeholder: t('categories.englishNamePlaceholder', 'Enter English name'),
         width: 'half'
       }),
-      createTextField('nameFr', 'French Name', {
-        placeholder: 'Enter French name',
+      createTextField('nameFr', t('categories.frenchName', 'French Name'), {
+        placeholder: t('categories.frenchNamePlaceholder', 'Enter French name'),
         width: 'half'
       }),
-      createTextField('nameAr', 'Arabic Name', {
-        placeholder: 'Enter Arabic name',
+      createTextField('nameAr', t('categories.arabicName', 'Arabic Name'), {
+        placeholder: t('categories.arabicNamePlaceholder', 'Enter Arabic name'),
         width: 'half'
       }),
-      createSelectField('parentId', 'Parent Category', parentCategories, {
-        placeholder: 'Select parent category (optional)',
+      createSelectField('parentId', t('categories.parent', 'Parent Category'), parentCategories, {
+        placeholder: t('categories.selectParent', 'Select parent category (optional)'),
         searchable: true,
         clearable: true,
         width: 'half'
       }),
-      createSelectField('status', 'Status', [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' }
+      createSelectField('status', t('categories.status', 'Status'), [
+        { value: 'active', label: t('status.active', 'Active') },
+        { value: 'inactive', label: t('status.inactive', 'Inactive') }
       ], {
         defaultValue: 'active',
         width: 'half'
       }),
-      createTextareaField('description', 'Description', {
+      createTextareaField('description', t('categories.description', 'Description'), {
         rows: 3,
-        placeholder: 'Enter category description (optional)',
+        placeholder: t('categories.descriptionPlaceholder', 'Enter category description (optional)'),
         width: 'full'
       })
     ];
-  }, [categories]);
+  }, [categories, t]);
 
   // Enhanced statistics
   const stats = useMemo(() => {

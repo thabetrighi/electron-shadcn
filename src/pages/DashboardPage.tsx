@@ -31,7 +31,7 @@ export default function DashboardPage() {
     users: 0,
   });
   const { settings } = useSettings();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     initializeDatabase();
@@ -84,35 +84,35 @@ export default function DashboardPage() {
 
   const systemStats = [
     {
-      name: 'Language',
+      name: t('settings.language', 'Language'),
       icon: <Globe className="w-4 h-4" />,
       settingKey: 'language',
       systemValue: i18n.language,
       status: getSettingStatus('language', i18n.language)
     },
     {
-      name: 'Theme',
+      name: t('dashboard.themeMode', 'Theme'),
       icon: <Palette className="w-4 h-4" />,
       settingKey: 'theme_mode',
-      systemValue: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+      systemValue: document.documentElement.classList.contains('dark') ? t('system.dark', 'dark') : t('system.light', 'light'),
       status: true // Theme is always working
     },
     {
-      name: 'Font Size',
+      name: t('dashboard.rootFontSize', 'Font Size'),
       icon: <Type className="w-4 h-4" />,
       settingKey: 'font_size',
       systemValue: getComputedStyle(document.documentElement).fontSize,
       status: true // Font size is always applied
     },
     {
-      name: 'Compact Mode',
+      name: t('settings.compactMode', 'Compact Mode'),
       icon: <Layout className="w-4 h-4" />,
       settingKey: 'compact_mode',
       systemValue: document.documentElement.classList.contains('compact-mode'),
       status: getSettingStatus('compact_mode', document.documentElement.classList.contains('compact-mode'))
     },
     {
-      name: 'Currency',
+      name: t('settings.currency', 'Currency'),
       icon: <DollarSign className="w-4 h-4" />,
       settingKey: 'currency_code',
       systemValue: getCurrentValue('currency_code'),
@@ -123,7 +123,7 @@ export default function DashboardPage() {
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('dashboard.title', 'Dashboard')}</h2>
         <div className="flex items-center space-x-2">
           <LangToggle variant="select" showLabel showSettingsLink />
         </div>
@@ -133,45 +133,45 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.totalSales', 'Total Sales')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">$45,231.89</div>
-            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.fromLastMonth', '+{{percent}}% from last month', { percent: 20.1 })}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Orders</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.orders', 'Orders')}</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+2350</div>
-            <p className="text-xs text-muted-foreground">+180.1% from last month</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.fromLastMonth', '+{{percent}}% from last month', { percent: 180.1 })}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Customers</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.customers', 'Customers')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+12,234</div>
-            <p className="text-xs text-muted-foreground">+19% from last month</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.fromLastMonth', '+{{percent}}% from last month', { percent: 19 })}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.activeNow', 'Active Now')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">+201 since last hour</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.sinceLastHour', '+{{count}} since last hour', { count: 201 })}</p>
           </CardContent>
         </Card>
       </div>
@@ -181,10 +181,10 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TestTube className="w-5 h-5 text-green-600" />
-            Settings Integration Status
+            {t('dashboard.settingsIntegration', 'Settings Integration Status')}
           </CardTitle>
           <CardDescription>
-            Real-time status of system settings integration
+            {t('dashboard.settingsIntegrationSubtitle', 'Real-time status of system settings integration')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -197,7 +197,7 @@ export default function DashboardPage() {
                     <p className="font-medium text-sm">{stat.name}</p>
                     <p className="text-xs text-gray-600 truncate max-w-32">
                       {typeof stat.systemValue === 'boolean' ? 
-                        (stat.systemValue ? 'Enabled' : 'Disabled') : 
+                        (stat.systemValue ? t('status.enabled', 'Enabled') : t('status.disabled', 'Disabled')) : 
                         stat.systemValue
                       }
                     </p>
@@ -207,11 +207,11 @@ export default function DashboardPage() {
                   {stat.status ? (
                     <Badge className="bg-green-100 text-green-800 text-xs px-2 py-1">
                       <CheckCircle className="w-3 h-3 mr-1" />
-                      Active
+                      {t('status.active', 'Active')}
                     </Badge>
                   ) : (
                     <Badge variant="secondary" className="text-xs px-2 py-1">
-                      Inactive
+                      {t('status.inactive', 'Inactive')}
                     </Badge>
                   )}
                 </div>
@@ -222,30 +222,30 @@ export default function DashboardPage() {
           <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
               <Settings className="w-4 h-4 text-blue-600" />
-              <h4 className="font-semibold text-blue-800">Quick System Info</h4>
+              <h4 className="font-semibold text-blue-800">{t('dashboard.quickSystemInfo', 'Quick System Info')}</h4>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
-                <span className="text-blue-700 font-medium">Current Language:</span>
+                <span className="text-blue-700 font-medium">{t('dashboard.currentLanguage', 'Current Language')}:</span>
                 <br />
                 <span className="text-blue-600">{i18n.language.toUpperCase()}</span>
               </div>
               <div>
-                <span className="text-blue-700 font-medium">Theme Mode:</span>
+                <span className="text-blue-700 font-medium">{t('dashboard.themeMode', 'Theme Mode')}:</span>
                 <br />
                 <span className="text-blue-600">
-                  {document.documentElement.classList.contains('dark') ? 'Dark' : 'Light'}
+                  {document.documentElement.classList.contains('dark') ? t('system.dark', 'Dark') : t('system.light', 'Light')}
                 </span>
               </div>
               <div>
-                <span className="text-blue-700 font-medium">Root Font Size:</span>
+                <span className="text-blue-700 font-medium">{t('dashboard.rootFontSize', 'Root Font Size')}:</span>
                 <br />
                 <span className="text-blue-600">{getComputedStyle(document.documentElement).fontSize}</span>
               </div>
               <div>
-                <span className="text-blue-700 font-medium">Settings Count:</span>
+                <span className="text-blue-700 font-medium">{t('dashboard.settingsCount', 'Settings Count')}:</span>
                 <br />
-                <span className="text-blue-600">{settings.length} loaded</span>
+                <span className="text-blue-600">{t('dashboard.settingsLoaded', '{{count}} loaded', { count: settings.length })}</span>
               </div>
             </div>
           </div>
@@ -256,13 +256,13 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
+            <CardTitle>{t('dashboard.overview', 'Overview')}</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <div className="h-[300px] flex items-center justify-center bg-gray-50 rounded-lg">
               <div className="text-center">
                 <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-600">Chart visualization would go here</p>
+                <p className="text-gray-600">{t('dashboard.chartPlaceholder', 'Chart visualization would go here')}</p>
               </div>
             </div>
           </CardContent>
@@ -270,8 +270,8 @@ export default function DashboardPage() {
         
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your recent activities and updates</CardDescription>
+            <CardTitle>{t('dashboard.recentActivity', 'Recent Activity')}</CardTitle>
+            <CardDescription>{t('dashboard.recentActivitySubtitle', 'Your recent activities and updates')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -280,8 +280,8 @@ export default function DashboardPage() {
                   <Settings className="w-4 h-4 text-blue-600" />
                 </div>
                 <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium">Settings updated</p>
-                  <p className="text-xs text-gray-500">Language and theme preferences saved</p>
+                  <p className="text-sm font-medium">{t('dashboard.settingsUpdated', 'Settings updated')}</p>
+                  <p className="text-xs text-gray-500">{t('dashboard.settingsUpdatedDesc', 'Language and theme preferences saved')}</p>
                 </div>
               </div>
               
@@ -290,8 +290,8 @@ export default function DashboardPage() {
                   <CheckCircle className="w-4 h-4 text-green-600" />
                 </div>
                 <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium">System integration active</p>
-                  <p className="text-xs text-gray-500">All settings are working correctly</p>
+                  <p className="text-sm font-medium">{t('dashboard.systemIntegrationActive', 'System integration active')}</p>
+                  <p className="text-xs text-gray-500">{t('dashboard.systemIntegrationDesc', 'All settings are working correctly')}</p>
                 </div>
               </div>
               
@@ -300,8 +300,8 @@ export default function DashboardPage() {
                   <Monitor className="w-4 h-4 text-purple-600" />
                 </div>
                 <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium">Dashboard loaded</p>
-                  <p className="text-xs text-gray-500">Welcome to your POS system</p>
+                  <p className="text-sm font-medium">{t('dashboard.dashboardLoaded', 'Dashboard loaded')}</p>
+                  <p className="text-xs text-gray-500">{t('dashboard.dashboardLoadedDesc', 'Welcome to your POS system')}</p>
                 </div>
               </div>
             </div>

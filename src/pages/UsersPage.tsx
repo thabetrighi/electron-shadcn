@@ -129,6 +129,108 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
 
+  // Enhanced columns configuration with translations
+  const columns: Column<Record<string, any>>[] = useMemo(() => [
+    {
+      key: 'name',
+      header: t('users.name', 'Name'),
+      sortable: true,
+      filterable: true,
+      searchable: true,
+      exportable: true,
+      sticky: true,
+      width: '250px',
+      render: (name: string, user: Record<string, any>) => (
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm shadow-md">
+            {name?.charAt(0)?.toUpperCase() || '?'}
+          </div>
+          <div>
+            <div className="font-medium text-gray-900">{name}</div>
+            <div className="text-sm text-gray-500">{user.email}</div>
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'role',
+      header: t('users.role', 'Role'),
+      render: renderUserRole,
+      sortable: true,
+      filterable: true,
+      exportable: true
+    },
+    {
+      key: 'phone',
+      header: t('users.phone', 'Phone'),
+      render: renderPhone,
+      exportable: true
+    },
+    {
+      key: 'status',
+      header: t('users.status', 'Status'),
+      render: renderStatus,
+      sortable: true,
+      filterable: true,
+      exportable: true
+    },
+    {
+      key: 'lastLoginAt',
+      header: 'Last Login',
+      render: (date: string) => date ? renderDateTime(date) : <span className="text-gray-400">Never</span>,
+      sortable: true,
+      type: 'date',
+      exportable: true
+    },
+    {
+      key: 'createdAt',
+      header: t('users.created', 'Created'),
+      render: renderDate,
+      sortable: true,
+      type: 'date',
+      exportable: true
+    }
+  ], [t]);
+
+  // Form fields configuration with translations
+  const formFields: FormField[] = useMemo(() => [
+    createTextField('name', t('users.name', 'Full Name'), {
+      validation: { required: true, minLength: 2, maxLength: 100 },
+      placeholder: t('users.namePlaceholder', 'Enter full name'),
+      width: 'full'
+    }),
+    createEmailField('email', t('users.email', 'Email Address'), {
+      validation: { required: true, email: true },
+      placeholder: t('users.emailPlaceholder', 'Enter email address'),
+      width: 'half'
+    }),
+    createTextField('phone', t('users.phone', 'Phone Number'), {
+      placeholder: t('users.phonePlaceholder', 'Enter phone number'),
+      width: 'half'
+    }),
+    createSelectField('role', t('users.role', 'Role'), [
+      { value: 'client', label: 'Client' },
+      { value: 'supplier', label: 'Supplier' },
+      { value: 'admin', label: 'Administrator' }
+    ], {
+      placeholder: t('users.selectRole', 'Select user role'),
+      defaultValue: 'client',
+      width: 'half'
+    }),
+    createSelectField('status', t('users.status', 'Status'), [
+      { value: 'active', label: t('status.active', 'Active') },
+      { value: 'inactive', label: t('status.inactive', 'Inactive') }
+    ], {
+      defaultValue: 'active',
+      width: 'half'
+    }),
+    createTextareaField('address', 'Address', {
+      rows: 3,
+      placeholder: 'Enter full address (optional)',
+      width: 'full'
+    })
+  ], [t]);
+
   // Enhanced statistics
   const stats = useMemo(() => {
     const totalUsers = users.length;
@@ -340,9 +442,9 @@ export default function UsersPage() {
         description: t("pages.usersSubtitle", "Manage system users and their roles"),
         category: "administration",
       }}
-      columns={usersColumns}
-      stats={stats}
-      formFields={usersFormFields}
+              columns={columns}
+        stats={stats}
+        formFields={formFields}
       cardRenderer={cardRenderer}
       onAdd={handleAdd}
       onEdit={handleEdit}

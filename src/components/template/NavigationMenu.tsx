@@ -32,63 +32,63 @@ export default function NavigationMenu() {
         <NavigationMenuItem>
           <Link to="/dashboard">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Dashboard
+              {t("navigation.dashboard")}
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link to="/pos">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              POS
+              {t("navigation.pos")}
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link to="/products">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Products
+              {t("navigation.products")}
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link to="/categories">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Categories
+              {t("navigation.categories")}
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link to="/units">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Units
+              {t("navigation.units")}
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link to="/users">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Users
+              {t("navigation.users")}
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link to="/orders">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Orders
+              {t("navigation.orders")}
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link to="/reports">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Reports
+              {t("navigation.reports")}
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link to="/settings">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Settings
+              {t("navigation.settings")}
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
