@@ -106,7 +106,9 @@ export default function ProductsPage() {
         <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
           {sku}
         </span>
-      ) : '-'
+      ) : (
+        <span className="text-gray-400">-</span>
+      )
     },
     {
       key: 'sellingPrice',
@@ -115,7 +117,7 @@ export default function ProductsPage() {
       render: (price: number) => renderCurrency(price),
       type: 'currency',
       exportable: true,
-      align: 'right'
+      align: 'right' as const
     },
     {
       key: 'currentStock',
@@ -124,25 +126,29 @@ export default function ProductsPage() {
       render: (stock: number, product: Product) => renderStock(stock, product.minStock || 10),
       type: 'number',
       exportable: true,
-      align: 'right'
+      align: 'right' as const
     },
     {
       key: 'category',
       header: t('products.category', 'Category'),
-      render: (category: any) => category?.name || '-',
+      render: (category: any) => category?.name || (
+        <span className="text-gray-400">{t('common.none', 'None')}</span>
+      ),
       filterable: true,
       exportable: true
     },
     {
       key: 'unit',
       header: t('products.unit', 'Unit'),
-      render: (unit: any) => unit ? `${unit.name} (${unit.symbol})` : '-',
+      render: (unit: any) => unit ? `${unit.name} (${unit.symbol})` : (
+        <span className="text-gray-400">{t('common.none', 'None')}</span>
+      ),
       exportable: true
     },
     {
       key: 'isActive',
       header: t('products.status', 'Status'),
-      render: (isActive: boolean) => renderStatus(isActive ? 'active' : 'inactive'),
+      render: (isActive: boolean) => renderStatus(isActive ? t('status.active', 'active') : t('status.inactive', 'inactive')),
       sortable: true,
       filterable: true,
       exportable: true

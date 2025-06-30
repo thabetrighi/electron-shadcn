@@ -1,4 +1,5 @@
 ﻿import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Button } from './button';
 import { Input } from './input';
@@ -45,6 +46,7 @@ export function DataTable<T extends Record<string, any>>({
   onRefresh,
   title
 }: DataTableProps<T>) {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortKey, setSortKey] = useState<keyof T | null>(null);
@@ -89,19 +91,23 @@ export function DataTable<T extends Record<string, any>>({
         <div>
           {title && <h2 className="text-2xl font-bold tracking-tight">{title}</h2>}
           <p className="text-sm text-muted-foreground">
-            Showing {paginatedData.length} of {filteredData.length} results
+            {t('table.showingXofY', 'Showing {{start}}-{{end}} of {{total}}', {
+              start: startIndex + 1,
+              end: Math.min(startIndex + pageSize, filteredData.length),
+              total: filteredData.length
+            })}
           </p>
         </div>
         <div className="flex items-center space-x-2">
           {onRefresh && (
             <Button variant="outline" onClick={onRefresh}>
-              Refresh
+              {t('common.refresh', 'Refresh')}
             </Button>
           )}
           {onAdd && (
             <Button onClick={onAdd}>
               <Plus className="w-4 h-4 mr-2" />
-              Add New
+              {t('table.addNew', 'Add New')}
             </Button>
           )}
         </div>
@@ -113,7 +119,7 @@ export function DataTable<T extends Record<string, any>>({
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              placeholder="Search..."
+              placeholder={t('table.searchPlaceholder', 'Search...')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -144,7 +150,7 @@ export function DataTable<T extends Record<string, any>>({
                 </TableHead>
               ))}
               {actions.length > 0 && (
-                <TableHead className="w-[100px]">Actions</TableHead>
+                <TableHead className="w-[100px]">{t('table.actions', 'Actions')}</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -152,13 +158,13 @@ export function DataTable<T extends Record<string, any>>({
             {loading ? (
               <TableRow>
                 <TableCell colSpan={columns.length + (actions.length > 0 ? 1 : 0)} className="text-center py-8">
-                  Loading...
+                  {t('table.loadingData', 'Loading...')}
                 </TableCell>
               </TableRow>
             ) : paginatedData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={columns.length + (actions.length > 0 ? 1 : 0)} className="text-center py-8">
-                  No data found
+                  {t('table.noDataFound', 'No data found')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -208,9 +214,6 @@ export function DataTable<T extends Record<string, any>>({
       {/* Pagination */}
       {paginated && totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
-          </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
@@ -219,33 +222,23 @@ export function DataTable<T extends Record<string, any>>({
               disabled={currentPage === 1}
             >
               <ChevronLeft className="h-4 w-4" />
-              Previous
+              {t('tablePagination.previous', 'Previous')}
             </Button>
-            
             <div className="flex items-center space-x-1">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-                return (
-                  <Button
-                    key={pageNum}
-                    variant={currentPage === pageNum ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(pageNum)}
-                    className="w-8 h-8"
-                  >
-                    {pageNum}
-                  </Button>
-                );
-              })}
+              <span className="text-sm text-muted-foreground">
+                {t('tablePagination.pageXofY', 'Page {{current}} of {{total}}', {
+                  current: currentPage,
+                  total: totalPages
+                })}
+              </span>
             </div>
-            
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
             >
-              Next
+              {t('tablePagination.next', 'Next')}
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -255,21 +248,21 @@ export function DataTable<T extends Record<string, any>>({
   );
 }
 
-// Helper functions for common renderers and actions
-export const createEditAction = <T,>(onEdit: (row: T) => void): Action<T> => ({
-  label: 'Edit',
+// Helper functions for creating common actions with translation support
+export const createEditAction = <T,>(onEdit: (row: T) => void, t?: any): Action<T> => ({
+  label: t ? t('actions.edit', 'Edit') : 'Edit',
   icon: Edit,
   onClick: onEdit,
-  variant: 'default'
 });
 
-export const createDeleteAction = <T,>(onDelete: (row: T) => void): Action<T> => ({
-  label: 'Delete',
+export const createDeleteAction = <T,>(onDelete: (row: T) => void, t?: any): Action<T> => ({
+  label: t ? t('actions.delete', 'Delete') : 'Delete',
   icon: Trash2,
   onClick: onDelete,
-  variant: 'destructive'
+  variant: 'destructive' as const,
 });
 
+// Helper functions for rendering common data types
 export const renderStatus = (status: string) => (
   <Badge variant={status === 'active' ? 'default' : 'secondary'}>
     {status}
@@ -277,14 +270,11 @@ export const renderStatus = (status: string) => (
 );
 
 export const renderCurrency = (amount: number | null | undefined) => {
-  if (amount === null || amount === undefined || isNaN(amount)) {
-    return <span className="font-medium text-gray-400">$0.00</span>;
-  }
-  return (
-    <span className="font-medium text-green-600">
-      ${amount.toFixed(2)}
-    </span>
-  );
+  if (amount == null) return '-';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  }).format(amount);
 };
 
 export const renderDate = (date: string) => (

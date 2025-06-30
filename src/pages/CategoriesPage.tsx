@@ -24,99 +24,98 @@ interface Category {
   productsCount?: number;
 }
 
-// Categories columns configuration
-const categoriesColumns: Column<Record<string, any>>[] = [
-  {
-    key: 'name',
-    header: 'Category Name',
-    sortable: true,
-    filterable: true,
-    searchable: true,
-    exportable: true,
-    sticky: true,
-    width: '280px',
-    render: (name: string, category: Record<string, any>) => (
-      <div className="flex items-center space-x-3">
-        <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center text-white shadow-md">
-          <Archive className="w-5 h-5" />
-        </div>
-        <div>
-          <div className="font-medium text-gray-900">{name}</div>
-          {category.parent && (
-            <div className="text-sm text-gray-500 flex items-center">
-              <span className="text-gray-400 mr-1">Under:</span>
-              <span className="font-medium">{category.parent.name}</span>
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  },
-  {
-    key: 'nameEn',
-    header: 'English Name',
-    render: (nameEn: string) => (
-      <span className="text-gray-700">{nameEn || '-'}</span>
-    ),
-    exportable: true
-  },
-  {
-    key: 'nameFr',
-    header: 'French Name',
-    render: (nameFr: string) => (
-      <span className="text-gray-700">{nameFr || '-'}</span>
-    ),
-    exportable: true
-  },
-  {
-    key: 'nameAr',
-    header: 'Arabic Name',
-    render: (nameAr: string) => (
-      <span className="text-gray-700 text-right">{nameAr || '-'}</span>
-    ),
-    exportable: true,
-    align: 'right'
-  },
-  {
-    key: 'productsCount',
-    header: 'Products',
-    render: (count: number) => (
-      <div className="flex items-center justify-center">
-        <div className="flex items-center space-x-2 bg-blue-50 px-3 py-1 rounded-full">
-          <Package className="w-4 h-4 text-blue-600" />
-          <span className="font-medium text-blue-700">{count || 0}</span>
-        </div>
-      </div>
-    ),
-    sortable: true,
-    type: 'number',
-    exportable: true,
-    align: 'center'
-  },
-  {
-    key: 'status',
-    header: 'Status',
-    render: renderStatus,
-    sortable: true,
-    filterable: true,
-    exportable: true
-  },
-  {
-    key: 'createdAt',
-    header: 'Created',
-    render: renderDate,
-    sortable: true,
-    type: 'date',
-    exportable: true
-  }
-];
-
 export default function CategoriesPage() {
   const { t } = useTranslation();
-  
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
+
+  // Categories columns configuration
+  const categoriesColumns: Column<Record<string, any>>[] = useMemo(() => [
+    {
+      key: 'name',
+      header: t('categories.name', 'Category Name'),
+      sortable: true,
+      filterable: true,
+      searchable: true,
+      exportable: true,
+      sticky: true,
+      width: '280px',
+      render: (name: string, category: Record<string, any>) => (
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center text-white shadow-md">
+            <Archive className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="font-medium text-gray-900">{name}</div>
+            {category.parent && (
+              <div className="text-sm text-gray-500 flex items-center">
+                <span className="text-gray-400 mr-1">{t('categories.under', 'Under')}:</span>
+                <span className="font-medium">{category.parent.name}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'nameEn',
+      header: t('categories.englishName', 'English Name'),
+      render: (nameEn: string) => (
+        <span className="text-gray-700">{nameEn || <span className="text-gray-400">{t('common.none', '-')}</span>}</span>
+      ),
+      exportable: true
+    },
+    {
+      key: 'nameFr',
+      header: t('categories.frenchName', 'French Name'),
+      render: (nameFr: string) => (
+        <span className="text-gray-700">{nameFr || <span className="text-gray-400">{t('common.none', '-')}</span>}</span>
+      ),
+      exportable: true
+    },
+    {
+      key: 'nameAr',
+      header: t('categories.arabicName', 'Arabic Name'),
+      render: (nameAr: string) => (
+        <span className="text-gray-700 text-right">{nameAr || <span className="text-gray-400">{t('common.none', '-')}</span>}</span>
+      ),
+      exportable: true,
+      align: 'right' as const
+    },
+    {
+      key: 'productsCount',
+      header: t('categories.products', 'Products'),
+      render: (count: number) => (
+        <div className="flex items-center justify-center">
+          <div className="flex items-center space-x-2 bg-blue-50 px-3 py-1 rounded-full">
+            <Package className="w-4 h-4 text-blue-600" />
+            <span className="font-medium text-blue-700">{count || 0}</span>
+          </div>
+        </div>
+      ),
+      sortable: true,
+      type: 'number',
+      exportable: true,
+      align: 'center' as const
+    },
+    {
+      key: 'status',
+      header: t('categories.status', 'Status'),
+      render: (status: string) => renderStatus(t(`status.${status}`, status)),
+      sortable: true,
+      filterable: true,
+      exportable: true
+    },
+    {
+      key: 'createdAt',
+      header: t('categories.created', 'Created'),
+      render: renderDate,
+      sortable: true,
+      type: 'date',
+      exportable: true
+    }
+  ], [t]);
 
   // Form fields with dynamic parent categories
   const formFields = useMemo((): FormField[] => {
@@ -394,7 +393,6 @@ export default function CategoriesPage() {
       entityConfig={{
         icon: Archive,
         color: "text-orange-600",
-        description: t("pages.categoriesSubtitle", "Organize products into categories"),
         category: "organization",
       }}
       columns={categoriesColumns}

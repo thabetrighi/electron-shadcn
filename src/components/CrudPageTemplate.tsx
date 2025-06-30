@@ -320,7 +320,7 @@ export function CrudPageTemplate<T extends Record<string, any>>({
     const baseStats: Stats[] = [
       {
         label: t("stats.total", "Total {{entity}}", {
-          entity: t(entityNamePlural),
+          entity: t(`${entityNamePlural}.title`),
         }),
         value: data.length,
         icon: entityConfig.icon || Package,
@@ -534,7 +534,7 @@ export function CrudPageTemplate<T extends Record<string, any>>({
 
     if (onBulkDelete && permissions.delete) {
       baseBulkActions.push({
-        label: t("bulkActions.deleteSelected", "Delete Selected"),
+        label: t("table.deleteSelected", "Delete Selected"),
         icon: Trash2,
         onClick: (selectedItems) => handleBulkDeleteClick(selectedItems),
         variant: "destructive",
@@ -824,7 +824,7 @@ export function CrudPageTemplate<T extends Record<string, any>>({
       } else {
         // Use default export utility
         exportData(format, dataToExport, exportColumns, {
-          title: title || t(entityNamePlural),
+          title: title || t(`${entityNamePlural}.title`),
           subtitle: subtitle,
           filename: `${entityNamePlural}_${new Date().toISOString().split("T")[0]}`,
         });
@@ -894,7 +894,7 @@ export function CrudPageTemplate<T extends Record<string, any>>({
           )}
           <div>
             <h1 className="mb-1 text-4xl font-bold tracking-tight text-gray-900">
-              {title || t(entityNamePlural)}
+              {title || t(`${entityNamePlural}.title`)}
             </h1>
             {subtitle && <p className="text-lg text-gray-600">{subtitle}</p>}
             {entityConfig.description && (

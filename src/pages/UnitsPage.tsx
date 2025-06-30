@@ -490,7 +490,7 @@ export default function UnitsPage() {
       entityConfig={{
         icon: Target,
         color: "text-indigo-600",
-        description: t("pages.unitsSubtitle", "Manage measurement units for products"),
+        description: t("units.description", "Manage measurement units for products"),
         category: "configuration",
       }}
       columns={columns}
@@ -502,8 +502,7 @@ export default function UnitsPage() {
       onDelete={handleDelete}
       onBulkDelete={handleBulkDelete}
       onRefresh={handleRefresh}
-      title={t("pages.units", "Units")}
-      subtitle={t("pages.unitsSubtitle", "Manage measurement units for products")}
+      title={t("units.title", "Units")}
     />
   );
 }

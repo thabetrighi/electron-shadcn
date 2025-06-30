@@ -6,7 +6,7 @@ export const translations = {
       titleHomePage: "Home Page",
       titleSecondPage: "Second Page",
       
-      // Common Actions
+      // Common Actions  
       cancel: "Cancel",
       save: "Save",
       edit: "Edit",
@@ -29,6 +29,248 @@ export const translations = {
       print: "Print",
       clearFilters: "Clear Filters",
       showingXofY: "Showing {{start}}-{{end}} of {{total}}",
+      duplicate: "Duplicate",
+      archive: "Archive",
+      restore: "Restore",
+      retry: "Try Again",
+      deleting: "Deleting...",
+      
+      // Common Terms
+      none: "None",
+      all: "All",
+      any: "Any",
+      yes: "Yes",
+      no: "No",
+      ok: "OK",
+      apply: "Apply",
+      clear: "Clear",
+      select: "Select",
+      required: "Required",
+      optional: "Optional",
+      list: "List",
+      noDescription: "No description",
+      enabled: "Enabled",
+      disabled: "Disabled",
+      available: "Available",
+      unavailable: "Unavailable",
+      online: "Online",
+      offline: "Offline",
+      connected: "Connected",
+      disconnected: "Disconnected",
+      success: "Success",
+      error: "Error",
+      warning: "Warning",
+      info: "Information",
+      active: "Active",
+      total: "Total",
+      thisMonth: "This Month",
+      lastLogin: "Last Login",
+      completed: "Completed",
+      totalRevenue: "Total Revenue",
+      averageOrderValue: "Average Order Value",
+      confirmedOrders: "Confirmed Orders",
+      deliveredOrders: "Delivered Orders",
+      payment: "Payment",
+      show: "Show",
+      perPage: "per page",
+      companyInformation: "Company Information",
+      businessName: "Your company or business name",
+      businessAddress: "Your business address",
+      businessPhone: "Your business phone number",
+      businessEmail: "Your business email address",
+      taxNumber: "Business tax/VAT number",
+      taxRatePercentage: "Legacy tax rate percentage",
+      regionalSettings: "Regional & Localization Settings",
+      applicationLanguage: "Application language",
+      businessTimezone: "Business timezone",
+      timeFormat: "12-hour or 24-hour time",
+      firstDayOfWeek: "First day of the week",
+      dateDisplayFormat: "Date display format (short, medium, long, full)",
+      regionalFormatting: "Regional settings for formatting",
+      englishName: "English Name",
+      conversionRate: "Conversion Rate",
+      baseUnit: "Base Unit",
+      myBusiness: "My Business",
+      utc: "UTC",
+      twelveHour: "12-hour (1:30 PM)",
+      sunday: "Sunday",
+      usFormat: "MM/DD/YYYY (US Format)",
+      autoRefresh: "Auto-refresh",
+      
+      // Table Elements
+      table: {
+        actions: "Actions",
+        noDataFound: "No data found",
+        noDataTitle: "No items found",
+        noDataDescription: "There are no items to display at the moment.",
+        emptySearchTitle: "No results found",
+        emptySearchDescription: "Try adjusting your search or filter criteria.",
+        loadingData: "Loading data...",
+        searching: "Searching...",
+        filtering: "Filtering...",
+        selectAll: "Select all",
+        selectRow: "Select row",
+        selectedItems: "{{count}} selected",
+        showingResults: "Showing {{start}}-{{end}} of {{total}} results",
+        filteredResults: "(filtered from {{total}} total)",
+        totalResults: "{{total}} total results",
+        searchPlaceholder: "Search...",
+        searchResults: "Search Results",
+        clearSearch: "Clear Search",
+        addNew: "Add New",
+        addItem: "Add {{item}}",
+        editItem: "Edit {{item}}",
+        deleteItem: "Delete {{item}}",
+        viewItem: "View {{item}}",
+        duplicateItem: "Duplicate {{item}}",
+        archiveItem: "Archive {{item}}",
+        restoreItem: "Restore {{item}}",
+        columns: "Columns",
+        density: "Density",
+        compact: "Compact",
+        comfortable: "Comfortable",
+        spacious: "Spacious",
+        viewMode: "View Mode",
+        exportData: "Export Data",
+        importData: "Import Data",
+        bulkActions: "Bulk Actions",
+        deleteSelected: "Delete Selected",
+        editSelected: "Edit Selected",
+        archiveSelected: "Archive Selected",
+        exportSelected: "Export Selected",
+        confirmBulkDelete: "Are you sure you want to delete {{count}} items?",
+        bulkDeleteSuccess: "{{count}} items deleted successfully",
+        bulkDeleteError: "Failed to delete items",
+        rowsPerPage: "Rows per page",
+        itemsPerPage: "Items per page",
+        showingXofY: "Showing {{start}}-{{end}} of {{total}}",
+        goToFirstPage: "Go to first page",
+        goToPreviousPage: "Go to previous page", 
+        goToNextPage: "Go to next page",
+        goToLastPage: "Go to last page",
+        pageXofY: "Page {{current}} of {{total}}",
+        enterPageNumber: "Enter page number",
+        invalidPageNumber: "Invalid page number",
+        sortAscending: "Sort ascending",
+        sortDescending: "Sort descending",
+        sortBy: "Sort by {{column}}",
+        filterBy: "Filter by {{column}}",
+        removeFilter: "Remove filter",
+        applyFilters: "Apply Filters",
+        resetFilters: "Reset Filters",
+        showAllItems: "Show all items",
+        hideColumn: "Hide column",
+        showColumn: "Show column",
+        resizeColumn: "Resize column",
+        pinColumn: "Pin column",
+        unpinColumn: "Unpin column",
+        toggleColumns: "Toggle columns",
+        tableView: "Table View",
+        cardsView: "Cards View",
+        listView: "List View"
+      },
+
+      // Export Options
+      exportOptions: {
+        csv: "CSV",
+        excel: "Excel", 
+        pdf: "PDF",
+        json: "JSON",
+        print: "Print",
+        exportAs: "Export as {{format}}",
+        exportData: "Export Data",
+        exportSelected: "Export Selected",
+        exportAll: "Export All",
+        exportFiltered: "Export Filtered",
+        includeFilters: "Include Filters",
+        customFields: "Custom Fields",
+        selectFields: "Select Fields to Export",
+        exportSuccess: "Data exported successfully",
+        exportError: "Failed to export data",
+        preparing: "Preparing export...",
+        downloading: "Downloading..."
+      },
+
+      // Table Filters  
+      tableFilters: {
+        filters: "Filters",
+        activeFilters: "Active Filters",
+        noFilters: "No filters applied",
+        clearAll: "Clear All",
+        clearAllFilters: "Clear All Filters",
+        applyFilters: "Apply Filters",
+        resetFilters: "Reset Filters",
+        quickFilters: "Quick Filters",
+        advancedFilters: "Advanced Filters",
+        customFilters: "Custom Filters",
+        filterBy: "Filter by",
+        filterOptions: "Filter Options",
+        selectFilter: "Select filter",
+        addFilter: "Add Filter",
+        removeFilter: "Remove Filter",
+        filterValue: "Filter Value",
+        contains: "Contains",
+        equals: "Equals",
+        startsWith: "Starts with",
+        endsWith: "Ends with",
+        greaterThan: "Greater than",
+        lessThan: "Less than",
+        between: "Between",
+        notEquals: "Not equals",
+        isEmpty: "Is empty",
+        isNotEmpty: "Is not empty",
+        selectAll: "Select All",
+        selectNone: "Select None",
+        searchFilters: "Search filters...",
+        status: "Status",
+        category: "Category",
+        priceRange: "Price Range",
+        stockLevel: "Stock Level",
+        dateRange: "Date Range",
+        outOfStock: "Out of Stock",
+        lowStock: "Low Stock",
+        inStock: "In Stock",
+        active: "Active",
+        inactive: "Inactive",
+        from: "From",
+        to: "To",
+        min: "Min",
+        max: "Max",
+        startDate: "Start Date",
+        endDate: "End Date",
+        anyDate: "Any Date",
+        today: "Today",
+        yesterday: "Yesterday",
+        thisWeek: "This Week",
+        lastWeek: "Last Week",
+        thisMonth: "This Month",
+        lastMonth: "Last Month",
+        thisYear: "This Year",
+        lastYear: "Last Year",
+        custom: "Custom",
+        range: "Range"
+      },
+
+      // Pagination
+      tablePagination: {
+        previous: "Previous",
+        next: "Next", 
+        first: "First",
+        last: "Last",
+        page: "Page",
+        of: "of",
+        pageXofY: "Page {{current}} of {{total}}",
+        goToPage: "Go to page",
+        itemsPerPage: "Items per page",
+        showingXtoYofZ: "Showing {{start}} to {{end}} of {{total}}",
+        noItemsToShow: "No items to show",
+        loadingMore: "Loading more...",
+        endOfResults: "End of results",
+        showMore: "Show More",
+        showLess: "Show Less",
+        show: "Show",
+        perPage: "per page"
+      },
       
       // Navigation
       navigation: {
@@ -168,13 +410,17 @@ export const translations = {
         namePlaceholder: "Enter unit name (e.g., Kilogram)",
         symbolPlaceholder: "Enter unit symbol (e.g., kg)",
         descriptionPlaceholder: "Enter unit description (optional)",
-        selectType: "Select unit type"
+        selectType: "Select unit type",
+        piece: "Piece",
+        weight: "Weight",
+        volume: "Volume",
+        length: "Length"
       },
 
       // Users
       users: {
         title: "Users",
-        subtitle: "Manage system users and permissions",
+        subtitle: "Manage system users and their roles",
         name: "Name",
         email: "Email",
         phone: "Phone",
@@ -211,7 +457,7 @@ export const translations = {
         subtitle: "Configure your application preferences",
         categories: "Categories",
         general: "General",
-        printing: "Printing",
+        printing: "Printing", 
         pos: "POS",
         appearance: "Appearance",
         currency: "Currency",
@@ -221,7 +467,54 @@ export const translations = {
         resetCategory: "Reset Category",
         saveChanges: "Save Changes",
         saving: "Saving...",
-        unsavedChanges: "Unsaved Changes"
+        unsavedChanges: "Unsaved Changes",
+        generalSettings: "General Settings",
+        basicCompanySettings: "Basic company and application settings",
+        receiptPrintingConfig: "Receipt and report printing configuration",
+        posInterfaceSettings: "Point of sale interface settings",
+        themeVisualCustomization: "Theme and visual customization",
+        currencyFinancialSettings: "Currency and financial settings",
+        // General Settings
+        storeName: "Store Name",
+        storeAddress: "Store Address",
+        storePhone: "Store Phone",
+        storeEmail: "Store Email",
+        taxRate: "Tax Rate",
+        taxIncluded: "Tax Included in Prices",
+        timezone: "Timezone",
+        dateFormat: "Date Format",
+        timeFormat: "Time Format",
+        // Appearance Settings
+        themeMode: "Theme Mode",
+        colorScheme: "Color Scheme",
+        fontSize: "Font Size",
+        layoutDensity: "Layout Density",
+        sidebarPosition: "Sidebar Position",
+        enableAnimations: "Enable Animations",
+        // Currency Settings
+        currencyCode: "Currency Code",
+        currencySymbol: "Currency Symbol",
+        currencyPosition: "Currency Position",
+        decimalPlaces: "Decimal Places",
+        thousandSeparator: "Thousand Separator",
+        decimalSeparator: "Decimal Separator",
+        // Language Settings
+        defaultLanguage: "Default Language",
+        enableRtl: "Enable Right-to-Left",
+        // POS Settings  
+        receiptPrinter: "Receipt Printer",
+        barcodeScanner: "Barcode Scanner",
+        cashDrawer: "Cash Drawer",
+        displayCustomerScreen: "Customer Display Screen",
+        autoOpenCashDrawer: "Auto Open Cash Drawer",
+        printReceiptAutomatically: "Print Receipt Automatically",
+        // Printing Settings
+        paperSize: "Paper Size",
+        printMargins: "Print Margins", 
+        receiptHeader: "Receipt Header",
+        receiptFooter: "Receipt Footer",
+        logoUrl: "Logo URL",
+        printLogo: "Print Logo on Receipt"
       },
 
       // Status
@@ -237,6 +530,8 @@ export const translations = {
 
       // Statistics
       stats: {
+        // Entity totals
+        total: "Total {{entity}}",
         totalProducts: "Total Products",
         activeProducts: "Active Products",
         totalCategories: "Total Categories",
@@ -255,11 +550,69 @@ export const translations = {
         avgPrice: "Average Price",
         lowStock: "Low Stock Items",
         outOfStock: "Out of Stock",
-        ofTotal: "of total"
+        ofTotal: "of total",
+        totalUnits: "Total Units",
+        activeUnits: "Active Units",
+        pieceUnits: "Piece Units",
+        weightUnits: "Weight Units",
+        
+        // Dynamic status stats
+        active: "Active",
+        inactive: "Inactive",
+        pending: "Pending",
+        draft: "Draft",
+        published: "Published",
+        archived: "Archived",
+        deleted: "Deleted",
+        unknown: "Unknown",
+        
+        // Time-based stats
+        thisMonth: "This Month",
+        lastMonth: "Last Month",
+        today: "Today",
+        yesterday: "Yesterday",
+        thisWeek: "This Week",
+        lastWeek: "Last Week",
+        thisYear: "This Year",
+        lastYear: "Last Year",
+        
+        // Comparison stats
+        percentage: "of total",
+        vsLastMonth: "vs last month",
+        vsLastWeek: "vs last week",
+        vsLastYear: "vs last year",
+        growth: "Growth",
+        decline: "Decline",
+        
+        // Selection stats
+        selected: "Selected",
+        filtered: "Filtered",
+        visible: "Visible",
+        hidden: "Hidden"
       },
 
-      // Filters
-      filters: {
+      // Bulk Actions
+      bulkActions: {
+        exportSelected: "Export Selected",
+        copySelected: "Copy Selected",
+        copiedToClipboard: "Copied to clipboard",
+        editSelected: "Edit Selected",
+        archiveSelected: "Archive Selected",
+        deleteConfirmation: "Are you sure you want to delete items?",
+        bulkArchiveSuccess: "{{count}} items archived successfully",
+        bulkArchiveError: "Failed to archive items"
+      },
+
+      // Bulk Delete
+      bulkDelete: {
+        title: "Delete Multiple Items",
+        confirmation: "Are you sure you want to delete {{count}} items? This action cannot be undone.",
+        andMore: "and {{count}} more...",
+        deleteAll: "Delete All"
+      },
+
+      // Filter Options
+      filterOptions: {
         status: "Status",
         category: "Category",
         priceRange: "Price Range",
@@ -281,9 +634,68 @@ export const translations = {
 
       // Pages
       pages: {
+        // Dashboard
+        dashboard: "Dashboard",
+        dashboardSubtitle: "Overview of your business performance",
+        
+        // Home
+        home: "Home",
+        homeSubtitle: "Welcome to your modern POS system",
+        
+        // Products
+        products: "Products",
+        productsSubtitle: "Manage your product catalog and inventory",
+        
+        // Categories
         categories: "Categories",
-        categoriesSubtitle: "Organize products into categories"
+        categoriesSubtitle: "Organize products into categories",
+        
+        // Units
+        units: "Units",
+        unitsSubtitle: "Manage measurement units for products",
+        
+        // Users
+        users: "Users",
+        usersSubtitle: "Manage system users and their roles",
+        
+        // Orders
+        orders: "Orders",
+        ordersSubtitle: "Track and manage customer orders",
+        
+        // POS
+        pos: "Point of Sale",
+        posSubtitle: "Process customer transactions",
+        
+        // Reports
+        reports: "Reports",
+        reportsSubtitle: "View analytics and business reports",
+        
+        // Settings
+        settings: "Settings",
+        settingsSubtitle: "Configure system preferences and options"
       },
+
+      // Entity Names (Singular)
+      product: "Product",
+      category: "Category", 
+      unit: "Unit",
+      user: "User",
+      order: "Order",
+      setting: "Setting",
+      report: "Report",
+
+      // Empty States
+      emptyState: {
+        description: "Get started by adding your first {{entity}}",
+        noProducts: "No products yet",
+        noCategories: "No categories yet",
+        noUnits: "No units yet",
+        noUsers: "No users yet",
+        noOrders: "No orders yet"
+      },
+
+      // Delete Confirmations
+      deleteConfirmation: "Are you sure you want to delete this {{entity}}? This action cannot be undone.",
 
       // Messages
       messages: {
@@ -297,6 +709,13 @@ export const translations = {
         updateError: "Failed to update {{entity}}",
         loadError: "Failed to load data",
         duplicateSuccess: "{{entity}} duplicated successfully",
+        duplicateError: "Failed to duplicate {{entity}}",
+        archiveSuccess: "{{entity}} archived successfully",
+        archiveError: "Failed to archive {{entity}}",
+        restoreSuccess: "{{entity}} restored successfully",
+        restoreError: "Failed to restore {{entity}}",
+        createSuccess: "{{entity}} created successfully",
+        error: "An error occurred",
         exportSuccess: "Data exported successfully",
         languageChanged: "Language changed to {{language}}",
         languageChangeError: "Failed to change language",
@@ -477,6 +896,225 @@ export const translations = {
       print: "Imprimer",
       clearFilters: "Effacer les filtres",
       showingXofY: "Affichage de {{start}}-{{end}} sur {{total}}",
+      duplicate: "Dupliquer",
+      archive: "Archiver",
+      restore: "Restaurer",
+      retry: "Réessayer",
+      deleting: "Suppression...",
+      
+      // Common Terms
+      none: "Aucun",
+      all: "Tous",
+      any: "N'importe lequel",
+      yes: "Oui",
+      no: "Non",
+      ok: "OK",
+      apply: "Appliquer",
+      clear: "Effacer",
+      select: "Sélectionner",
+      required: "Requis",
+      optional: "Optionnel",
+      enabled: "Activé",
+      disabled: "Désactivé",
+      available: "Disponible",
+      unavailable: "Indisponible",
+      online: "En ligne",
+      offline: "Hors ligne",
+      connected: "Connecté",
+      disconnected: "Déconnecté",
+      success: "Succès",
+      error: "Erreur",
+      warning: "Avertissement",
+      info: "Information",
+      active: "Actif",
+      total: "Total",
+      thisMonth: "Ce mois-ci",
+      lastLogin: "Dernière connexion",
+      completed: "Terminé",
+      totalRevenue: "Chiffre d'affaires total",
+      averageOrderValue: "Valeur moyenne des commandes",
+      confirmedOrders: "Commandes confirmées",
+      deliveredOrders: "Commandes livrées",
+      payment: "Paiement",
+      show: "Afficher",
+      perPage: "par page",
+      companyInformation: "Informations de l'entreprise",
+      businessName: "Le nom de votre entreprise ou société",
+      businessAddress: "L'adresse de votre entreprise",
+      businessPhone: "Le numéro de téléphone de votre entreprise",
+      businessEmail: "L'adresse email de votre entreprise",
+      taxNumber: "Numéro de taxe/TVA de l'entreprise",
+      taxRatePercentage: "Pourcentage de taux de taxe hérité",
+      regionalSettings: "Paramètres régionaux et de localisation",
+      applicationLanguage: "Langue de l'application",
+      businessTimezone: "Fuseau horaire de l'entreprise",
+      timeFormat: "Format 12 heures ou 24 heures",
+      firstDayOfWeek: "Premier jour de la semaine",
+      dateDisplayFormat: "Format d'affichage de la date (court, moyen, long, complet)",
+      regionalFormatting: "Paramètres régionaux pour le formatage",
+      englishName: "Nom anglais",
+      conversionRate: "Taux de conversion",
+      baseUnit: "Unité de base",
+      myBusiness: "Mon Entreprise",
+      utc: "UTC",
+      twelveHour: "12 heures (1:30 PM)",
+      sunday: "Dimanche",
+      usFormat: "MM/DD/YYYY (Format US)",
+      autoRefresh: "Actualisation automatique",
+      
+      // Table Elements
+      table: {
+        actions: "Actions",
+        noDataFound: "Aucune donnée trouvée",
+        noDataTitle: "Aucun élément trouvé",
+        noDataDescription: "Il n'y a aucun élément à afficher pour le moment.",
+        emptySearchTitle: "Aucun résultat trouvé",
+        emptySearchDescription: "Essayez d'ajuster vos critères de recherche ou de filtre.",
+        loadingData: "Chargement des données...",
+        searching: "Recherche en cours...",
+        filtering: "Filtrage en cours...",
+        selectAll: "Sélectionner tout",
+        selectRow: "Sélectionner la ligne",
+        selectedItems: "{{count}} sélectionnés",
+        showingResults: "Affichage de {{start}}-{{end}} sur {{total}} résultats",
+        filteredResults: "(filtré de {{total}} au total)",
+        totalResults: "{{total}} résultats au total",
+        searchPlaceholder: "Rechercher...",
+        searchResults: "Résultats de recherche",
+        clearSearch: "Effacer la recherche",
+        addNew: "Ajouter",
+        addItem: "Ajouter {{item}}",
+        editItem: "Modifier {{item}}",
+        deleteItem: "Supprimer {{item}}",
+        viewItem: "Voir {{item}}",
+        duplicateItem: "Dupliquer {{item}}",
+        archiveItem: "Archiver {{item}}",
+        restoreItem: "Restaurer {{item}}",
+        columns: "Colonnes",
+        density: "Densité",
+        compact: "Compact",
+        comfortable: "Confortable",
+        spacious: "Spacieux",
+        viewMode: "Mode d'affichage",
+        exportData: "Exporter les données",
+        importData: "Importer les données",
+        bulkActions: "Actions groupées",
+        deleteSelected: "Supprimer la sélection",
+        editSelected: "Modifier la sélection",
+        archiveSelected: "Archiver la sélection",
+        exportSelected: "Exporter la sélection",
+        confirmBulkDelete: "Êtes-vous sûr de vouloir supprimer {{count}} éléments?",
+        bulkDeleteSuccess: "{{count}} éléments supprimés avec succès",
+        bulkDeleteError: "Échec de la suppression des éléments",
+        rowsPerPage: "Lignes par page",
+        itemsPerPage: "Éléments par page",
+        showingXofY: "Affichage de {{start}}-{{end}} sur {{total}}",
+        goToFirstPage: "Aller à la première page",
+        goToPreviousPage: "Aller à la page précédente",
+        goToNextPage: "Aller à la page suivante",
+        goToLastPage: "Aller à la dernière page",
+        pageXofY: "Page {{current}} sur {{total}}",
+        enterPageNumber: "Entrer le numéro de page",
+        invalidPageNumber: "Numéro de page invalide",
+        sortAscending: "Tri croissant",
+        sortDescending: "Tri décroissant",
+        sortBy: "Trier par {{column}}",
+        filterBy: "Filtrer par {{column}}",
+        removeFilter: "Supprimer le filtre",
+        applyFilters: "Appliquer les filtres",
+        resetFilters: "Réinitialiser les filtres",
+        showAllItems: "Afficher tous les éléments",
+        hideColumn: "Masquer la colonne",
+        showColumn: "Afficher la colonne",
+        resizeColumn: "Redimensionner la colonne",
+        pinColumn: "Épingler la colonne",
+        unpinColumn: "Désépingler la colonne",
+        toggleColumns: "Basculer les colonnes",
+        tableView: "Vue tableau",
+        cardsView: "Vue cartes",
+        listView: "Vue liste"
+      },
+
+                   // Table Filters
+       tableFilters: {
+         filters: "Filtres",
+        activeFilters: "Filtres actifs",
+        noFilters: "Aucun filtre appliqué",
+        clearAll: "Effacer tout",
+        clearAllFilters: "Effacer tous les filtres",
+        applyFilters: "Appliquer les filtres",
+        resetFilters: "Réinitialiser les filtres",
+        quickFilters: "Filtres rapides",
+        advancedFilters: "Filtres avancés",
+        customFilters: "Filtres personnalisés",
+        filterBy: "Filtrer par",
+        filterOptions: "Options de filtre",
+        selectFilter: "Sélectionner un filtre",
+        addFilter: "Ajouter un filtre",
+        removeFilter: "Supprimer le filtre",
+        filterValue: "Valeur du filtre",
+        contains: "Contient",
+        equals: "Égal à",
+        startsWith: "Commence par",
+        endsWith: "Se termine par",
+        greaterThan: "Supérieur à",
+        lessThan: "Inférieur à",
+        between: "Entre",
+        notEquals: "Différent de",
+        isEmpty: "Est vide",
+        isNotEmpty: "N'est pas vide",
+        selectAll: "Sélectionner tout",
+        selectNone: "Sélectionner aucun",
+        searchFilters: "Rechercher des filtres...",
+        status: "Statut",
+        category: "Catégorie",
+        priceRange: "Gamme de prix",
+        stockLevel: "Niveau de stock",
+        dateRange: "Plage de dates",
+        outOfStock: "Rupture de stock",
+        lowStock: "Stock faible",
+        inStock: "En stock",
+        active: "Actif",
+        inactive: "Inactif",
+        from: "De",
+        to: "À",
+        min: "Min",
+        max: "Max",
+        startDate: "Date de début",
+        endDate: "Date de fin",
+        anyDate: "Toute date",
+        today: "Aujourd'hui",
+        yesterday: "Hier",
+        thisWeek: "Cette semaine",
+        lastWeek: "La semaine dernière",
+        thisMonth: "Ce mois-ci",
+        lastMonth: "Le mois dernier",
+        thisYear: "Cette année",
+        lastYear: "L'année dernière",
+        custom: "Personnalisé",
+        range: "Plage"
+      },
+
+             // Pagination
+       tablePagination: {
+         previous: "Précédent",
+        next: "Suivant",
+        first: "Premier",
+        last: "Dernier",
+        page: "Page",
+        of: "sur",
+        pageXofY: "Page {{current}} sur {{total}}",
+        goToPage: "Aller à la page",
+        itemsPerPage: "Éléments par page",
+        showingXtoYofZ: "Affichage de {{start}} à {{end}} sur {{total}}",
+        noItemsToShow: "Aucun élément à afficher",
+        loadingMore: "Chargement de plus...",
+        endOfResults: "Fin des résultats",
+        showMore: "Afficher plus",
+        showLess: "Afficher moins",
+        show: "Afficher",
+        perPage: "par page"
+      },
       
       // Navigation
       navigation: {
@@ -616,13 +1254,17 @@ export const translations = {
         namePlaceholder: "Entrez le nom de l'unité (ex: Kilogramme)",
         symbolPlaceholder: "Entrez le symbole de l'unité (ex: kg)",
         descriptionPlaceholder: "Entrez la description de l'unité (optionnel)",
-        selectType: "Sélectionnez le type d'unité"
+        selectType: "Sélectionnez le type d'unité",
+        piece: "Pièce",
+        weight: "Poids",
+        volume: "Volume",
+        length: "Longueur"
       },
 
       // Users
       users: {
         title: "Utilisateurs",
-        subtitle: "Gérer les utilisateurs système et les permissions",
+        subtitle: "Gérer les utilisateurs système et leurs rôles",
         name: "Nom",
         email: "Email",
         phone: "Téléphone",
@@ -669,7 +1311,13 @@ export const translations = {
         resetCategory: "Réinitialiser la catégorie",
         saveChanges: "Enregistrer les modifications",
         saving: "Enregistrement...",
-        unsavedChanges: "Modifications non enregistrées"
+        unsavedChanges: "Modifications non enregistrées",
+        generalSettings: "Paramètres généraux",
+        basicCompanySettings: "Paramètres de base de l'entreprise et de l'application",
+        receiptPrintingConfig: "Configuration d'impression des reçus et rapports",
+        posInterfaceSettings: "Paramètres de l'interface de point de vente",
+        themeVisualCustomization: "Personnalisation thématique et visuelle",
+        currencyFinancialSettings: "Paramètres de devise et financiers"
       },
 
       // Status
@@ -685,6 +1333,8 @@ export const translations = {
 
       // Statistics
       stats: {
+        // Entity totals
+        total: "Total {{entity}}",
         totalProducts: "Total des produits",
         activeProducts: "Produits actifs",
         totalCategories: "Total des catégories",
@@ -703,11 +1353,69 @@ export const translations = {
         avgPrice: "Prix moyen",
         lowStock: "Articles en rupture faible",
         outOfStock: "En rupture de stock",
-        ofTotal: "du total"
+        ofTotal: "du total",
+        totalUnits: "Total des unités",
+        activeUnits: "Unités actives",
+        pieceUnits: "Unités de pièce",
+        weightUnits: "Unités de poids",
+        
+        // Dynamic status stats
+        active: "Actif",
+        inactive: "Inactif",
+        pending: "En attente",
+        draft: "Brouillon",
+        published: "Publié",
+        archived: "Archivé",
+        deleted: "Supprimé",
+        unknown: "Inconnu",
+        
+        // Time-based stats
+        thisMonth: "Ce mois",
+        lastMonth: "Mois dernier",
+        today: "Aujourd'hui",
+        yesterday: "Hier",
+        thisWeek: "Cette semaine",
+        lastWeek: "Semaine dernière",
+        thisYear: "Cette année",
+        lastYear: "Année dernière",
+        
+        // Comparison stats
+        percentage: "du total",
+        vsLastMonth: "par rapport au mois dernier",
+        vsLastWeek: "par rapport à la semaine dernière",
+        vsLastYear: "par rapport à l'année dernière",
+        growth: "Croissance",
+        decline: "Déclin",
+        
+        // Selection stats
+        selected: "Sélectionnés",
+        filtered: "Filtrés",
+        visible: "Visibles",
+        hidden: "Cachés"
       },
 
-      // Filters
-      filters: {
+      // Bulk Actions
+      bulkActions: {
+        exportSelected: "Exporter la sélection",
+        copySelected: "Copier la sélection",
+        copiedToClipboard: "Copié dans le presse-papiers",
+        editSelected: "Modifier la sélection",
+        archiveSelected: "Archiver la sélection",
+        deleteConfirmation: "Êtes-vous sûr de vouloir supprimer les éléments?",
+        bulkArchiveSuccess: "{{count}} éléments archivés avec succès",
+        bulkArchiveError: "Échec de l'archivage des éléments"
+      },
+
+      // Bulk Delete
+      bulkDelete: {
+        title: "Supprimer plusieurs éléments",
+        confirmation: "Êtes-vous sûr de vouloir supprimer {{count}} éléments? Cette action ne peut pas être annulée.",
+        andMore: "et {{count}} de plus...",
+        deleteAll: "Tout supprimer"
+      },
+
+      // Filter Options
+      filterOptions: {
         status: "Statut",
         category: "Catégorie",
         priceRange: "Gamme de prix",
@@ -729,9 +1437,68 @@ export const translations = {
 
       // Pages
       pages: {
+        // Dashboard
+        dashboard: "Dashboard",
+        dashboardSubtitle: "Aperçu de vos performances commerciales",
+        
+        // Home
+        home: "Accueil",
+        homeSubtitle: "Bienvenue dans votre système POS moderne",
+        
+        // Products
+        products: "Produits",
+        productsSubtitle: "Gérer votre catalogue de produits et inventaire",
+        
+        // Categories
         categories: "Catégories",
-        categoriesSubtitle: "Organiser les produits en catégories"
+        categoriesSubtitle: "Organiser les produits en catégories",
+        
+        // Units
+        units: "Unités",
+        unitsSubtitle: "Gérer les unités de mesure pour les produits",
+        
+        // Users
+        users: "Utilisateurs",
+        usersSubtitle: "Gérer les utilisateurs système et leurs rôles",
+        
+        // Orders
+        orders: "Commandes",
+        ordersSubtitle: "Suivre et gérer les commandes clients",
+        
+        // POS
+        pos: "Point de vente",
+        posSubtitle: "Traiter les transactions clients",
+        
+        // Reports
+        reports: "Rapports",
+        reportsSubtitle: "Voir les analyses et rapports commerciaux",
+        
+        // Settings
+        settings: "Paramètres",
+        settingsSubtitle: "Configurer les préférences et options système"
       },
+
+      // Entity Names (Singular)
+      product: "Produit",
+      category: "Catégorie", 
+      unit: "Unité",
+      user: "Utilisateur",
+      order: "Commande",
+      setting: "Paramètre",
+      report: "Rapport",
+
+      // Empty States
+      emptyState: {
+        description: "Commencez par ajouter votre premier {{entity}}",
+        noProducts: "Aucun produit pour le moment",
+        noCategories: "Aucune catégorie pour le moment",
+        noUnits: "Aucune unité pour le moment",
+        noUsers: "Aucun utilisateur pour le moment",
+        noOrders: "Aucune commande pour le moment"
+      },
+
+      // Delete Confirmations
+      deleteConfirmation: "Êtes-vous sûr de vouloir supprimer ce {{entity}}? Cette action ne peut pas être annulée.",
 
       // Messages
       messages: {
@@ -745,6 +1512,13 @@ export const translations = {
         updateError: "Échec de la mise à jour de {{entity}}",
         loadError: "Échec du chargement des données",
         duplicateSuccess: "{{entity}} dupliqué avec succès",
+        duplicateError: "Échec de la duplication de {{entity}}",
+        archiveSuccess: "{{entity}} archivé avec succès",
+        archiveError: "Échec de l'archivage de {{entity}}",
+        restoreSuccess: "{{entity}} restauré avec succès",
+        restoreError: "Échec de la restauration de {{entity}}",
+        createSuccess: "{{entity}} créé avec succès",
+        error: "Une erreur s'est produite",
         exportSuccess: "Données exportées avec succès",
         languageChanged: "Langue changée en {{language}}",
         languageChangeError: "Échec du changement de langue",
@@ -920,6 +1694,246 @@ export const translations = {
       print: "طباعة",
       clearFilters: "مسح المرشحات",
       showingXofY: "عرض {{start}}-{{end}} من {{total}}",
+      duplicate: "نسخ",
+      archive: "أرشفة",
+      restore: "استعادة",
+      retry: "إعادة المحاولة",
+      deleting: "جاري الحذف...",
+      
+      // Common Terms
+      none: "لا شيء",
+      all: "الكل",
+      any: "أي",
+      yes: "نعم",
+      no: "لا",
+      ok: "موافق",
+      apply: "تطبيق",
+      clear: "مسح",
+      select: "اختيار",
+      required: "مطلوب",
+      optional: "اختياري",
+      enabled: "مفعل",
+      disabled: "معطل",
+      available: "متاح",
+      unavailable: "غير متاح",
+      online: "متصل",
+      offline: "غير متصل",
+      connected: "متصل",
+      disconnected: "منقطع",
+      success: "نجح",
+      error: "خطأ",
+      warning: "تحذير",
+      info: "معلومات",
+      active: "نشط",
+      total: "المجموع",
+      thisMonth: "هذا الشهر",
+      lastLogin: "آخر تسجيل دخول",
+      completed: "مكتمل",
+      totalRevenue: "إجمالي الإيرادات",
+      averageOrderValue: "متوسط قيمة الطلب",
+      confirmedOrders: "الطلبات المؤكدة",
+      deliveredOrders: "الطلبات المسلمة",
+      payment: "الدفع",
+      show: "إظهار",
+      perPage: "لكل صفحة",
+      companyInformation: "معلومات الشركة",
+      businessName: "اسم شركتك أو عملك",
+      businessAddress: "عنوان عملك",
+      businessPhone: "رقم هاتف عملك",
+      businessEmail: "عنوان البريد الإلكتروني لعملك",
+      taxNumber: "رقم ضريبة/ضريبة القيمة المضافة للعمل",
+      taxRatePercentage: "نسبة معدل الضريبة القديمة",
+      regionalSettings: "الإعدادات الإقليمية والتوطين",
+      applicationLanguage: "لغة التطبيق",
+      businessTimezone: "المنطقة الزمنية للعمل",
+      timeFormat: "تنسيق 12 ساعة أو 24 ساعة",
+      firstDayOfWeek: "اليوم الأول من الأسبوع",
+      dateDisplayFormat: "تنسيق عرض التاريخ (قصير، متوسط، طويل، كامل)",
+      regionalFormatting: "الإعدادات الإقليمية للتنسيق",
+      englishName: "الاسم الإنجليزي",
+      conversionRate: "معدل التحويل",
+      baseUnit: "الوحدة الأساسية",
+      myBusiness: "عملي",
+      utc: "UTC",
+      twelveHour: "12 ساعة (1:30 PM)",
+      sunday: "الأحد",
+      usFormat: "MM/DD/YYYY (تنسيق أمريكي)",
+      autoRefresh: "التحديث التلقائي",
+      
+      // Table Elements
+      table: {
+        actions: "الإجراءات",
+        noDataFound: "لا توجد بيانات",
+        noDataTitle: "لا توجد عناصر",
+        noDataDescription: "لا توجد عناصر للعرض في الوقت الحالي.",
+        emptySearchTitle: "لا توجد نتائج",
+        emptySearchDescription: "حاول تعديل معايير البحث أو التصفية.",
+        loadingData: "جاري تحميل البيانات...",
+        searching: "جاري البحث...",
+        filtering: "جاري التصفية...",
+        selectAll: "تحديد الكل",
+        selectRow: "تحديد الصف",
+        selectedItems: "{{count}} محدد",
+        showingResults: "عرض {{start}}-{{end}} من {{total}} نتيجة",
+        filteredResults: "(مصفى من {{total}} إجمالي)",
+        totalResults: "{{total}} نتيجة إجمالية",
+        searchPlaceholder: "بحث...",
+        searchResults: "نتائج البحث",
+        clearSearch: "مسح البحث",
+        addNew: "إضافة جديد",
+        addItem: "إضافة {{item}}",
+        editItem: "تعديل {{item}}",
+        deleteItem: "حذف {{item}}",
+        viewItem: "عرض {{item}}",
+        duplicateItem: "تكرار {{item}}",
+        archiveItem: "أرشفة {{item}}",
+        restoreItem: "استعادة {{item}}",
+        columns: "الأعمدة",
+        density: "الكثافة",
+        compact: "مضغوط",
+        comfortable: "مريح",
+        spacious: "واسع",
+        viewMode: "وضع العرض",
+        exportData: "تصدير البيانات",
+        importData: "استيراد البيانات",
+        bulkActions: "الإجراءات المجمعة",
+        deleteSelected: "حذف المحدد",
+        editSelected: "تعديل المحدد",
+        archiveSelected: "أرشفة المحدد",
+        exportSelected: "تصدير المحدد",
+        confirmBulkDelete: "هل أنت متأكد من حذف {{count}} عنصر؟",
+        bulkDeleteSuccess: "تم حذف {{count}} عنصر بنجاح",
+        bulkDeleteError: "فشل في حذف العناصر",
+        rowsPerPage: "صفوف لكل صفحة",
+        itemsPerPage: "عناصر لكل صفحة",
+        showingXofY: "عرض {{start}}-{{end}} من {{total}}",
+        goToFirstPage: "الذهاب إلى الصفحة الأولى",
+        goToPreviousPage: "الذهاب إلى الصفحة السابقة",
+        goToNextPage: "الذهاب إلى الصفحة التالية",
+        goToLastPage: "الذهاب إلى الصفحة الأخيرة",
+        pageXofY: "صفحة {{current}} من {{total}}",
+        enterPageNumber: "أدخل رقم الصفحة",
+        invalidPageNumber: "رقم صفحة غير صحيح",
+        sortAscending: "ترتيب تصاعدي",
+        sortDescending: "ترتيب تنازلي",
+        sortBy: "ترتيب حسب {{column}}",
+        filterBy: "تصفية حسب {{column}}",
+        removeFilter: "إزالة المرشح",
+        applyFilters: "تطبيق المرشحات",
+        resetFilters: "إعادة تعيين المرشحات",
+        showAllItems: "عرض جميع العناصر",
+        hideColumn: "إخفاء العمود",
+        showColumn: "عرض العمود",
+        resizeColumn: "تغيير حجم العمود",
+        pinColumn: "تثبيت العمود",
+        unpinColumn: "إلغاء تثبيت العمود",
+        toggleColumns: "تبديل الأعمدة",
+        tableView: "عرض الجدول",
+        cardsView: "عرض البطاقات",
+        listView: "عرض القائمة"
+      },
+
+      // Export Options
+      exportOptions: {
+        csv: "CSV",
+        excel: "Excel",
+        pdf: "PDF",
+        json: "JSON",
+        print: "طباعة",
+        exportAs: "تصدير كـ {{format}}",
+        exportData: "تصدير البيانات",
+        exportSelected: "تصدير المحدد",
+        exportAll: "تصدير الكل",
+        exportFiltered: "تصدير المصفى",
+        includeFilters: "تضمين المرشحات",
+        customFields: "حقول مخصصة",
+        selectFields: "اختر الحقول للتصدير",
+        exportSuccess: "تم تصدير البيانات بنجاح",
+        exportError: "فشل في تصدير البيانات",
+        preparing: "تحضير التصدير...",
+        downloading: "جاري التحميل..."
+      },
+
+             // Table Filters
+       tableFilters: {
+         filters: "المرشحات",
+        activeFilters: "المرشحات النشطة",
+        noFilters: "لا توجد مرشحات مطبقة",
+        clearAll: "مسح الكل",
+        clearAllFilters: "مسح جميع المرشحات",
+        applyFilters: "تطبيق المرشحات",
+        resetFilters: "إعادة تعيين المرشحات",
+        quickFilters: "مرشحات سريعة",
+        advancedFilters: "مرشحات متقدمة",
+        customFilters: "مرشحات مخصصة",
+        filterBy: "تصفية حسب",
+        filterOptions: "خيارات التصفية",
+        selectFilter: "اختر مرشح",
+        addFilter: "إضافة مرشح",
+        removeFilter: "إزالة المرشح",
+        filterValue: "قيمة المرشح",
+        contains: "يحتوي على",
+        equals: "يساوي",
+        startsWith: "يبدأ بـ",
+        endsWith: "ينتهي بـ",
+        greaterThan: "أكبر من",
+        lessThan: "أصغر من",
+        between: "بين",
+        notEquals: "لا يساوي",
+        isEmpty: "فارغ",
+        isNotEmpty: "غير فارغ",
+        selectAll: "تحديد الكل",
+        selectNone: "عدم تحديد أي شيء",
+        searchFilters: "البحث في المرشحات...",
+        status: "الحالة",
+        category: "الفئة",
+        priceRange: "نطاق السعر",
+        stockLevel: "مستوى المخزون",
+        dateRange: "نطاق التاريخ",
+        outOfStock: "نفاد المخزون",
+        lowStock: "مخزون منخفض",
+        inStock: "متوفر",
+        active: "نشط",
+        inactive: "غير نشط",
+        from: "من",
+        to: "إلى",
+        min: "أدنى",
+        max: "أعلى",
+        startDate: "تاريخ البداية",
+        endDate: "تاريخ النهاية",
+        anyDate: "أي تاريخ",
+        today: "اليوم",
+        yesterday: "أمس",
+        thisWeek: "هذا الأسبوع",
+        lastWeek: "الأسبوع الماضي",
+        thisMonth: "هذا الشهر",
+        lastMonth: "الشهر الماضي",
+        thisYear: "هذا العام",
+        lastYear: "العام الماضي",
+        custom: "مخصص",
+        range: "نطاق"
+      },
+
+             // Pagination
+       tablePagination: {
+         previous: "السابق",
+        next: "التالي",
+        first: "الأول",
+        last: "الأخير",
+        page: "صفحة",
+        of: "من",
+        pageXofY: "صفحة {{current}} من {{total}}",
+        goToPage: "الانتقال إلى الصفحة",
+        itemsPerPage: "عناصر لكل صفحة",
+        showingXtoYofZ: "عرض {{start}} إلى {{end}} من {{total}}",
+        noItemsToShow: "لا توجد عناصر للعرض",
+        loadingMore: "تحميل المزيد...",
+        endOfResults: "نهاية النتائج",
+        showMore: "إظهار المزيد",
+        showLess: "إظهار أقل",
+        show: "إظهار",
+        perPage: "لكل صفحة"
+      },
       
       // Navigation
       navigation: {
@@ -1059,13 +2073,17 @@ export const translations = {
         namePlaceholder: "أدخل اسم الوحدة (مثل: كيلوغرام)",
         symbolPlaceholder: "أدخل رمز الوحدة (مثل: كغ)",
         descriptionPlaceholder: "أدخل وصف الوحدة (اختياري)",
-        selectType: "اختر نوع الوحدة"
+        selectType: "اختر نوع الوحدة",
+        piece: "قطعة",
+        weight: "وزن",
+        volume: "حجم",
+        length: "طول"
       },
 
       // Users
       users: {
         title: "المستخدمون",
-        subtitle: "إدارة مستخدمي النظام والصلاحيات",
+        subtitle: "إدارة مستخدمي النظام وأدوارهم",
         name: "الاسم",
         email: "البريد الإلكتروني",
         phone: "الهاتف",
@@ -1112,7 +2130,13 @@ export const translations = {
         resetCategory: "إعادة تعيين الفئة",
         saveChanges: "حفظ التغييرات",
         saving: "جاري الحفظ...",
-        unsavedChanges: "تغييرات غير محفوظة"
+        unsavedChanges: "تغييرات غير محفوظة",
+        generalSettings: "الإعدادات العامة",
+        basicCompanySettings: "إعدادات الشركة الأساسية والتطبيق",
+        receiptPrintingConfig: "تكوين طباعة الإيصالات والتقارير",
+        posInterfaceSettings: "إعدادات واجهة نقطة البيع",
+        themeVisualCustomization: "تخصيص المظهر والعرض",
+        currencyFinancialSettings: "إعدادات العملة والمالية"
       },
 
       // Status
@@ -1128,6 +2152,8 @@ export const translations = {
 
       // Statistics
       stats: {
+        // Entity totals
+        total: "إجمالي {{entity}}",
         totalProducts: "إجمالي المنتجات",
         activeProducts: "المنتجات النشطة",
         totalCategories: "إجمالي الفئات",
@@ -1146,11 +2172,69 @@ export const translations = {
         avgPrice: "متوسط السعر",
         lowStock: "عناصر المخزون المنخفض",
         outOfStock: "نفاد المخزون",
-        ofTotal: "من الإجمالي"
+        ofTotal: "من الإجمالي",
+        totalUnits: "إجمالي الوحدات",
+        activeUnits: "الوحدات النشطة",
+        pieceUnits: "وحدات القطعة",
+        weightUnits: "وحدات الوزن",
+        
+        // Dynamic status stats
+        active: "نشط",
+        inactive: "غير نشط",
+        pending: "معلق",
+        draft: "مسودة",
+        published: "منشور",
+        archived: "مؤرشف",
+        deleted: "محذوف",
+        unknown: "غير معروف",
+        
+        // Time-based stats
+        thisMonth: "هذا الشهر",
+        lastMonth: "الشهر الماضي",
+        today: "اليوم",
+        yesterday: "أمس",
+        thisWeek: "هذا الأسبوع",
+        lastWeek: "الأسبوع الماضي",
+        thisYear: "هذا العام",
+        lastYear: "العام الماضي",
+        
+        // Comparison stats
+        percentage: "من الإجمالي",
+        vsLastMonth: "مقارنة بالشهر الماضي",
+        vsLastWeek: "مقارنة بالأسبوع الماضي",
+        vsLastYear: "مقارنة بالعام الماضي",
+        growth: "نمو",
+        decline: "تراجع",
+        
+        // Selection stats
+        selected: "محدد",
+        filtered: "مصفى",
+        visible: "مرئي",
+        hidden: "مخفي"
       },
 
-      // Filters
-      filters: {
+      // Bulk Actions
+      bulkActions: {
+        exportSelected: "تصدير المحدد",
+        copySelected: "نسخ المحدد",
+        copiedToClipboard: "تم النسخ إلى الحافظة",
+        editSelected: "تعديل المحدد",
+        archiveSelected: "أرشفة المحدد",
+        deleteConfirmation: "هل أنت متأكد من حذف العناصر؟",
+        bulkArchiveSuccess: "تم أرشفة {{count}} عنصر بنجاح",
+        bulkArchiveError: "فشل في أرشفة العناصر"
+      },
+
+      // Bulk Delete
+      bulkDelete: {
+        title: "حذف عناصر متعددة",
+        confirmation: "هل أنت متأكد من حذف {{count}} عنصر؟ لا يمكن التراجع عن هذا الإجراء.",
+        andMore: "و {{count}} آخرين...",
+        deleteAll: "حذف الكل"
+      },
+
+      // Filter Options
+      filterOptions: {
         status: "الحالة",
         category: "الفئة",
         priceRange: "نطاق السعر",
@@ -1188,6 +2272,13 @@ export const translations = {
         updateError: "فشل في تحديث {{entity}}",
         loadError: "فشل في تحميل البيانات",
         duplicateSuccess: "تم تكرار {{entity}} بنجاح",
+        duplicateError: "فشل في تكرار {{entity}}",
+        archiveSuccess: "تم أرشفة {{entity}} بنجاح",
+        archiveError: "فشل في أرشفة {{entity}}",
+        restoreSuccess: "تم استعادة {{entity}} بنجاح",
+        restoreError: "فشل في استعادة {{entity}}",
+        createSuccess: "تم إنشاء {{entity}} بنجاح",
+        error: "حدث خطأ",
         exportSuccess: "تم تصدير البيانات بنجاح",
         languageChanged: "تم تغيير اللغة إلى {{language}}",
         languageChangeError: "فشل في تغيير اللغة",

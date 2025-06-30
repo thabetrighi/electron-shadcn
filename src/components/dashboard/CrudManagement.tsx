@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
@@ -36,6 +37,7 @@ interface Unit {
 }
 
 export default function CrudManagement() {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
@@ -285,31 +287,31 @@ export default function CrudManagement() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Plus className="w-5 h-5" />
-                <span>Add New Product</span>
+                <span>{t('table.addItem', 'Add {{item}}', { item: t('navigation.products', 'Product').slice(0, -1) })}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="product-name">Name</Label>
+                  <Label htmlFor="product-name">{t('products.name', 'Name')}</Label>
                   <Input
                     id="product-name"
                     value={productForm.name}
                     onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                    placeholder="Product name"
+                    placeholder={t('products.namePlaceholder', 'Product name')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="product-sku">SKU</Label>
+                  <Label htmlFor="product-sku">{t('products.sku', 'SKU')}</Label>
                   <Input
                     id="product-sku"
                     value={productForm.sku}
                     onChange={(e) => setProductForm({ ...productForm, sku: e.target.value })}
-                    placeholder="Product SKU"
+                    placeholder={t('products.skuPlaceholder', 'Product SKU')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="product-price">Price</Label>
+                  <Label htmlFor="product-price">{t('products.price', 'Price')}</Label>
                   <Input
                     id="product-price"
                     type="number"
@@ -320,7 +322,7 @@ export default function CrudManagement() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="product-stock">Stock</Label>
+                  <Label htmlFor="product-stock">{t('products.stock', 'Stock')}</Label>
                   <Input
                     id="product-stock"
                     type="number"
@@ -330,10 +332,10 @@ export default function CrudManagement() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="product-category">Category</Label>
+                  <Label htmlFor="product-category">{t('products.category', 'Category')}</Label>
                   <Select value={productForm.categoryId} onValueChange={(value) => setProductForm({ ...productForm, categoryId: value })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={t('products.selectCategory', 'Select category')} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((category) => (
@@ -345,10 +347,10 @@ export default function CrudManagement() {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="product-unit">Unit</Label>
+                  <Label htmlFor="product-unit">{t('products.unit', 'Unit')}</Label>
                   <Select value={productForm.unitId} onValueChange={(value) => setProductForm({ ...productForm, unitId: value })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select unit" />
+                      <SelectValue placeholder={t('products.selectUnit', 'Select unit')} />
                     </SelectTrigger>
                     <SelectContent>
                       {units.map((unit) => (
@@ -361,23 +363,23 @@ export default function CrudManagement() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="product-description">Description</Label>
+                <Label htmlFor="product-description">{t('products.description', 'Description')}</Label>
                 <Textarea
                   id="product-description"
                   value={productForm.description}
                   onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-                  placeholder="Product description"
+                  placeholder={t('products.descriptionPlaceholder', 'Product description')}
                 />
               </div>
               <Button onClick={createProduct} disabled={!productForm.name}>
-                Create Product
+                {t('common.create', 'Create')} {t('navigation.products', 'Product').slice(0, -1)}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Products List</CardTitle>
+              <CardTitle>{t('navigation.products', 'Products')} {t('common.list', 'List')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -386,12 +388,12 @@ export default function CrudManagement() {
                     <div>
                       <h4 className="font-medium">{product.name}</h4>
                       <p className="text-sm text-gray-600">
-                        SKU: {product.sku || 'N/A'} | Price: ${product.sellingPrice} | Stock: {product.currentStock}
+                        {t('products.sku', 'SKU')}: {product.sku || t('common.none', 'N/A')} | {t('products.price', 'Price')}: ${product.sellingPrice} | {t('products.stock', 'Stock')}: {product.currentStock}
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant={product.isActive ? 'default' : 'secondary'}>
-                        {product.isActive ? 'Active' : 'Inactive'}
+                        {product.isActive ? t('status.active', 'Active') : t('status.inactive', 'Inactive')}
                       </Badge>
                       <Button variant="destructive" size="sm" onClick={() => deleteProduct(product.id)}>
                         <Trash2 className="w-4 h-4" />
@@ -400,7 +402,7 @@ export default function CrudManagement() {
                   </div>
                 ))}
                 {products.length === 0 && (
-                  <p className="text-center text-gray-500 py-8">No products found</p>
+                  <p className="text-center text-gray-500 py-8">{t('table.noDataTitle', 'No products found')}</p>
                 )}
               </div>
             </CardContent>
@@ -415,37 +417,37 @@ export default function CrudManagement() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Plus className="w-5 h-5" />
-                <span>Add New Category</span>
+                <span>{t('table.addItem', 'Add {{item}}', { item: t('navigation.categories', 'Category').slice(0, -1) })}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="category-name">Name</Label>
+                <Label htmlFor="category-name">{t('categories.name', 'Name')}</Label>
                 <Input
                   id="category-name"
                   value={categoryForm.name}
                   onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
-                  placeholder="Category name"
+                  placeholder={t('categories.namePlaceholder', 'Category name')}
                 />
               </div>
               <div>
-                <Label htmlFor="category-description">Description</Label>
+                <Label htmlFor="category-description">{t('categories.description', 'Description')}</Label>
                 <Textarea
                   id="category-description"
                   value={categoryForm.description}
                   onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
-                  placeholder="Category description"
+                  placeholder={t('categories.descriptionPlaceholder', 'Category description')}
                 />
               </div>
               <Button onClick={createCategory} disabled={!categoryForm.name}>
-                Create Category
+                {t('common.create', 'Create')} {t('navigation.categories', 'Category').slice(0, -1)}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Categories List</CardTitle>
+              <CardTitle>{t('navigation.categories', 'Categories')} {t('common.list', 'List')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -453,11 +455,11 @@ export default function CrudManagement() {
                   <div key={category.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <h4 className="font-medium">{category.name}</h4>
-                      <p className="text-sm text-gray-600">{category.description || 'No description'}</p>
+                      <p className="text-sm text-gray-600">{category.description || t('common.noDescription', 'No description')}</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant={category.status === 'active' ? 'default' : 'secondary'}>
-                        {category.status}
+                        {category.status === 'active' ? t('status.active', 'Active') : t('status.inactive', 'Inactive')}
                       </Badge>
                       <Button variant="destructive" size="sm" onClick={() => deleteCategory(category.id)}>
                         <Trash2 className="w-4 h-4" />
@@ -466,7 +468,7 @@ export default function CrudManagement() {
                   </div>
                 ))}
                 {categories.length === 0 && (
-                  <p className="text-center text-gray-500 py-8">No categories found</p>
+                  <p className="text-center text-gray-500 py-8">{t('table.noDataTitle', 'No categories found')}</p>
                 )}
               </div>
             </CardContent>
@@ -481,53 +483,53 @@ export default function CrudManagement() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Plus className="w-5 h-5" />
-                <span>Add New Unit</span>
+                <span>{t('table.addItem', 'Add {{item}}', { item: t('navigation.units', 'Unit').slice(0, -1) })}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="unit-name">Name</Label>
+                  <Label htmlFor="unit-name">{t('units.name', 'Name')}</Label>
                   <Input
                     id="unit-name"
                     value={unitForm.name}
                     onChange={(e) => setUnitForm({ ...unitForm, name: e.target.value })}
-                    placeholder="Unit name"
+                    placeholder={t('units.namePlaceholder', 'Unit name')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="unit-symbol">Symbol</Label>
+                  <Label htmlFor="unit-symbol">{t('units.symbol', 'Symbol')}</Label>
                   <Input
                     id="unit-symbol"
                     value={unitForm.symbol}
                     onChange={(e) => setUnitForm({ ...unitForm, symbol: e.target.value })}
-                    placeholder="Unit symbol"
+                    placeholder={t('units.symbolPlaceholder', 'Unit symbol')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="unit-type">Type</Label>
+                  <Label htmlFor="unit-type">{t('units.type', 'Type')}</Label>
                   <Select value={unitForm.type} onValueChange={(value) => setUnitForm({ ...unitForm, type: value })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder={t('units.selectType', 'Select type')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="piece">Piece</SelectItem>
-                      <SelectItem value="weight">Weight</SelectItem>
-                      <SelectItem value="volume">Volume</SelectItem>
-                      <SelectItem value="length">Length</SelectItem>
+                      <SelectItem value="piece">{t('units.piece', 'Piece')}</SelectItem>
+                      <SelectItem value="weight">{t('units.weight', 'Weight')}</SelectItem>
+                      <SelectItem value="volume">{t('units.volume', 'Volume')}</SelectItem>
+                      <SelectItem value="length">{t('units.length', 'Length')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <Button onClick={createUnit} disabled={!unitForm.name || !unitForm.symbol}>
-                Create Unit
+                {t('common.create', 'Create')} {t('navigation.units', 'Unit').slice(0, -1)}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Units List</CardTitle>
+              <CardTitle>{t('navigation.units', 'Units')} {t('common.list', 'List')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -535,11 +537,11 @@ export default function CrudManagement() {
                   <div key={unit.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <h4 className="font-medium">{unit.name} ({unit.symbol})</h4>
-                      <p className="text-sm text-gray-600">Type: {unit.type}</p>
+                      <p className="text-sm text-gray-600">{t('units.type', 'Type')}: {unit.type}</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant={unit.status === 'active' ? 'default' : 'secondary'}>
-                        {unit.status}
+                        {unit.status === 'active' ? t('status.active', 'Active') : t('status.inactive', 'Inactive')}
                       </Badge>
                       <Button variant="destructive" size="sm" onClick={() => deleteUnit(unit.id)}>
                         <Trash2 className="w-4 h-4" />
@@ -548,7 +550,7 @@ export default function CrudManagement() {
                   </div>
                 ))}
                 {units.length === 0 && (
-                  <p className="text-center text-gray-500 py-8">No units found</p>
+                  <p className="text-center text-gray-500 py-8">{t('table.noDataTitle', 'No units found')}</p>
                 )}
               </div>
             </CardContent>

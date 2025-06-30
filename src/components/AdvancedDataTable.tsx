@@ -222,6 +222,12 @@ export function AdvancedDataTable<T extends Record<string, any>>({
 }: AdvancedDataTableProps<T>) {
   const { t } = useTranslation();
   
+  // Translate export options
+  const translatedExportOptions = exportOptions.map(option => ({
+    ...option,
+    label: t(`exportOptions.${option.format}`, option.label)
+  }));
+  
   // State management
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(pageSizes[0]);
@@ -379,7 +385,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
     // Auto-calculate total count
     if (!stats.some(stat => stat.label.toLowerCase().includes('total'))) {
       baseStats.unshift({
-        label: t('total', 'Total'),
+        label: t('table.totalResults', 'Total'),
         value: data.length,
         icon: Package,
         color: 'text-blue-600',
@@ -390,7 +396,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
     // Auto-calculate filtered count if different
     if (filteredData.length !== data.length) {
       baseStats.push({
-        label: t('filtered', 'Filtered'),
+        label: t('table.filteredResults', 'Filtered'),
         value: filteredData.length,
         icon: Filter,
         color: 'text-purple-600',
@@ -401,7 +407,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
     // Auto-calculate selected count
     if (selectedRows.size > 0) {
       baseStats.push({
-        label: t('selected', 'Selected'),
+        label: t('table.selectedItems', 'Selected'),
         value: selectedRows.size,
         icon: CheckSquare,
         color: 'text-green-600',
@@ -603,7 +609,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                 <Checkbox
                   checked={selectedRows.size === paginatedData.length && paginatedData.length > 0}
                   onCheckedChange={handleSelectAll}
-                  aria-label="Select all"
+                  aria-label={t('table.selectAll', 'Select all')}
                 />
               </TableHead>
             )}
@@ -629,7 +635,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
               </TableHead>
             ))}
             {actions.length > 0 && (
-              <TableHead className="w-16 text-center">Actions</TableHead>
+              <TableHead className="w-16 text-center">{t('table.actions', 'Actions')}</TableHead>
             )}
           </TableRow>
         </TableHeader>
@@ -639,7 +645,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
               <TableCell colSpan={visibleColumns.length + (actions.length > 0 ? 1 : 0) + (selectable ? 1 : 0)} className="text-center py-12">
                 <div className="flex flex-col items-center space-y-2">
                   <RefreshCw className="w-6 h-6 animate-spin text-blue-500" />
-                  <span className="text-gray-500">Loading...</span>
+                  <span className="text-gray-500">{t('table.loadingData', 'Loading...')}</span>
                 </div>
               </TableCell>
             </TableRow>
@@ -661,7 +667,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                 ) : (
                   <div className="space-y-2">
                     <div className="text-2xl">🔍</div>
-                    <span className="text-gray-500">No data found</span>
+                    <span className="text-gray-500">{t('table.noDataFound', 'No data found')}</span>
                   </div>
                 )}
               </TableCell>
@@ -853,7 +859,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
             <div className="relative min-w-[300px]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="Search..."
+                placeholder={t('table.searchPlaceholder', 'Search...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -867,7 +873,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="border-gray-300">
                   <Filter className="w-4 h-4 mr-2" />
-                  Filters
+                  {t('tableFilters.filters', 'Filters')}
                   {activeFiltersCount > 0 && (
                     <Badge className="ml-2 px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700 hover:bg-blue-100">
                       {activeFiltersCount}
@@ -877,9 +883,9 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-64 p-4" align="start">
-                <div className="space-y-4">
+                                  <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-sm">Filters</h4>
+                    <h4 className="font-medium text-sm">{t('tableFilters.filters', 'Filters')}</h4>
                     {activeFiltersCount > 0 && (
                       <Button
                         variant="ghost"
@@ -887,7 +893,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                         onClick={clearFilters}
                         className="h-6 px-2 text-xs"
                       >
-                        Clear all
+                        {t('tableFilters.clearAll', 'Clear all')}
                       </Button>
                     )}
                   </div>
@@ -903,7 +909,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                             <SelectValue placeholder="All" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="all">All</SelectItem>
+                            <SelectItem value="all">{t('tableFilters.selectAll', 'All')}</SelectItem>
                             {field.options?.map((option) => (
                               <SelectItem key={option.value} value={option.value}>
                                 {option.label}
@@ -916,7 +922,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                           type={field.type}
                           value={filters[field.key] || ""}
                           onChange={(e) => handleFilter(field.key, e.target.value)}
-                          placeholder={`Filter by ${field.label.toLowerCase()}`}
+                          placeholder={t('tableFilters.filterBy', 'Filter by {{field}}', { field: field.label.toLowerCase() })}
                           className="h-8"
                         />
                       )}
@@ -935,7 +941,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
               className="text-gray-600 hover:text-gray-900"
             >
               <X className="w-4 h-4 mr-2" />
-              Clear filters
+              {t('tableFilters.clearAllFilters', 'Clear filters')}
             </Button>
           )}
         </div>
@@ -947,7 +953,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="border-blue-300 text-blue-700">
                   <CheckSquare className="w-4 h-4 mr-2" />
-                  {selectedRows.size} selected
+                  {t('table.selectedItems', '{{count}} selected', { count: selectedRows.size })}
                   <ChevronDown className="w-4 h-4 ml-1" />
                 </Button>
               </DropdownMenuTrigger>
@@ -976,14 +982,14 @@ export function AdvancedDataTable<T extends Record<string, any>>({
           {/* Column Visibility */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="border-gray-300">
-                <Columns className="w-4 h-4 mr-2" />
-                Columns
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <div className="p-2">
-                <h4 className="font-medium text-sm mb-2">Toggle columns</h4>
+                          <Button variant="outline" size="sm" className="border-gray-300">
+              <Columns className="w-4 h-4 mr-2" />
+              {t('table.columns', 'Columns')}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <div className="p-2">
+              <h4 className="font-medium text-sm mb-2">{t('table.toggleColumns', 'Toggle columns')}</h4>
                 {columns.map((column) => (
                   <DropdownMenuCheckboxItem
                     key={String(column.key)}
@@ -1008,8 +1014,9 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                   size="sm"
                   onClick={() => setViewMode(mode)}
                   className="h-8 px-3 rounded-none first:rounded-l-md last:rounded-r-md"
+                  title={t(`table.${mode}View`, `${mode.charAt(0).toUpperCase() + mode.slice(1)} View`)}
                 >
-                  {mode === 'table' ? <List className="w-4 h-4" /> : mode === 'cards' ? <Grid className="w-4 h-4" /> : 'List'}
+                  {mode === 'table' ? <List className="w-4 h-4" /> : mode === 'cards' ? <Grid className="w-4 h-4" /> : <List className="w-4 h-4" />}
                 </Button>
               ))}
             </div>
@@ -1019,14 +1026,14 @@ export function AdvancedDataTable<T extends Record<string, any>>({
           {onExport && (
             <Button variant="outline" size="sm" onClick={() => handleExport('csv')} className="border-gray-300">
               <Download className="w-4 h-4 mr-2" />
-              Export
+              {t('exportOptions.exportData', 'Export')}
             </Button>
           )}
           
           {onImport && (
             <Button variant="outline" size="sm" onClick={onImport} className="border-gray-300">
               <Upload className="w-4 h-4 mr-2" />
-              Import
+              {t('exportOptions.importData', 'Import')}
             </Button>
           )}
 
@@ -1039,7 +1046,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
           {onAdd && (
             <Button onClick={onAdd} className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
-              Add New
+              {t('table.addNew', 'Add New')}
             </Button>
           )}
         </div>
@@ -1048,12 +1055,16 @@ export function AdvancedDataTable<T extends Record<string, any>>({
       {/* Results Info */}
       <div className="flex items-center justify-between text-sm text-gray-600 bg-gray-50 px-4 py-2 rounded-lg">
         <span>
-          Showing {startIndex + 1} to {endIndex} of {filteredData.length} results
-          {filteredData.length !== data.length && ` (filtered from ${data.length} total)`}
+          {t('table.showingResults', 'Showing {{start}}-{{end}} of {{total}} results', {
+            start: startIndex + 1,
+            end: endIndex,
+            total: filteredData.length
+          })}
+          {filteredData.length !== data.length && ` ${t('table.filteredResults', '(filtered from {{total}} total)', { total: data.length })}`}
         </span>
         {selectedRows.size > 0 && (
           <span className="text-blue-600 font-medium">
-            {selectedRows.size} selected
+            {t('table.selectedItems', '{{count}} selected', { count: selectedRows.size })}
           </span>
         )}
       </div>
@@ -1065,7 +1076,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
       {paginated && totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-700">Show</span>
+            <span className="text-sm text-gray-700">{t('tablePagination.show', 'Show')}</span>
             <Select value={pageSize.toString()} onValueChange={(value) => {
               setPageSize(Number(value));
               setCurrentPage(1);
@@ -1081,7 +1092,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
                 ))}
               </SelectContent>
             </Select>
-            <span className="text-sm text-gray-700">per page</span>
+            <span className="text-sm text-gray-700">{t('tablePagination.perPage', 'per page')}</span>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -1091,9 +1102,10 @@ export function AdvancedDataTable<T extends Record<string, any>>({
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
               className="h-8"
+              title={t('tablePagination.goToPreviousPage', 'Go to previous page')}
             >
               <ChevronLeft className="w-4 h-4" />
-              Previous
+              {t('tablePagination.previous', 'Previous')}
             </Button>
             
             <div className="flex items-center space-x-1">
@@ -1121,14 +1133,18 @@ export function AdvancedDataTable<T extends Record<string, any>>({
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="h-8"
+              title={t('tablePagination.goToNextPage', 'Go to next page')}
             >
-              Next
+              {t('tablePagination.next', 'Next')}
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
 
           <div className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
+            {t('tablePagination.pageXofY', 'Page {{current}} of {{total}}', {
+              current: currentPage,
+              total: totalPages
+            })}
           </div>
         </div>
       )}
@@ -1156,43 +1172,43 @@ export const renderDate = (date: string) => (
   <span className="text-gray-900">{new Date(date).toLocaleDateString()}</span>
 );
 
-export const renderBoolean = (value: boolean) => (
+export const renderBoolean = (value: boolean, t?: any) => (
   <Badge variant={value ? 'default' : 'secondary'} className="font-medium">
-    {value ? 'Yes' : 'No'}
+    {value ? (t ? t('yes', 'Yes') : 'Yes') : (t ? t('no', 'No') : 'No')}
   </Badge>
 );
 
 // Helper functions for common actions
-export const createEditAction = <T,>(onEdit: (row: T) => void): Action<T> => ({
-  label: 'Edit',
+export const createEditAction = <T,>(onEdit: (row: T) => void, t?: any): Action<T> => ({
+  label: t ? t('edit', 'Edit') : 'Edit',
   icon: Edit,
   onClick: onEdit,
   variant: 'outline'
 });
 
-export const createDeleteAction = <T,>(onDelete: (row: T) => void): Action<T> => ({
-  label: 'Delete',
+export const createDeleteAction = <T,>(onDelete: (row: T) => void, t?: any): Action<T> => ({
+  label: t ? t('delete', 'Delete') : 'Delete',
   icon: Trash2,
   onClick: onDelete,
   variant: 'destructive'
 });
 
-export const createViewAction = <T,>(onView: (row: T) => void): Action<T> => ({
-  label: 'View',
+export const createViewAction = <T,>(onView: (row: T) => void, t?: any): Action<T> => ({
+  label: t ? t('view', 'View') : 'View',
   icon: Eye,
   onClick: onView
 });
 
 // Helper functions for bulk actions
-export const createBulkDeleteAction = <T,>(onBulkDelete: (rows: T[]) => void): BulkAction<T> => ({
-  label: 'Delete Selected',
+export const createBulkDeleteAction = <T,>(onBulkDelete: (rows: T[]) => void, t?: any): BulkAction<T> => ({
+  label: t ? t('table.deleteSelected', 'Delete Selected') : 'Delete Selected',
   icon: Trash2,
   onClick: onBulkDelete,
   variant: 'destructive'
 });
 
-export const createBulkEditAction = <T,>(onBulkEdit: (rows: T[]) => void): BulkAction<T> => ({
-  label: 'Edit Selected',
+export const createBulkEditAction = <T,>(onBulkEdit: (rows: T[]) => void, t?: any): BulkAction<T> => ({
+  label: t ? t('table.editSelected', 'Edit Selected') : 'Edit Selected',
   icon: Edit,
   onClick: onBulkEdit,
   variant: 'outline'
