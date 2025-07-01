@@ -100,7 +100,7 @@ export default function OrdersPage() {
     },
     {
       key: 'paymentStatus',
-      header: 'Payment',
+      header: t('orders.payment', 'Payment'),
       render: renderStatus,
       sortable: true,
       filterable: true,
@@ -131,7 +131,7 @@ export default function OrdersPage() {
       }),
       createSelectField('customerId', t('orders.customer', 'Customer'), customerOptions, {
         validation: { required: true },
-        placeholder: 'Select customer',
+        placeholder: t('orders.selectCustomer', 'Select customer'),
         searchable: true,
         width: 'half'
       }),
@@ -140,31 +140,31 @@ export default function OrdersPage() {
         placeholder: '0.00',
         width: 'half'
       }),
-      createSelectField('paymentMethod', 'Payment Method', [
-        { value: 'cash', label: 'Cash' },
-        { value: 'card', label: 'Credit/Debit Card' },
-        { value: 'bank_transfer', label: 'Bank Transfer' },
-        { value: 'check', label: 'Check' }
+      createSelectField('paymentMethod', t('orders.paymentMethod', 'Payment Method'), [
+        { value: 'cash', label: t('orders.cash', 'Cash') },
+        { value: 'card', label: t('orders.card', 'Credit/Debit Card') },
+        { value: 'bank_transfer', label: t('orders.bankTransfer', 'Bank Transfer') },
+        { value: 'check', label: t('orders.check', 'Check') }
       ], {
-        placeholder: 'Select payment method',
+        placeholder: t('orders.selectPaymentMethod', 'Select payment method'),
         width: 'half'
       }),
       createSelectField('status', t('orders.status', 'Order Status'), [
         { value: 'pending', label: t('status.pending', 'Pending') },
-        { value: 'confirmed', label: 'Confirmed' },
-        { value: 'processing', label: 'Processing' },
-        { value: 'shipped', label: 'Shipped' },
-        { value: 'delivered', label: 'Delivered' },
+        { value: 'confirmed', label: t('status.confirmed', 'Confirmed') },
+        { value: 'processing', label: t('status.processing', 'Processing') },
+        { value: 'shipped', label: t('status.shipped', 'Shipped') },
+        { value: 'delivered', label: t('status.delivered', 'Delivered') },
         { value: 'cancelled', label: t('status.cancelled', 'Cancelled') }
       ], {
         defaultValue: 'pending',
         width: 'half'
       }),
-      createSelectField('paymentStatus', 'Payment Status', [
+      createSelectField('paymentStatus', t('orders.paymentStatus', 'Payment Status'), [
         { value: 'pending', label: t('status.pending', 'Pending') },
-        { value: 'paid', label: 'Paid' },
-        { value: 'failed', label: 'Failed' },
-        { value: 'refunded', label: 'Refunded' }
+        { value: 'paid', label: t('status.paid', 'Paid') },
+        { value: 'failed', label: t('status.failed', 'Failed') },
+        { value: 'refunded', label: t('status.refunded', 'Refunded') }
       ], {
         defaultValue: 'pending',
         width: 'half'
@@ -381,13 +381,13 @@ export default function OrdersPage() {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
-          <span className="text-gray-500 text-sm font-medium">Items:</span>
+          <span className="text-gray-500 text-sm font-medium">{t('orders.items', 'Items')}:</span>
           <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium inline-block">
             {order.itemsCount || 0}
           </div>
         </div>
         <div className="space-y-1">
-          <span className="text-gray-500 text-sm font-medium">Payment:</span>
+          <span className="text-gray-500 text-sm font-medium">{t('orders.payment', 'Payment')}:</span>
           <div>{renderStatus(order.paymentStatus)}</div>
         </div>
       </div>
@@ -395,12 +395,12 @@ export default function OrdersPage() {
       <div className="pt-3 border-t border-gray-100">
         <div className="flex justify-between items-center">
           <div>
-            <span className="text-gray-500 text-sm">Order Date:</span>
+            <span className="text-gray-500 text-sm">{t('orders.orderDate', 'Order Date')}:</span>
             <div className="font-medium">{renderDate(order.orderDate)}</div>
           </div>
           {order.paymentMethod && (
             <div>
-              <span className="text-gray-500 text-sm">Payment Method:</span>
+              <span className="text-gray-500 text-sm">{t('orders.paymentMethod', 'Payment Method')}:</span>
               <div className="font-medium capitalize">{order.paymentMethod.replace('_', ' ')}</div>
             </div>
           )}
@@ -409,7 +409,7 @@ export default function OrdersPage() {
 
       {order.customer?.email && (
         <div className="pt-2 border-t border-gray-100">
-          <span className="text-gray-500 text-sm">Customer Email:</span>
+          <span className="text-gray-500 text-sm">{t('orders.customerEmail', 'Customer Email')}:</span>
           <p className="text-sm text-gray-700">{order.customer.email}</p>
         </div>
       )}
@@ -438,8 +438,6 @@ export default function OrdersPage() {
       onDelete={handleDelete}
       onBulkDelete={handleBulkDelete}
       onRefresh={handleRefresh}
-      title={t("pages.orders", "Orders")}
-      subtitle={t("pages.ordersSubtitle", "Manage customer orders and transactions")}
     />
   );
 } 

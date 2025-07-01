@@ -502,7 +502,6 @@ export default function UnitsPage() {
       onDelete={handleDelete}
       onBulkDelete={handleBulkDelete}
       onRefresh={handleRefresh}
-      title={t("units.title", "Units")}
     />
   );
 }

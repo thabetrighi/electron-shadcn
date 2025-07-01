@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -119,6 +120,8 @@ const KEYBOARD_SHORTCUTS = {
 };
 
 export default function POSPage() {
+  const { t } = useTranslation();
+  
   // State management
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -1154,7 +1157,7 @@ export default function POSPage() {
               <Receipt className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900">POS Terminal</h1>
+              <h1 className="text-lg font-bold text-gray-900">{t('pos.terminal', 'POS Terminal')}</h1>
             </div>
           </div>
 
@@ -1164,7 +1167,7 @@ export default function POSPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 ref={searchInputRef}
-                placeholder="Search products, users, SKU..."
+                placeholder={t('pos.searchPlaceholder', 'Search products, users, SKU...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => {
@@ -1180,7 +1183,7 @@ export default function POSPage() {
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-48 overflow-y-auto">
                   {searchResults.products.length > 0 && (
                     <div className="p-2">
-                      <div className="text-xs font-medium text-gray-500 mb-1">Products</div>
+                      <div className="text-xs font-medium text-gray-500 mb-1">{t('pos.products', 'Products')}</div>
                       {searchResults.products.slice(0, 4).map(product => (
                         <div 
                           key={product.id}
@@ -1202,7 +1205,7 @@ export default function POSPage() {
                   
                   {searchResults.users.length > 0 && (
                     <div className="p-2 border-t border-gray-100">
-                      <div className="text-xs font-medium text-gray-500 mb-1">Users</div>
+                      <div className="text-xs font-medium text-gray-500 mb-1">{t('pos.users', 'Users')}</div>
                       {searchResults.users.slice(0, 3).map(user => (
                         <div 
                           key={user.id}
@@ -1210,7 +1213,7 @@ export default function POSPage() {
                           onClick={() => {
                             setSelectedUser(user);
                             setSearchTerm('');
-                            toast.success(`Assigned to ${user.name}`);
+                            toast.success(t('pos.assignedToUser', 'Assigned to {{user}}', { user: user.name }));
                           }}
                         >
                           <Avatar className="w-6 h-6">
@@ -1246,11 +1249,11 @@ export default function POSPage() {
               size="sm" 
               onClick={() => setShowKeyboardHelp(true)} 
               className="h-9 px-3"
-              title="Keyboard Shortcuts (F1-F10)"
+              title={t('pos.keyboardShortcuts', 'Keyboard Shortcuts')}
             >
               <Keyboard className="w-4 h-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setView(view === 'grid' ? 'list' : 'grid')} className="h-9 px-3" title="Toggle View (F1)">
+            <Button variant="outline" size="sm" onClick={() => setView(view === 'grid' ? 'list' : 'grid')} className="h-9 px-3" title={t('pos.toggleView', 'Toggle View')}>
               {view === 'grid' ? <List className="w-4 h-4" /> : <Grid3X3 className="w-4 h-4" />}
             </Button>
             <Button 
@@ -1265,7 +1268,7 @@ export default function POSPage() {
                 setIsFullscreen(!isFullscreen);
               }} 
               className="h-9 px-3"
-              title="Fullscreen (F2)"
+              title={t('pos.fullscreen', 'Fullscreen')}
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </Button>
@@ -1286,7 +1289,7 @@ export default function POSPage() {
                 >
                   <Users className="w-5 h-5 text-blue-600" />
                   <span className="text-sm font-medium text-blue-700">
-                    {selectedUser ? selectedUser.name : 'User'}
+                    {selectedUser ? selectedUser.name : t('pos.user', 'User')}
                   </span>
                 </div>
                 
@@ -1301,13 +1304,13 @@ export default function POSPage() {
                     <div className="absolute top-full left-0 mt-1 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                       <div className="p-3 space-y-2">
                         <Input
-                          placeholder="Enter customer name..."
+                          placeholder={t('pos.enterCustomerName', 'Enter customer name...')}
                           value={customerName}
                           onChange={(e) => setCustomerName(e.target.value)}
                           className="h-8 text-sm"
                         />
                         <div className="border-t pt-2">
-                          <div className="text-xs text-gray-500 mb-1">Assign User:</div>
+                          <div className="text-xs text-gray-500 mb-1">{t('pos.selectUser', 'Assign User:')}</div>
                           {users.map(user => (
                             <div
                               key={user.id}
@@ -1471,7 +1474,7 @@ export default function POSPage() {
         </div>
 
         {/* Cart & Orders List - Always Right Side */}
-        <div className={`bg-white border-l border-gray-200 flex flex-col overflow-hidden ${
+        <div className={`bg-white border-gray-200 flex flex-col overflow-hidden ${
           isFullscreen ? 'w-96' : 'w-80'
         }`}>
           {/* Sidebar Header */}
@@ -1479,7 +1482,7 @@ export default function POSPage() {
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                 <ShoppingCart className="w-4 h-4" />
-                <span className="text-sm">Cart ({getCartItemCount()})</span>
+                <span className="text-sm">{t('pos.cart', 'Cart')} ({getCartItemCount()})</span>
               </h3>
               <div className="flex items-center gap-1">
                 {/* Cart View Toggle */}

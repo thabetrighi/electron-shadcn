@@ -137,7 +137,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <div className={`hidden lg:flex flex-col transition-all duration-300 ease-in-out ${
           sidebarOpen ? 'w-64' : 'w-0'
         }`}>
-          <div className={`w-64 sidebar-gradient-bg backdrop-blur-sm border-r border-gray-200/50 shadow-xl flex-shrink-0 overflow-hidden transition-all duration-300 flex flex-col h-full ${
+          <div className={`w-64 sidebar-gradient-bg backdrop-blur-sm border-gray-200/50 shadow-xl flex-shrink-0 overflow-hidden transition-all duration-300 flex flex-col h-full ${
             sidebarOpen ? 'opacity-100' : 'opacity-0'
           }`}>
             {/* Sidebar Header */}
@@ -384,7 +384,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           />
           
           {/* Mobile Sidebar */}
-          <div className="fixed top-8 bottom-0 left-0 w-64 sidebar-gradient-bg backdrop-blur-sm border-r border-gray-200/50 shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col">
+          <div className="fixed top-8 bottom-0 left-0 w-64 sidebar-gradient-bg backdrop-blur-sm border-gray-200/50 shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col">
             {/* Sidebar Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200/50 flex-shrink-0">
               <div className="flex items-center">

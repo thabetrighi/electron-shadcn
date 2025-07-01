@@ -176,8 +176,8 @@ export default function UsersPage() {
     },
     {
       key: 'lastLoginAt',
-      header: 'Last Login',
-      render: (date: string) => date ? renderDateTime(date) : <span className="text-gray-400">Never</span>,
+      header: t('users.lastLogin', 'Last Login'),
+      render: (date: string) => date ? renderDateTime(date) : <span className="text-gray-400">{t('never', 'Never')}</span>,
       sortable: true,
       type: 'date',
       exportable: true
@@ -224,9 +224,9 @@ export default function UsersPage() {
       defaultValue: 'active',
       width: 'half'
     }),
-    createTextareaField('address', 'Address', {
+    createTextareaField('address', t('users.address', 'Address'), {
       rows: 3,
-      placeholder: 'Enter full address (optional)',
+      placeholder: t('users.addressPlaceholder', 'Enter full address (optional)'),
       width: 'full'
     })
   ], [t]);
@@ -451,8 +451,6 @@ export default function UsersPage() {
       onDelete={handleDelete}
       onBulkDelete={handleBulkDelete}
       onRefresh={handleRefresh}
-      title={t("pages.users", "Users")}
-      subtitle={t("pages.usersSubtitle", "Manage system users and their roles")}
     />
   );
 }

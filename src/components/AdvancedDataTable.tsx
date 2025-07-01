@@ -382,17 +382,6 @@ export function AdvancedDataTable<T extends Record<string, any>>({
   const enhancedStats = useMemo(() => {
     const baseStats = [...stats];
 
-    // Auto-calculate total count
-    if (!stats.some(stat => stat.label.toLowerCase().includes('total'))) {
-      baseStats.unshift({
-        label: t('table.totalResults', 'Total'),
-        value: data.length,
-        icon: Package,
-        color: 'text-blue-600',
-        format: 'number' as const
-      });
-    }
-
     // Auto-calculate filtered count if different
     if (filteredData.length !== data.length) {
       baseStats.push({

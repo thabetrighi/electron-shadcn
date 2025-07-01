@@ -61,7 +61,7 @@ export const renderStatus = (status: string) => {
 
   return (
     <Badge variant="outline" className={`${config.color} border`}>
-      <Icon className="w-3 h-3 mr-1" />
+      <Icon className="w-3 h-3 mr-1 rtl:ml-1 rtl:mr-0" />
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </Badge>
   );
@@ -81,7 +81,7 @@ export const renderUserRole = (role: string) => {
 
   return (
     <Badge variant="outline" className={`${config.color} border`}>
-      <Icon className="w-3 h-3 mr-1" />
+      <Icon className="w-3 h-3 mr-1 rtl:ml-1 rtl:mr-0" />
       {role.charAt(0).toUpperCase() + role.slice(1)}
     </Badge>
   );
@@ -109,7 +109,7 @@ export const renderPhone = (phone: string) => {
   if (!phone) return <span className="text-gray-400">-</span>;
   return (
     <div className="flex items-center">
-      <Phone className="w-3 h-3 mr-1 text-gray-400" />
+      <Phone className="w-3 h-3 mr-1 rtl:ml-1 rtl:mr-0 text-gray-400" />
       <span className="font-mono text-sm">{phone}</span>
     </div>
   );
@@ -119,7 +119,7 @@ export const renderEmail = (email: string) => {
   if (!email) return <span className="text-gray-400">-</span>;
   return (
     <div className="flex items-center">
-      <Mail className="w-3 h-3 mr-1 text-gray-400" />
+      <Mail className="w-3 h-3 mr-1 rtl:ml-1 rtl:mr-0 text-gray-400" />
       <span className="text-sm">{email}</span>
     </div>
   );

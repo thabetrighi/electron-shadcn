@@ -393,6 +393,7 @@ export default function CategoriesPage() {
       entityConfig={{
         icon: Archive,
         color: "text-orange-600",
+        description: t("pages.categoriesSubtitle", "Organize products into categories"),
         category: "organization",
       }}
       columns={categoriesColumns}
@@ -404,8 +405,6 @@ export default function CategoriesPage() {
       onDelete={handleDelete}
       onBulkDelete={handleBulkDelete}
       onRefresh={handleRefresh}
-      title={t("pages.categories", "Categories")}
-      subtitle={t("pages.categoriesSubtitle", "Organize products into categories")}
     />
   );
 }
