@@ -1448,8 +1448,8 @@ export default function POSPage() {
             ) : filteredProducts.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-gray-500">
                 <Package className="w-12 h-12 mb-4 text-gray-300" />
-                <p className="text-lg font-medium mb-2">No products found</p>
-                <p className="text-sm">Try adjusting your search or category filter</p>
+                <p className="text-lg font-medium mb-2">{t('pos.noProducts', 'No products found')}</p>
+                <p className="text-sm">{t('pos.tryAdjustingSearch', 'Try adjusting your search or category filter')}</p>
               </div>
             ) : (
               <div className={`${
@@ -1503,7 +1503,7 @@ export default function POSPage() {
                     size="sm"
                     onClick={savePendingCart}
                     className="h-6 px-2 text-xs text-blue-600 hover:bg-blue-50"
-                    title="Save Cart"
+                    title={t('pos.saveCart', 'Save Cart')}
                   >
                     <Save className="w-3 h-3" />
                   </Button>
@@ -1533,7 +1533,7 @@ export default function POSPage() {
                     size="sm"
                     onClick={clearCart}
                     className="h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                    title="Clear Cart"
+                    title={t('pos.clearCart', 'Clear Cart')}
                   >
                     <Trash2 className="w-3 h-3" />
                   </Button>
@@ -1557,12 +1557,8 @@ export default function POSPage() {
                 onDrop={handleDrop}
               >
                 <ShoppingCart className={`w-8 h-8 mb-2 ${isDragging ? 'text-blue-400' : 'text-gray-300'}`} />
-                <p className="text-sm font-medium mb-1">
-                  {isDragging ? 'Drop product here!' : 'Cart is empty'}
-                </p>
-                <p className="text-xs text-center">
-                  {isDragging ? 'Release to add to cart' : 'Add products by clicking or drag & drop here'}
-                </p>
+                <p className="text-sm font-medium mb-1">{isDragging ? t('pos.dropProductHere', 'Drop product here!') : t('pos.cartEmpty', 'Cart is empty')}</p>
+                <p className="text-xs text-center">{isDragging ? t('pos.releaseToAdd', 'Release to add to cart') : t('pos.addProductsHint', 'Add products by clicking or drag & drop here')}</p>
               </div>
             ) : cartView === 'list' ? (
               /* List View - Vertical Scrolling */
@@ -1606,7 +1602,7 @@ export default function POSPage() {
                 className="w-full h-12 bg-green-600 hover:bg-green-700 font-bold text-lg shadow-lg"
               >
                 <CheckCircle2 className="w-5 h-5 mr-2" />
-                CHECKOUT & PRINT ({formatCurrency(getCartTotal())})
+                {t('pos.checkoutAndPrint', 'Checkout & Print')} ({formatCurrency(getCartTotal())})
               </Button>
               
               {/* Secondary Checkout without Print */}
@@ -1616,7 +1612,7 @@ export default function POSPage() {
                 className="w-full h-8 text-sm border-green-300 text-green-700 hover:bg-green-50"
               >
                 <Receipt className="w-4 h-4 mr-2" />
-                Checkout without Print (F11)
+                {t('pos.checkoutNoPrint', 'Checkout without Print')} (F11)
               </Button>
             </div>
           )}
@@ -1631,14 +1627,14 @@ export default function POSPage() {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Plus className="w-4 h-4" />
-                Add Custom Item
+                {t('pos.addCustomItem', 'Add Custom Item')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <label className="text-sm font-medium mb-1 block">Item Name *</label>
+                <label className="text-sm font-medium mb-1 block">{t('pos.itemName', 'Item Name')} *</label>
                 <Input
-                  placeholder="Enter item name"
+                  placeholder={t('pos.enterItemName', 'Enter item name')}
                   value={customItemForm.name}
                   onChange={(e) => setCustomItemForm(prev => ({ ...prev, name: e.target.value }))}
                   className="h-8"
@@ -1646,22 +1642,22 @@ export default function POSPage() {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Price *</label>
+                  <label className="text-sm font-medium mb-1 block">{t('pos.price', 'Price')} *</label>
                   <Input
                     type="number"
                     step="0.01"
-                    placeholder="0.00"
+                    placeholder={t('pos.pricePlaceholder', '0.00')}
                     value={customItemForm.price}
                     onChange={(e) => setCustomItemForm(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
                     className="h-8"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Quantity</label>
+                  <label className="text-sm font-medium mb-1 block">{t('pos.quantity', 'Quantity')}</label>
                   <Input
                     type="number"
                     min="1"
-                    placeholder="1"
+                    placeholder={t('pos.quantityPlaceholder', '1')}
                     value={customItemForm.quantity}
                     onChange={(e) => setCustomItemForm(prev => ({ ...prev, quantity: parseInt(e.target.value) || 1 }))}
                     className="h-8"
@@ -1669,9 +1665,9 @@ export default function POSPage() {
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Description</label>
+                <label className="text-sm font-medium mb-1 block">{t('pos.description', 'Description')}</label>
                 <Input
-                  placeholder="Optional description"
+                  placeholder={t('pos.optionalDescription', 'Optional description')}
                   value={customItemForm.description}
                   onChange={(e) => setCustomItemForm(prev => ({ ...prev, description: e.target.value }))}
                   className="h-8"
@@ -1683,14 +1679,14 @@ export default function POSPage() {
                   variant="outline"
                   className="flex-1 h-8"
                 >
-                  Cancel
+                  {t('pos.cancel', 'Cancel')}
                 </Button>
                 <Button 
                   onClick={handleAddCustomItem}
                   disabled={!customItemForm.name || customItemForm.price <= 0}
                   className="flex-1 h-8"
                 >
-                  Add to Cart
+                  {t('pos.addToCart', 'Add to Cart')}
                 </Button>
               </div>
             </CardContent>
