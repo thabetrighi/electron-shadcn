@@ -5,8 +5,9 @@ import { CategoriesService } from '../../../database/services/categories.service
 import { UnitsService } from '../../../database/services/units.service';
 import { ProductsService } from '../../../database/services/products.service';
 import { OrdersService } from '../../../database/services/orders.service';
+import { OrderItemsService } from '../../../database/services/order-items.service';
 import { SettingsService } from '../../../database/services/settings.service';
-import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS } from './database-channels';
+import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, ORDER_ITEM_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS } from './database-channels';
 
 export function registerDatabaseListeners() {
   console.log('Registering database IPC listeners...');
@@ -144,6 +145,39 @@ export function registerDatabaseListeners() {
 
   ipcMain.handle(ORDER_CHANNELS.GET_ORDERS_BY_USER, async (_, userId) => {
     return await OrdersService.getByUser(userId);
+  });
+
+  // Order Item operations
+  ipcMain.handle(ORDER_ITEM_CHANNELS.GET_ALL_ORDER_ITEMS, async () => {
+    return await OrderItemsService.getAll();
+  });
+
+  ipcMain.handle(ORDER_ITEM_CHANNELS.GET_ORDER_ITEM_BY_ID, async (_, id) => {
+    return await OrderItemsService.getById(id);
+  });
+
+  ipcMain.handle(ORDER_ITEM_CHANNELS.GET_ORDER_ITEMS_BY_ORDER, async (_, orderId) => {
+    return await OrderItemsService.getByOrderId(orderId);
+  });
+
+  ipcMain.handle(ORDER_ITEM_CHANNELS.CREATE_ORDER_ITEM, async (_, itemData) => {
+    return await OrderItemsService.create(itemData);
+  });
+
+  ipcMain.handle(ORDER_ITEM_CHANNELS.CREATE_MULTIPLE_ORDER_ITEMS, async (_, items) => {
+    return await OrderItemsService.createMultiple(items);
+  });
+
+  ipcMain.handle(ORDER_ITEM_CHANNELS.UPDATE_ORDER_ITEM, async (_, id, itemData) => {
+    return await OrderItemsService.update(id, itemData);
+  });
+
+  ipcMain.handle(ORDER_ITEM_CHANNELS.DELETE_ORDER_ITEM, async (_, id) => {
+    return await OrderItemsService.delete(id);
+  });
+
+  ipcMain.handle(ORDER_ITEM_CHANNELS.DELETE_ORDER_ITEMS_BY_ORDER, async (_, orderId) => {
+    return await OrderItemsService.deleteByOrderId(orderId);
   });
 
   // Settings operations

@@ -560,6 +560,28 @@ export default function POSPage() {
 
       const result = await window.database.orders.create(orderData);
       if (result.success) {
+        // Create order items after order is successfully created
+        const orderItems = pendingCart.items.map(item => ({
+          orderId: result.data.id,
+          productId: item.product?.id || null,
+          productName: item.product?.name || item.customItem?.name,
+          productSku: item.product?.sku || '',
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          discountRate: 0,
+          discountAmount: item.discount,
+          taxRate: item.product?.taxRate || 0,
+          taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
+          totalPrice: item.total,
+        }));
+
+        const itemsResult = await window.database.orderItems.createMultiple(orderItems);
+        if (itemsResult.success) {
+          console.log(`✅ Created ${orderItems.length} order items for pending cart order ${orderData.orderNumber}`);
+        } else {
+          console.warn(`⚠️ Failed to create order items for pending cart order ${orderData.orderNumber}:`, itemsResult.error);
+        }
+        
         const assignedText = selectedUser ? ` (Assigned to: ${selectedUser.name})` : '';
         toast.success(`Sale completed! Order #${orderData.orderNumber}${assignedText}`);
         
@@ -633,6 +655,28 @@ export default function POSPage() {
 
       const result = await window.database.orders.create(orderData);
       if (result.success) {
+        // Create order items after order is successfully created
+        const orderItems = cart.map(item => ({
+          orderId: result.data.id,
+          productId: item.product?.id || null,
+          productName: item.product?.name || item.customItem?.name,
+          productSku: item.product?.sku || '',
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          discountRate: 0,
+          discountAmount: item.discount,
+          taxRate: item.product?.taxRate || 0,
+          taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
+          totalPrice: item.total,
+        }));
+
+        const itemsResult = await window.database.orderItems.createMultiple(orderItems);
+        if (itemsResult.success) {
+          console.log(`✅ Created ${orderItems.length} order items for order ${orderData.orderNumber}`);
+        } else {
+          console.warn(`⚠️ Failed to create order items for order ${orderData.orderNumber}:`, itemsResult.error);
+        }
+        
         const assignedText = selectedUser ? ` (Assigned to: ${selectedUser.name})` : '';
         const printText = printReceipt ? ' [Receipt Printed]' : ' [No Receipt]';
         toast.success(`Sale completed! Order #${orderData.orderNumber}${assignedText}${printText}`);

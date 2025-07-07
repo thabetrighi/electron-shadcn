@@ -5,8 +5,8 @@ export const translations = {
       appName: "POS Pro",
       titleHomePage: "Home Page",
       titleSecondPage: "Second Page",
-      
-      // Common Actions  
+
+      // Common Actions
       cancel: "Cancel",
       save: "Save",
       edit: "Edit",
@@ -34,7 +34,7 @@ export const translations = {
       restore: "Restore",
       retry: "Try Again",
       deleting: "Deleting...",
-      
+
       // Common Terms
       none: "None",
       all: "All",
@@ -97,7 +97,7 @@ export const translations = {
       sunday: "Sunday",
       usFormat: "MM/DD/YYYY (US Format)",
       autoRefresh: "Auto-refresh",
-      
+
       // Table Elements
       table: {
         actions: "Actions",
@@ -146,7 +146,7 @@ export const translations = {
         itemsPerPage: "Items per page",
         showingXofY: "Showing {{start}}-{{end}} of {{total}}",
         goToFirstPage: "Go to first page",
-        goToPreviousPage: "Go to previous page", 
+        goToPreviousPage: "Go to previous page",
         goToNextPage: "Go to next page",
         goToLastPage: "Go to last page",
         pageXofY: "Page {{current}} of {{total}}",
@@ -168,13 +168,13 @@ export const translations = {
         toggleColumns: "Toggle columns",
         tableView: "Table View",
         cardsView: "Cards View",
-        listView: "List View"
+        listView: "List View",
       },
 
       // Export Options
       exportOptions: {
         csv: "CSV",
-        excel: "Excel", 
+        excel: "Excel",
         pdf: "PDF",
         json: "JSON",
         print: "Print",
@@ -189,10 +189,10 @@ export const translations = {
         exportSuccess: "Data exported successfully",
         exportError: "Failed to export data",
         preparing: "Preparing export...",
-        downloading: "Downloading..."
+        downloading: "Downloading...",
       },
 
-      // Table Filters  
+      // Table Filters
       tableFilters: {
         filters: "Filters",
         activeFilters: "Active Filters",
@@ -249,13 +249,13 @@ export const translations = {
         thisYear: "This Year",
         lastYear: "Last Year",
         custom: "Custom",
-        range: "Range"
+        range: "Range",
       },
 
       // Pagination
       tablePagination: {
         previous: "Previous",
-        next: "Next", 
+        next: "Next",
         first: "First",
         last: "Last",
         page: "Page",
@@ -270,9 +270,9 @@ export const translations = {
         showMore: "Show More",
         showLess: "Show Less",
         show: "Show",
-        perPage: "per page"
+        perPage: "per page",
       },
-      
+
       // Navigation
       navigation: {
         dashboard: "Dashboard",
@@ -283,7 +283,7 @@ export const translations = {
         orders: "Orders",
         pos: "POS",
         reports: "Reports",
-        settings: "Settings"
+        settings: "Settings",
       },
 
       // Dashboard
@@ -301,7 +301,8 @@ export const translations = {
         recentActivitySubtitle: "Your recent activities and updates",
         chartPlaceholder: "Chart visualization would go here",
         settingsIntegration: "Settings Integration Status",
-        settingsIntegrationSubtitle: "Real-time status of system settings integration",
+        settingsIntegrationSubtitle:
+          "Real-time status of system settings integration",
         quickSystemInfo: "Quick System Info",
         currentLanguage: "Current Language",
         themeMode: "Theme Mode",
@@ -313,13 +314,14 @@ export const translations = {
         systemIntegrationActive: "System integration active",
         systemIntegrationDesc: "All settings are working correctly",
         dashboardLoaded: "Dashboard loaded",
-        dashboardLoadedDesc: "Welcome to your POS system"
+        dashboardLoadedDesc: "Welcome to your POS system",
       },
 
-      // Home Page 
+      // Home Page
       home: {
         title: "Dashboard",
-        welcomeMessage: "Welcome back! Here's what's happening with your store today.",
+        welcomeMessage:
+          "Welcome back! Here's what's happening with your store today.",
         totalRevenue: "Total Revenue",
         totalOrders: "Total Orders",
         productsLabel: "Products",
@@ -349,7 +351,7 @@ export const translations = {
         quickActions: "Quick Actions",
         addProduct: "Add Product",
         viewReports: "View Reports",
-        manageUsers: "Manage Users"
+        manageUsers: "Manage Users",
       },
 
       // Products
@@ -373,7 +375,7 @@ export const translations = {
         selectUnit: "Select a unit",
         descriptionPlaceholder: "Enter product description (optional)",
         skuTooltip: "Stock Keeping Unit - unique identifier",
-        lowStockHelp: "Alert when stock falls below this level"
+        lowStockHelp: "Alert when stock falls below this level",
       },
 
       // Categories
@@ -393,9 +395,9 @@ export const translations = {
         frenchName: "French Name",
         arabicName: "Arabic Name",
         englishNamePlaceholder: "Enter English name",
-        frenchNamePlaceholder: "Enter French name", 
+        frenchNamePlaceholder: "Enter French name",
         arabicNamePlaceholder: "Enter Arabic name",
-        under: "Under"
+        under: "Under",
       },
 
       // Units
@@ -415,7 +417,7 @@ export const translations = {
         piece: "Piece",
         weight: "Weight",
         volume: "Volume",
-        length: "Length"
+        length: "Length",
       },
 
       // Users
@@ -439,7 +441,7 @@ export const translations = {
         passwordPlaceholder: "Enter password",
         addressPlaceholder: "Enter full address (optional)",
         selectRole: "Select user role",
-        lastLogin: "Last Login"
+        lastLogin: "Last Login",
       },
 
       // Orders
@@ -450,7 +452,7 @@ export const translations = {
         customer: "Customer",
         total: "Total",
         status: "Status",
-        date: "Date", 
+        date: "Date",
         orderDate: "Order Date",
         items: "Items",
         created: "Created",
@@ -463,105 +465,105 @@ export const translations = {
         cash: "Cash",
         card: "Credit/Debit Card",
         bankTransfer: "Bank Transfer",
-        check: "Check"
+        check: "Check",
       },
 
       // POS (Point of Sale)
       pos: {
-        title: "نقطة البيع",
-        subtitle: "معالجة معاملات العملاء",
+        title: "Point of Sale",
+        subtitle: "Processing customer transactions",
         terminal: "POS Terminal",
-        cart: "السلة",
-        total: "المجموع",
-        subtotal: "المجموع الجزئي",
-        tax: "الضريبة",
-        checkout: "الدفع",
-        checkoutWithPrint: "الدفع وطباعة الفاتورة",
-        checkoutWithoutPrint: "الدفع",
-        addToCart: "إضافة للسلة",
-        removeFromCart: "إزالة من السلة",
-        clearCart: "مسح السلة",
-        customer: "العميل",
-        user: "المستخدم",
-        assignUser: "تعيين المستخدم",
-        enterCustomerName: "أدخل اسم العميل...",
-        payment: "الدفع",
-        cash: "نقدي",
-        card: "بطاقة",
-        change: "الباقي",
-        searchPlaceholder: "بحث عن المنتجات، المستخدمين، رمز المنتج...",
-        products: "المنتجات",
-        users: "المستخدمين",
-        keyboardShortcuts: "أزرار مفتاح المفتاح",
-        toggleView: "تبديل العرض",
-        fullscreen: "كامل الشاشة",
-        quantity: "الكمية",
-        unitPrice: "سعر الوحدة",
-        discount: "الخصم",
-        items: "العناصر",
-        item: "العنصر",
-        addCustomItem: "إضافة عنصر مخصص",
-        customItemName: "اسم العنصر المخصص",
-        customItemPrice: "سعر العنصر المخصص",
-        customItemDescription: "وصف العنصر المخصص",
-        pendingCarts: "السلات المعلقة",
-        savePendingCart: "حفظ السلة المعلقة",
-        loadPendingCart: "تحميل السلة المعلقة",
-        deletePendingCart: "حذف السلة المعلقة",
-        quickCheckout: "الدفع السريع",
-        pendingCartName: "اسم السلة المعلقة",
-        enterCartName: "أدخل اسم السلة...",
-        cartSaved: "تم حفظ السلة بنجاح",
-        cartLoaded: "تم تحميل السلة بنجاح",
-        cartDeleted: "تم حذف السلة بنجاح",
-        noItemsInCart: "لا توجد عناصر في السلة",
-        orderCompleted: "تم إكمال الطلب بنجاح",
-        receiptPrinted: "تم طباعة الفاتورة",
-        assignedToUser: "تعيين إلى {{user}}",
-        outOfStock: "نفاد المخزون",
-        lowStock: "مخزون منخفض",
-        featured: "مميز",
-        gridView: "عرض الشبكة",
-        listView: "عرض القائمة",
-        barcode: "رمز الشريط الضوئي",
-        enterBarcode: "أدخل رمز الشريط الضوئي...",
-        barcodeNotFound: "رمز الشريط الضوئي غير موجود",
-        categoryFilter: "مرشح الفئة",
-        allCategories: "كل الفئات",
-        totalItems: "إجمالي العناصر",
-        cartEmpty: "السلة فارغة",
-        addItemsToCart: "أضف عناصر إلى السلة للمتابعة",
-        printReceipt: "طباعة الفاتورة",
-        emailReceipt: "الفاتورة عبر البريد الإلكتروني",
-        taxIncluded: "الضريبة داخلة",
-        taxRate: "معدل الضريبة",
-        discountApplied: "تم تطبيق الخصم",
-        quickActions: "إجراءات سريعة",
-        recentTransactions: "معاملات حديثة",
-        todaysSales: "مبيعات اليوم",
-        itemsPerPage: "عناصر في الصفحة",
-        noProducts: "لم يتم العثور على منتجات",
-        noUsers: "لم يتم العثور على مستخدمين",
-        searchResults: "نتائج البحث",
-        clearSearch: "مسح البحث",
-        productAdded: "تم إضافة المنتج إلى السلة",
-        productRemoved: "تم إزالة المنتج من السلة",
-        quantityUpdated: "تم تحديث الكمية",
-        priceUpdated: "تم تحديث السعر",
-        cartCleared: "تم مسح السلة",
-        processing: "جاري المعالجة...",
-        complete: "مكتمل",
-        cancel: "إلغاء",
-        save: "حفظ",
-        edit: "تعديل",
-        delete: "حذف",
-        back: "خلف",
-        next: "التالي",
-        previous: "السابق",
-        close: "إغلاق",
-        confirm: "تأكيد",
-        yes: "نعم",
-        no: "لا"
+        cart: "Cart",
+        total: "Total",
+        subtotal: "Subtotal",
+        tax: "Tax",
+        checkout: "Checkout",
+        checkoutWithPrint: "Checkout and Print Receipt",
+        checkoutWithoutPrint: "Checkout",
+        addToCart: "Add to Cart",
+        removeFromCart: "Remove from Cart",
+        clearCart: "Clear Cart",
+        customer: "Customer",
+        user: "User",
+        assignUser: "Assign User",
+        enterCustomerName: "Enter customer name...",
+        payment: "Payment",
+        cash: "Cash",
+        card: "Card",
+        change: "Change",
+        searchPlaceholder: "Search for products, users, barcode...",
+        products: "Products",
+        users: "Users",
+        keyboardShortcuts: "Keyboard Shortcuts",
+        toggleView: "Toggle View",
+        fullscreen: "Fullscreen",
+        quantity: "Quantity",
+        unitPrice: "Unit Price",
+        discount: "Discount",
+        items: "Items",
+        item: "Item",
+        addCustomItem: "Add Custom Item",
+        customItemName: "Custom Item Name",
+        customItemPrice: "Custom Item Price",
+        customItemDescription: "Custom Item Description",
+        pendingCarts: "Pending Carts",
+        savePendingCart: "Save Pending Cart",
+        loadPendingCart: "Load Pending Cart",
+        deletePendingCart: "Delete Pending Cart",
+        quickCheckout: "Quick Checkout",
+        pendingCartName: "Pending Cart Name",
+        enterCartName: "Enter cart name...",
+        cartSaved: "Cart saved successfully",
+        cartLoaded: "Cart loaded successfully",
+        cartDeleted: "Cart deleted successfully",
+        noItemsInCart: "No items in cart",
+        orderCompleted: "Order completed successfully",
+        receiptPrinted: "Receipt printed",
+        assignedToUser: "Assigned to {{user}}",
+        outOfStock: "Out of Stock",
+        lowStock: "Low Stock",
+        featured: "Featured",
+        gridView: "Grid View",
+        listView: "List View",
+        barcode: "Barcode",
+        enterBarcode: "Enter barcode...",
+        barcodeNotFound: "Barcode not found",
+        categoryFilter: "Category Filter",
+        allCategories: "All Categories",
+        totalItems: "Total Items",
+        cartEmpty: "Cart is empty",
+        addItemsToCart: "Add items to cart to proceed",
+        printReceipt: "Print Receipt",
+        emailReceipt: "Email Receipt",
+        taxIncluded: "Tax Included",
+        taxRate: "Tax Rate",
+        discountApplied: "Discount Applied",
+        quickActions: "Quick Actions",
+        recentTransactions: "Recent Transactions",
+        todaysSales: "Today's Sales",
+        itemsPerPage: "Items per Page",
+        noProducts: "No products found",
+        noUsers: "No users found",
+        searchResults: "Search Results",
+        clearSearch: "Clear Search",
+        productAdded: "Product added to cart",
+        productRemoved: "Product removed from cart",
+        quantityUpdated: "Quantity updated",
+        priceUpdated: "Price updated",
+        cartCleared: "Cart cleared",
+        processing: "Processing...",
+        complete: "Complete",
+        cancel: "Cancel",
+        save: "Save",
+        edit: "Edit",
+        delete: "Delete",
+        back: "Back",
+        next: "Next",
+        previous: "Previous",
+        close: "Close",
+        confirm: "Confirm",
+        yes: "Yes",
+        no: "No",
       },
 
       // Settings
@@ -570,7 +572,7 @@ export const translations = {
         subtitle: "Configure your application preferences",
         categories: "Categories",
         general: "General",
-        printing: "Printing", 
+        printing: "Printing",
         pos: "POS",
         appearance: "Appearance",
         currency: "Currency",
@@ -614,7 +616,7 @@ export const translations = {
         // Language Settings
         defaultLanguage: "Default Language",
         enableRtl: "Enable Right-to-Left",
-        // POS Settings  
+        // POS Settings
         receiptPrinter: "Receipt Printer",
         barcodeScanner: "Barcode Scanner",
         cashDrawer: "Cash Drawer",
@@ -623,11 +625,11 @@ export const translations = {
         printReceiptAutomatically: "Print Receipt Automatically",
         // Printing Settings
         paperSize: "Paper Size",
-        printMargins: "Print Margins", 
+        printMargins: "Print Margins",
         receiptHeader: "Receipt Header",
         receiptFooter: "Receipt Footer",
         logoUrl: "Logo URL",
-        printLogo: "Print Logo on Receipt"
+        printLogo: "Print Logo on Receipt",
       },
 
       // Status
@@ -645,7 +647,7 @@ export const translations = {
         delivered: "Delivered",
         paid: "Paid",
         failed: "Failed",
-        refunded: "Refunded"
+        refunded: "Refunded",
       },
 
       // Statistics
@@ -675,7 +677,7 @@ export const translations = {
         activeUnits: "Active Units",
         pieceUnits: "Piece Units",
         weightUnits: "Weight Units",
-        
+
         // Dynamic status stats
         active: "Active",
         inactive: "Inactive",
@@ -685,7 +687,7 @@ export const translations = {
         archived: "Archived",
         deleted: "Deleted",
         unknown: "Unknown",
-        
+
         // Time-based stats
         thisMonth: "This Month",
         lastMonth: "Last Month",
@@ -695,7 +697,7 @@ export const translations = {
         lastWeek: "Last Week",
         thisYear: "This Year",
         lastYear: "Last Year",
-        
+
         // Comparison stats
         percentage: "of total",
         vsLastMonth: "vs last month",
@@ -703,12 +705,12 @@ export const translations = {
         vsLastYear: "vs last year",
         growth: "Growth",
         decline: "Decline",
-        
+
         // Selection stats
         selected: "Selected",
         filtered: "Filtered",
         visible: "Visible",
-        hidden: "Hidden"
+        hidden: "Hidden",
       },
 
       // Bulk Actions
@@ -720,15 +722,16 @@ export const translations = {
         archiveSelected: "Archive Selected",
         deleteConfirmation: "Are you sure you want to delete items?",
         bulkArchiveSuccess: "{{count}} items archived successfully",
-        bulkArchiveError: "Failed to archive items"
+        bulkArchiveError: "Failed to archive items",
       },
 
       // Bulk Delete
       bulkDelete: {
         title: "Delete Multiple Items",
-        confirmation: "Are you sure you want to delete {{count}} items? This action cannot be undone.",
+        confirmation:
+          "Are you sure you want to delete {{count}} items? This action cannot be undone.",
         andMore: "and {{count}} more...",
-        deleteAll: "Delete All"
+        deleteAll: "Delete All",
       },
 
       // Filter Options
@@ -740,7 +743,7 @@ export const translations = {
         dateRange: "Date Range",
         outOfStock: "Out of Stock",
         lowStock: "Low Stock",
-        inStock: "In Stock"
+        inStock: "In Stock",
       },
 
       // Sections
@@ -749,7 +752,7 @@ export const translations = {
         pricing: "Pricing & Inventory",
         classification: "Classification",
         contact: "Contact Information",
-        security: "Security"
+        security: "Security",
       },
 
       // Pages
@@ -757,47 +760,47 @@ export const translations = {
         // Dashboard
         dashboard: "Dashboard",
         dashboardSubtitle: "Overview of your business performance",
-        
+
         // Home
         home: "Home",
         homeSubtitle: "Welcome to your modern POS system",
-        
+
         // Products
         products: "Products",
         productsSubtitle: "Manage your product catalog and inventory",
-        
+
         // Categories
         categories: "Categories",
         categoriesSubtitle: "Organize products into categories",
-        
+
         // Units
         units: "Units",
         unitsSubtitle: "Manage measurement units for products",
-        
+
         // Users
         users: "Users",
         usersSubtitle: "Manage system users and their roles",
-        
+
         // Orders
         orders: "Orders",
         ordersSubtitle: "Track and manage customer orders",
-        
+
         // POS
         pos: "Point of Sale",
         posSubtitle: "Process customer transactions",
-        
+
         // Reports
         reports: "Reports",
         reportsSubtitle: "View analytics and business reports",
-        
+
         // Settings
         settings: "Settings",
-        settingsSubtitle: "Configure system preferences and options"
+        settingsSubtitle: "Configure system preferences and options",
       },
 
       // Entity Names (Singular)
       product: "Product",
-      category: "Category", 
+      category: "Category",
       unit: "Unit",
       user: "User",
       order: "Order",
@@ -811,11 +814,12 @@ export const translations = {
         noCategories: "No categories yet",
         noUnits: "No units yet",
         noUsers: "No users yet",
-        noOrders: "No orders yet"
+        noOrders: "No orders yet",
       },
 
       // Delete Confirmations
-      deleteConfirmation: "Are you sure you want to delete this {{entity}}? This action cannot be undone.",
+      deleteConfirmation:
+        "Are you sure you want to delete this {{entity}}? This action cannot be undone.",
 
       // Messages
       messages: {
@@ -854,49 +858,49 @@ export const translations = {
         orderCreated: "Order created successfully",
         orderUpdated: "Order updated successfully",
         orderDeleted: "Order deleted successfully",
-        ordersDeleted: "{{count}} orders deleted successfully"
+        ordersDeleted: "{{count}} orders deleted successfully",
       },
 
       // Layout
       layout: {
-        searchPlaceholder: "البحث في أي شيء...",
-        hideSidebar: "إخفاء الشريط الجانبي",
-        showSidebar: "إظهار الشريط الجانبي",
-        switchToLightMode: "التبديل للوضع الفاتح",
-        switchToDarkMode: "التبديل للوضع الداكن",
-        notifications: "الإشعارات",
-        profile: "الملف الشخصي",
-        logout: "تسجيل الخروج",
-        quickPOS: "نقطة البيع السريعة",
-        systemOnline: "النظام متصل",
-        version: "الإصدار {{version}}",
-        modernPOS: "نقطة البيع الحديثة",
-        electronReact: "Electron + React"
+        searchPlaceholder: "Search anything...",
+        hideSidebar: "Hide Sidebar",
+        showSidebar: "Show Sidebar",
+        switchToLightMode: "Switch to Light Mode",
+        switchToDarkMode: "Switch to Dark Mode",
+        notifications: "Notifications",
+        profile: "Profile",
+        logout: "Logout",
+        quickPOS: "Quick POS",
+        systemOnline: "System Online",
+        version: "Version {{version}}",
+        modernPOS: "Modern POS",
+        electronReact: "Electron + React",
       },
 
-      // Reports
       reports: {
-        title: "التقارير",
-        subtitle: "عرض تحليلات وتقارير الأعمال",
-        salesReport: "تقرير المبيعات",
-        inventoryReport: "تقرير المخزون",
-        customerReport: "تقرير العملاء",
-        dateFrom: "من تاريخ",
-        dateTo: "إلى تاريخ",
-        generateReport: "إنشاء التقرير",
-        comingSoon: "قريبا",
-        dashboard: "لوحة التقارير",
-        advancedReportsComingSoon: "تقارير متقدمة قريبا",
-        description: "هذه الصفحة ستشمل تحليلات مفصلة، الرسوم البيانية، وتقارير مصدرة لبيانات المبيعات، المخزون، والعملاء.",
-        viewDashboard: "إظهار لوحة التقارير"
+        title: "Reports",
+        subtitle: "View business analytics and reports",
+        salesReport: "Sales Report",
+        inventoryReport: "Inventory Report",
+        customerReport: "Customer Report",
+        dateFrom: "Date From",
+        dateTo: "Date To",
+        generateReport: "Generate Report",
+        comingSoon: "Coming Soon",
+        dashboard: "Reports Dashboard",
+        advancedReportsComingSoon: "Advanced reports coming soon",
+        description:
+          "This page will include detailed analytics, charts, and exportable reports on sales, inventory, and customers.",
+        viewDashboard: "View Dashboard",
       },
 
       // System
       system: {
-        light: "فاتح",
-        dark: "داكن"
-      }
-    }
+        light: "light",
+        dark: "dark",
+      },
+    },
   },
   fr: {
     translation: {
@@ -904,7 +908,7 @@ export const translations = {
       appName: "POS Pro",
       titleHomePage: "Page d'accueil",
       titleSecondPage: "Deuxième Page",
-      
+
       // Common Actions
       cancel: "Annuler",
       save: "Enregistrer",
@@ -933,7 +937,7 @@ export const translations = {
       restore: "Restaurer",
       retry: "Réessayer",
       deleting: "Suppression...",
-      
+
       // Common Terms
       none: "Aucun",
       all: "Tous",
@@ -983,7 +987,8 @@ export const translations = {
       businessTimezone: "Fuseau horaire de l'entreprise",
       timeFormat: "Format 12 heures ou 24 heures",
       firstDayOfWeek: "Premier jour de la semaine",
-      dateDisplayFormat: "Format d'affichage de la date (court, moyen, long, complet)",
+      dateDisplayFormat:
+        "Format d'affichage de la date (court, moyen, long, complet)",
       regionalFormatting: "Paramètres régionaux pour le formatage",
       englishName: "Nom anglais",
       conversionRate: "Taux de conversion",
@@ -994,7 +999,7 @@ export const translations = {
       sunday: "Dimanche",
       usFormat: "MM/DD/YYYY (Format US)",
       autoRefresh: "Actualisation automatique",
-      
+
       // Table Elements
       table: {
         actions: "Actions",
@@ -1002,14 +1007,16 @@ export const translations = {
         noDataTitle: "Aucun élément trouvé",
         noDataDescription: "Il n'y a aucun élément à afficher pour le moment.",
         emptySearchTitle: "Aucun résultat trouvé",
-        emptySearchDescription: "Essayez d'ajuster vos critères de recherche ou de filtre.",
+        emptySearchDescription:
+          "Essayez d'ajuster vos critères de recherche ou de filtre.",
         loadingData: "Chargement des données...",
         searching: "Recherche en cours...",
         filtering: "Filtrage en cours...",
         selectAll: "Sélectionner tout",
         selectRow: "Sélectionner la ligne",
         selectedItems: "{{count}} sélectionnés",
-        showingResults: "Affichage de {{start}}-{{end}} sur {{total}} résultats",
+        showingResults:
+          "Affichage de {{start}}-{{end}} sur {{total}} résultats",
         filteredResults: "(filtré de {{total}} au total)",
         totalResults: "{{total}} résultats au total",
         searchPlaceholder: "Rechercher...",
@@ -1036,7 +1043,8 @@ export const translations = {
         editSelected: "Modifier la sélection",
         archiveSelected: "Archiver la sélection",
         exportSelected: "Exporter la sélection",
-        confirmBulkDelete: "Êtes-vous sûr de vouloir supprimer {{count}} éléments?",
+        confirmBulkDelete:
+          "Êtes-vous sûr de vouloir supprimer {{count}} éléments?",
         bulkDeleteSuccess: "{{count}} éléments supprimés avec succès",
         bulkDeleteError: "Échec de la suppression des éléments",
         rowsPerPage: "Lignes par page",
@@ -1065,12 +1073,12 @@ export const translations = {
         toggleColumns: "Basculer les colonnes",
         tableView: "Vue tableau",
         cardsView: "Vue cartes",
-        listView: "Vue liste"
+        listView: "Vue liste",
       },
 
-                   // Table Filters
-       tableFilters: {
-         filters: "Filtres",
+      // Table Filters
+      tableFilters: {
+        filters: "Filtres",
         activeFilters: "Filtres actifs",
         noFilters: "Aucun filtre appliqué",
         clearAll: "Effacer tout",
@@ -1125,12 +1133,12 @@ export const translations = {
         thisYear: "Cette année",
         lastYear: "L'année dernière",
         custom: "Personnalisé",
-        range: "Plage"
+        range: "Plage",
       },
 
-             // Pagination
-       tablePagination: {
-         previous: "Précédent",
+      // Pagination
+      tablePagination: {
+        previous: "Précédent",
         next: "Suivant",
         first: "Premier",
         last: "Dernier",
@@ -1146,9 +1154,9 @@ export const translations = {
         showMore: "Afficher plus",
         showLess: "Afficher moins",
         show: "Afficher",
-        perPage: "par page"
+        perPage: "par page",
       },
-      
+
       // Navigation
       navigation: {
         dashboard: "Tableau de bord",
@@ -1159,7 +1167,7 @@ export const translations = {
         orders: "Commandes",
         pos: "Point de vente",
         reports: "Rapports",
-        settings: "Paramètres"
+        settings: "Paramètres",
       },
 
       // Dashboard
@@ -1177,7 +1185,8 @@ export const translations = {
         recentActivitySubtitle: "Vos activités et mises à jour récentes",
         chartPlaceholder: "La visualisation du graphique irait ici",
         settingsIntegration: "Statut d'intégration des paramètres",
-        settingsIntegrationSubtitle: "Statut en temps réel de l'intégration des paramètres système",
+        settingsIntegrationSubtitle:
+          "Statut en temps réel de l'intégration des paramètres système",
         quickSystemInfo: "Informations système rapides",
         currentLanguage: "Langue actuelle",
         themeMode: "Mode thème",
@@ -1189,13 +1198,14 @@ export const translations = {
         systemIntegrationActive: "Intégration système active",
         systemIntegrationDesc: "Tous les paramètres fonctionnent correctement",
         dashboardLoaded: "Tableau de bord chargé",
-        dashboardLoadedDesc: "Bienvenue dans votre système POS"
+        dashboardLoadedDesc: "Bienvenue dans votre système POS",
       },
 
-      // Home Page 
+      // Home Page
       home: {
         title: "Tableau de bord",
-        welcomeMessage: "Bienvenue ! Voici ce qui se passe avec votre boutique aujourd'hui.",
+        welcomeMessage:
+          "Bienvenue ! Voici ce qui se passe avec votre boutique aujourd'hui.",
         totalRevenue: "Chiffre d'affaires total",
         totalOrders: "Total des commandes",
         productsLabel: "Produits",
@@ -1225,7 +1235,7 @@ export const translations = {
         quickActions: "Actions rapides",
         addProduct: "Ajouter un produit",
         viewReports: "Voir les rapports",
-        manageUsers: "Gérer les utilisateurs"
+        manageUsers: "Gérer les utilisateurs",
       },
 
       // Products
@@ -1249,7 +1259,7 @@ export const translations = {
         selectUnit: "Sélectionnez une unité",
         descriptionPlaceholder: "Entrez la description du produit (optionnel)",
         skuTooltip: "Unité de tenue de stock - identifiant unique",
-        lowStockHelp: "Alerte lorsque le stock tombe en dessous de ce niveau"
+        lowStockHelp: "Alerte lorsque le stock tombe en dessous de ce niveau",
       },
 
       // Categories
@@ -1263,15 +1273,16 @@ export const translations = {
         created: "Créé",
         products: "Produits",
         namePlaceholder: "Entrez le nom de la catégorie",
-        descriptionPlaceholder: "Entrez la description de la catégorie (optionnel)",
+        descriptionPlaceholder:
+          "Entrez la description de la catégorie (optionnel)",
         selectParent: "Sélectionnez la catégorie parent (optionnel)",
         englishName: "Nom anglais",
         frenchName: "Nom français",
         arabicName: "Nom arabe",
         englishNamePlaceholder: "Entrez le nom anglais",
-        frenchNamePlaceholder: "Entrez le nom français", 
+        frenchNamePlaceholder: "Entrez le nom français",
         arabicNamePlaceholder: "Entrez le nom arabe",
-        under: "Sous"
+        under: "Sous",
       },
 
       // Units
@@ -1291,7 +1302,7 @@ export const translations = {
         piece: "Pièce",
         weight: "Poids",
         volume: "Volume",
-        length: "Longueur"
+        length: "Longueur",
       },
 
       // Users
@@ -1315,7 +1326,7 @@ export const translations = {
         passwordPlaceholder: "Entrez le mot de passe",
         addressPlaceholder: "Entrez l'adresse complète (optionnel)",
         selectRole: "Sélectionnez le rôle utilisateur",
-        lastLogin: "Dernière connexion"
+        lastLogin: "Dernière connexion",
       },
 
       // Orders
@@ -1339,7 +1350,7 @@ export const translations = {
         cash: "Espèces",
         card: "Carte de crédit/débit",
         bankTransfer: "Virement bancaire",
-        check: "Chèque"
+        check: "Chèque",
       },
 
       // POS (Point of Sale)
@@ -1347,13 +1358,13 @@ export const translations = {
         title: "Terminal PDV",
         subtitle: "Système Point de Vente",
         terminal: "Terminal PDV",
-        
+
         // Search and Input
         searchPlaceholder: "Rechercher produits, utilisateurs, SKU...",
         enterCustomerName: "Entrez le nom du client...",
         selectUser: "Assigner utilisateur:",
         user: "Utilisateur",
-        
+
         // Cart and Items
         cart: "Panier",
         items: "Articles",
@@ -1366,7 +1377,7 @@ export const translations = {
         removeFromCart: "Retirer du panier",
         clearCart: "Vider le panier",
         emptyCart: "Le panier est vide",
-        
+
         // Checkout
         checkout: "Encaisser",
         checkoutWithPrint: "Encaisser et imprimer",
@@ -1375,7 +1386,7 @@ export const translations = {
         processingOrder: "Traitement de la commande...",
         orderComplete: "Commande terminée",
         printReceipt: "Imprimer le reçu",
-        
+
         // Custom Items
         customItem: "Article personnalisé",
         addCustomItem: "Ajouter article personnalisé",
@@ -1383,40 +1394,40 @@ export const translations = {
         customItemPrice: "Prix",
         customItemDescription: "Description (optionnel)",
         customItemQuantity: "Quantité",
-        
+
         // Pending Orders
         pendingOrders: "Commandes en attente",
         savePendingOrder: "Sauvegarder en attente",
         loadPendingOrder: "Charger commande",
         deletePendingOrder: "Supprimer commande",
         pendingOrderName: "Nom de commande",
-        
+
         // Customer
         customer: "Client",
         assignedTo: "Assigné à",
         customerName: "Nom du client",
-        
+
         // Product Display
         products: "Produits",
         allCategories: "Toutes catégories",
         inStock: "En stock",
         outOfStock: "Rupture de stock",
         lowStock: "Stock faible",
-        
+
         // View Options
         gridView: "Vue grille",
         listView: "Vue liste",
         toggleView: "Basculer vue",
         fullscreen: "Plein écran",
         exitFullscreen: "Quitter plein écran",
-        
+
         // Actions and Controls
         scan: "Scanner",
         scanBarcode: "Scanner code-barres",
         enterBarcode: "Entrez le code-barres...",
         keyboardShortcuts: "Raccourcis clavier",
         help: "Aide",
-        
+
         // Additional terms
         assignUser: "Assigner utilisateur",
         payment: "Paiement",
@@ -1474,7 +1485,7 @@ export const translations = {
         confirm: "Confirmer",
         yes: "Oui",
         no: "Non",
-        
+
         // Shortcuts
         shortcuts: {
           toggleView: "Basculer vue (F1)",
@@ -1487,280 +1498,250 @@ export const translations = {
           checkoutPrint: "Encaisser et imprimer (F10)",
           checkoutNoPrint: "Encaisser sans impression (F11)",
           quickCheckout: "Encaissement rapide (Entrée)",
-          clearSearch: "Effacer recherche (Échap)"
-        }
+          clearSearch: "Effacer recherche (Échap)",
+        },
       },
 
       // Settings
       settings: {
-        title: "الإعدادات",
-        subtitle: "تكوين تفضيلات التطبيق",
-        categories: "الفئات",
-        general: "عام",
-        printing: "الطباعة",
-        pos: "نقطة البيع",
-        appearance: "المظهر",
-        currency: "العملة",
-        language: "اللغة",
-        compactMode: "وضع التصغير",
-        initializeDefaults: "تهيئة الافتراضيات",
-        resetCategory: "إعادة تعيين الفئة",
-        saveChanges: "حفظ التغييرات",
-        saving: "جاري الحفظ...",
-        unsavedChanges: "تغييرات غير محفوظة",
-        generalSettings: "الإعدادات العامة",
-        basicCompanySettings: "إعدادات الشركة الأساسية والتطبيق",
-        receiptPrintingConfig: "تكوين طباعة الإيصالات والتقارير",
-        posInterfaceSettings: "إعدادات واجهة نقطة البيع",
-        themeVisualCustomization: "تخصيص المظهر والعرض",
-        currencyFinancialSettings: "إعدادات العملة والمالية"
+        title: "Paramètres",
+        subtitle: "Configurer les préférences de l'application",
+        categories: "Catégories",
+        general: "Général",
+        printing: "Impression",
+        pos: "Point de vente",
+        appearance: "Apparence",
+        currency: "Devise",
+        language: "Langue",
+        compactMode: "Mode compact",
+        initializeDefaults: "Initialiser les valeurs par défaut",
+        resetCategory: "Réinitialiser la catégorie",
+        saveChanges: "Enregistrer les modifications",
+        saving: "Enregistrement en cours...",
+        unsavedChanges: "Modifications non enregistrées",
+        generalSettings: "Paramètres généraux",
+        basicCompanySettings:
+          "Paramètres de base de l'entreprise et de l'application",
+        receiptPrintingConfig:
+          "Configuration de l'impression des reçus et rapports",
+        posInterfaceSettings: "Paramètres de l'interface du point de vente",
+        themeVisualCustomization: "Personnalisation de l'apparence",
+        currencyFinancialSettings: "Paramètres de la devise et financiers",
       },
 
-      // Status
       status: {
-        active: "نشط",
-        inactive: "غير نشط",
-        enabled: "مفعل",
-        disabled: "معطل",
-        pending: "معلق",
-        completed: "مكتمل",
-        cancelled: "ملغي",
-        confirmed: "مؤكد",
-        processing: "قيد المعالجة",
-        shipped: "مُرسل",
-        delivered: "مُسلم",
-        paid: "مدفوع",
-        failed: "فشل",
-        refunded: "مُسترد"
+        active: "Actif",
+        inactive: "Inactif",
+        enabled: "Activé",
+        disabled: "Désactivé",
+        pending: "En attente",
+        completed: "Terminé",
+        cancelled: "Annulé",
+        confirmed: "Confirmé",
+        processing: "En cours de traitement",
+        shipped: "Expédié",
+        delivered: "Livré",
+        paid: "Payé",
+        failed: "Échoué",
+        refunded: "Remboursé",
       },
 
-      // Statistics
       stats: {
-        // Entity totals
-        total: "إجمالي {{entity}}",
-        totalProducts: "إجمالي المنتجات",
-        activeProducts: "المنتجات النشطة",
-        totalCategories: "إجمالي الفئات",
-        activeCategories: "الفئات النشطة",
-        parentCategories: "الفئات الأصل",
-        childCategories: "الفئات الفرعية",
-        totalUsers: "إجمالي المستخدمين",
-        activeUsers: "المستخدمون النشطون",
-        administrators: "المديرون",
-        clients: "العملاء",
-        suppliers: "الموردون",
-        totalOrders: "إجمالي الطلبات",
-        pendingOrders: "الطلبات المعلقة",
-        completedOrders: "الطلبات المكتملة",
-        totalValue: "إجمالي قيمة المخزون",
-        avgPrice: "متوسط السعر",
-        lowStock: "عناصر المخزون المنخفض",
-        outOfStock: "نفاد المخزون",
-        ofTotal: "من الإجمالي",
-        totalUnits: "إجمالي الوحدات",
-        activeUnits: "الوحدات النشطة",
-        pieceUnits: "وحدات القطعة",
-        weightUnits: "وحدات الوزن",
-        
-        // Dynamic status stats
-        active: "نشط",
-        inactive: "غير نشط",
-        pending: "معلق",
-        draft: "مسودة",
-        published: "منشور",
-        archived: "مؤرشف",
-        deleted: "محذوف",
-        unknown: "غير معروف",
-        
-        // Time-based stats
-        thisMonth: "هذا الشهر",
-        lastMonth: "الشهر الماضي",
-        today: "اليوم",
-        yesterday: "أمس",
-        thisWeek: "هذا الأسبوع",
-        lastWeek: "الأسبوع الماضي",
-        thisYear: "هذا العام",
-        lastYear: "العام الماضي",
-        
-        // Comparison stats
-        percentage: "من الإجمالي",
-        vsLastMonth: "مقارنة بالشهر الماضي",
-        vsLastWeek: "مقارنة بالأسبوع الماضي",
-        vsLastYear: "مقارنة بالعام الماضي",
-        growth: "نمو",
-        decline: "تراجع",
-        
-        // Selection stats
-        selected: "محدد",
-        filtered: "مصفى",
-        visible: "مرئي",
-        hidden: "مخفي"
+        total: "Total de {{entity}}",
+        totalProducts: "Total des produits",
+        activeProducts: "Produits actifs",
+        totalCategories: "Total des catégories",
+        activeCategories: "Catégories actives",
+        parentCategories: "Catégories parentes",
+        childCategories: "Catégories enfants",
+        totalUsers: "Total des utilisateurs",
+        activeUsers: "Utilisateurs actifs",
+        administrators: "Administrateurs",
+        clients: "Clients",
+        suppliers: "Fournisseurs",
+        totalOrders: "Total des commandes",
+        pendingOrders: "Commandes en attente",
+        completedOrders: "Commandes terminées",
+        totalValue: "Valeur totale du stock",
+        avgPrice: "Prix moyen",
+        lowStock: "Articles en stock faible",
+        outOfStock: "Rupture de stock",
+        ofTotal: "du total",
+        totalUnits: "Total des unités",
+        activeUnits: "Unités actives",
+        pieceUnits: "Unités de pièce",
+        weightUnits: "Unités de poids",
+
+        active: "Actif",
+        inactive: "Inactif",
+        pending: "En attente",
+        draft: "Brouillon",
+        published: "Publié",
+        archived: "Archivé",
+        deleted: "Supprimé",
+        unknown: "Inconnu",
+
+        thisMonth: "Ce mois-ci",
+        lastMonth: "Le mois dernier",
+        today: "Aujourd'hui",
+        yesterday: "Hier",
+        thisWeek: "Cette semaine",
+        lastWeek: "La semaine dernière",
+        thisYear: "Cette année",
+        lastYear: "L'année dernière",
+
+        percentage: "du total",
+        vsLastMonth: "par rapport au mois dernier",
+        vsLastWeek: "par rapport à la semaine dernière",
+        vsLastYear: "par rapport à l'année dernière",
+        growth: "Croissance",
+        decline: "Déclin",
+
+        selected: "Sélectionné",
+        filtered: "Filtré",
+        visible: "Visible",
+        hidden: "Masqué",
       },
 
-      // Bulk Actions
       bulkActions: {
-        exportSelected: "تصدير المحدد",
-        copySelected: "نسخ المحدد",
-        copiedToClipboard: "تم النسخ إلى الحافظة",
-        editSelected: "تعديل المحدد",
-        archiveSelected: "أرشفة المحدد",
-        deleteConfirmation: "هل أنت متأكد من حذف العناصر؟",
-        bulkArchiveSuccess: "تم أرشفة {{count}} عنصر بنجاح",
-        bulkArchiveError: "فشل في أرشفة العناصر"
+        exportSelected: "Exporter la sélection",
+        copySelected: "Copier la sélection",
+        copiedToClipboard: "Copié dans le presse-papiers",
+        editSelected: "Modifier la sélection",
+        archiveSelected: "Archiver la sélection",
+        deleteConfirmation: "Êtes-vous sûr de vouloir supprimer les éléments ?",
+        bulkArchiveSuccess: "{{count}} élément(s) archivé(s) avec succès",
+        bulkArchiveError: "Échec de l'archivage des éléments",
       },
 
-      // Bulk Delete
       bulkDelete: {
-        title: "حذف عناصر متعددة",
-        confirmation: "هل أنت متأكد من حذف {{count}} عنصر؟ لا يمكن التراجع عن هذا الإجراء.",
-        andMore: "و {{count}} آخرين...",
-        deleteAll: "حذف الكل"
+        title: "Suppression multiple",
+        confirmation:
+          "Êtes-vous sûr de vouloir supprimer {{count}} élément(s) ? Cette action est irréversible.",
+        andMore: "et {{count}} autres...",
+        deleteAll: "Tout supprimer",
       },
 
-      // Filter Options
       filterOptions: {
-        status: "الحالة",
-        category: "الفئة",
-        priceRange: "نطاق السعر",
-        stockLevel: "مستوى المخزون",
-        dateRange: "نطاق التاريخ",
-        outOfStock: "نفاد المخزون",
-        lowStock: "مخزون منخفض",
-        inStock: "متوفر"
+        status: "Statut",
+        category: "Catégorie",
+        priceRange: "Fourchette de prix",
+        stockLevel: "Niveau de stock",
+        dateRange: "Plage de dates",
+        outOfStock: "Rupture de stock",
+        lowStock: "Stock faible",
+        inStock: "En stock",
       },
 
-      // Sections
       sections: {
-        basicInfo: "المعلومات الأساسية",
-        pricing: "التسعير والمخزون",
-        classification: "التصنيف",
-        contact: "معلومات الاتصال",
-        security: "الأمان"
+        basicInfo: "Informations de base",
+        pricing: "Tarification et stock",
+        classification: "Classification",
+        contact: "Informations de contact",
+        security: "Sécurité",
       },
 
-      // Pages
       pages: {
-        // Dashboard
-        dashboard: "لوحة التحكم",
-        dashboardSubtitle: "نظرة عامة على أداء عملك",
-        
-        // Home
-        home: "الرئيسية",
-        homeSubtitle: "مرحباً بك في نظام نقطة البيع الحديث",
-        
-        // Products
-        products: "المنتجات",
-        productsSubtitle: "إدارة كتالوج المنتجات والمخزون",
-        
-        // Categories
-        categories: "الفئات",
-        categoriesSubtitle: "تنظيم المنتجات في فئات",
-        
-        // Units
-        units: "الوحدات",
-        unitsSubtitle: "إدارة وحدات قياس المنتجات",
-        
-        // Users
-        users: "المستخدمون",
-        usersSubtitle: "إدارة مستخدمي النظام وأدوارهم",
-        
-        // Orders
-        orders: "الطلبات",
-        ordersSubtitle: "تتبع وإدارة طلبات العملاء",
-        
-        // POS
-        pos: "نقطة البيع",
-        posSubtitle: "معالجة معاملات العملاء",
-        
-        // Reports
-        reports: "التقارير",
-        reportsSubtitle: "عرض تحليلات وتقارير الأعمال",
-        
-        // Settings
-        settings: "الإعدادات",
-        settingsSubtitle: "تكوين تفضيلات وخيارات النظام"
+        dashboard: "Tableau de bord",
+        dashboardSubtitle:
+          "Vue d'ensemble de la performance de votre entreprise",
+        home: "Accueil",
+        homeSubtitle: "Bienvenue dans le système moderne de point de vente",
+        products: "Produits",
+        productsSubtitle: "Gérer le catalogue et le stock des produits",
+        categories: "Catégories",
+        categoriesSubtitle: "Organiser les produits par catégorie",
+        units: "Unités",
+        unitsSubtitle: "Gérer les unités de mesure des produits",
+        users: "Utilisateurs",
+        usersSubtitle: "Gérer les utilisateurs et leurs rôles",
+        orders: "Commandes",
+        ordersSubtitle: "Suivi et gestion des commandes clients",
+        pos: "Point de vente",
+        posSubtitle: "Traiter les transactions clients",
+        reports: "Rapports",
+        reportsSubtitle: "Afficher les analyses et rapports",
+        settings: "Paramètres",
+        settingsSubtitle: "Configurer les préférences et options système",
       },
 
-      // Messages
       messages: {
-        deleteSuccess: "تم حذف {{entity}} بنجاح",
-        deleteError: "فشل في حذف {{entity}}",
-        bulkDeleteSuccess: "تم حذف {{count}} عنصر بنجاح",
-        bulkDeleteError: "فشل في حذف العناصر",
-        addSuccess: "تم إضافة {{entity}} بنجاح",
-        addError: "فشل في إضافة {{entity}}",
-        updateSuccess: "تم تحديث {{entity}} بنجاح",
-        updateError: "فشل في تحديث {{entity}}",
-        loadError: "فشل في تحميل البيانات",
-        duplicateSuccess: "تم تكرار {{entity}} بنجاح",
-        duplicateError: "فشل في تكرار {{entity}}",
-        archiveSuccess: "تم أرشفة {{entity}} بنجاح",
-        archiveError: "فشل في أرشفة {{entity}}",
-        restoreSuccess: "تم استعادة {{entity}} بنجاح",
-        restoreError: "فشل في استعادة {{entity}}",
-        createSuccess: "تم إنشاء {{entity}} بنجاح",
-        error: "حدث خطأ",
-        exportSuccess: "تم تصدير البيانات بنجاح",
-        languageChanged: "تم تغيير اللغة إلى {{language}}",
-        languageChangeError: "فشل في تغيير اللغة",
-        categoryCreated: "تم إنشاء الفئة بنجاح",
-        categoryUpdated: "تم تحديث الفئة بنجاح",
-        categoryDeleted: "تم حذف الفئة بنجاح",
-        categoriesDeleted: "تم حذف {{count}} فئة بنجاح",
-        fetchError: "فشل في تحميل الفئات",
-        createError: "فشل في إنشاء الفئة",
-                // User-specific messages
-        userCreated: "تم إنشاء المستخدم بنجاح",
-        userUpdated: "تم تحديث المستخدم بنجاح", 
-        userDeleted: "تم حذف المستخدم بنجاح",
-        usersDeleted: "تم حذف {{count}} مستخدم بنجاح",
-        // Order-specific messages
-        orderCreated: "تم إنشاء الطلب بنجاح",
-        orderUpdated: "تم تحديث الطلب بنجاح",
-        orderDeleted: "تم حذف الطلب بنجاح",
-        ordersDeleted: "تم حذف {{count}} طلب بنجاح"
+        deleteSuccess: "{{entity}} supprimé avec succès",
+        deleteError: "Échec de la suppression de {{entity}}",
+        bulkDeleteSuccess: "{{count}} élément(s) supprimé(s) avec succès",
+        bulkDeleteError: "Échec de la suppression des éléments",
+        addSuccess: "{{entity}} ajouté avec succès",
+        addError: "Échec de l'ajout de {{entity}}",
+        updateSuccess: "{{entity}} mis à jour avec succès",
+        updateError: "Échec de la mise à jour de {{entity}}",
+        loadError: "Échec du chargement des données",
+        duplicateSuccess: "{{entity}} dupliqué avec succès",
+        duplicateError: "Échec de la duplication de {{entity}}",
+        archiveSuccess: "{{entity}} archivé avec succès",
+        archiveError: "Échec de l'archivage de {{entity}}",
+        restoreSuccess: "{{entity}} restauré avec succès",
+        restoreError: "Échec de la restauration de {{entity}}",
+        createSuccess: "{{entity}} créé avec succès",
+        error: "Une erreur s'est produite",
+        exportSuccess: "Données exportées avec succès",
+        languageChanged: "Langue changée en {{language}}",
+        languageChangeError: "Échec du changement de langue",
+        categoryCreated: "Catégorie créée avec succès",
+        categoryUpdated: "Catégorie mise à jour avec succès",
+        categoryDeleted: "Catégorie supprimée avec succès",
+        categoriesDeleted: "{{count}} catégories supprimées avec succès",
+        fetchError: "Échec du chargement des catégories",
+        createError: "Échec de la création de la catégorie",
+
+        userCreated: "Utilisateur créé avec succès",
+        userUpdated: "Utilisateur mis à jour avec succès",
+        userDeleted: "Utilisateur supprimé avec succès",
+        usersDeleted: "{{count}} utilisateurs supprimés avec succès",
+
+        orderCreated: "Commande créée avec succès",
+        orderUpdated: "Commande mise à jour avec succès",
+        orderDeleted: "Commande supprimée avec succès",
+        ordersDeleted: "{{count}} commandes supprimées avec succès",
       },
 
-      // Layout
       layout: {
-        searchPlaceholder: "البحث في أي شيء...",
-        hideSidebar: "إخفاء الشريط الجانبي",
-        showSidebar: "إظهار الشريط الجانبي",
-        switchToLightMode: "التبديل للوضع الفاتح",
-        switchToDarkMode: "التبديل للوضع الداكن",
-        notifications: "الإشعارات",
-        profile: "الملف الشخصي",
-        logout: "تسجيل الخروج",
-        quickPOS: "نقطة البيع السريعة",
-        systemOnline: "النظام متصل",
-        version: "الإصدار {{version}}",
-        modernPOS: "نقطة البيع الحديثة",
-        electronReact: "Electron + React"
+        searchPlaceholder: "Rechercher quelque chose...",
+        hideSidebar: "Masquer la barre latérale",
+        showSidebar: "Afficher la barre latérale",
+        switchToLightMode: "Passer au mode clair",
+        switchToDarkMode: "Passer au mode sombre",
+        notifications: "Notifications",
+        profile: "Profil",
+        logout: "Déconnexion",
+        quickPOS: "Point de vente rapide",
+        systemOnline: "Système en ligne",
+        version: "Version {{version}}",
+        modernPOS: "Point de vente moderne",
+        electronReact: "Electron + React",
       },
 
-      // Reports
       reports: {
-        title: "التقارير",
-        subtitle: "عرض تحليلات وتقارير الأعمال",
-        salesReport: "تقرير المبيعات",
-        inventoryReport: "تقرير المخزون",
-        customerReport: "تقرير العملاء",
-        dateFrom: "من تاريخ",
-        dateTo: "إلى تاريخ",
-        generateReport: "إنشاء التقرير",
-        comingSoon: "قريبا",
-        dashboard: "لوحة التقارير",
-        advancedReportsComingSoon: "تقارير متقدمة قريبا",
-        description: "هذه الصفحة ستشمل تحليلات مفصلة، الرسوم البيانية، وتقارير مصدرة لبيانات المبيعات، المخزون، والعملاء.",
-        viewDashboard: "إظهار لوحة التقارير"
+        title: "Rapports",
+        subtitle: "Afficher les analyses et rapports commerciaux",
+        salesReport: "Rapport de ventes",
+        inventoryReport: "Rapport d'inventaire",
+        customerReport: "Rapport client",
+        dateFrom: "Date de début",
+        dateTo: "Date de fin",
+        generateReport: "Générer le rapport",
+        comingSoon: "Bientôt disponible",
+        dashboard: "Tableau de rapports",
+        advancedReportsComingSoon: "Rapports avancés bientôt disponibles",
+        description:
+          "Cette page contiendra des analyses détaillées, des graphiques et des rapports exportables sur les ventes, l'inventaire et les clients.",
+        viewDashboard: "Afficher le tableau de rapports",
       },
 
-      // System
       system: {
-        light: "فاتح",
-        dark: "داكن"
-      }
-    }
+        light: "Clair",
+        dark: "Sombre",
+      },
+    },
   },
   ar: {
     translation: {
@@ -1768,7 +1749,7 @@ export const translations = {
       appName: "نقطة البيع برو",
       titleHomePage: "الصفحة الرئيسية",
       titleSecondPage: "الصفحة الثانية",
-      
+
       // Common Actions
       cancel: "إلغاء",
       save: "حفظ",
@@ -1797,7 +1778,7 @@ export const translations = {
       restore: "استعادة",
       retry: "إعادة المحاولة",
       deleting: "جاري الحذف...",
-      
+
       // Common Terms
       none: "لا شيء",
       all: "الكل",
@@ -1858,7 +1839,7 @@ export const translations = {
       sunday: "الأحد",
       usFormat: "MM/DD/YYYY (تنسيق أمريكي)",
       autoRefresh: "التحديث التلقائي",
-      
+
       // Table Elements
       table: {
         actions: "الإجراءات",
@@ -1929,7 +1910,7 @@ export const translations = {
         toggleColumns: "تبديل الأعمدة",
         tableView: "عرض الجدول",
         cardsView: "عرض البطاقات",
-        listView: "عرض القائمة"
+        listView: "عرض القائمة",
       },
 
       // Export Options
@@ -1950,12 +1931,12 @@ export const translations = {
         exportSuccess: "تم تصدير البيانات بنجاح",
         exportError: "فشل في تصدير البيانات",
         preparing: "تحضير التصدير...",
-        downloading: "جاري التحميل..."
+        downloading: "جاري التحميل...",
       },
 
-             // Table Filters
-       tableFilters: {
-         filters: "المرشحات",
+      // Table Filters
+      tableFilters: {
+        filters: "المرشحات",
         activeFilters: "المرشحات النشطة",
         noFilters: "لا توجد مرشحات مطبقة",
         clearAll: "مسح الكل",
@@ -2010,12 +1991,12 @@ export const translations = {
         thisYear: "هذا العام",
         lastYear: "العام الماضي",
         custom: "مخصص",
-        range: "نطاق"
+        range: "نطاق",
       },
 
-             // Pagination
-       tablePagination: {
-         previous: "السابق",
+      // Pagination
+      tablePagination: {
+        previous: "السابق",
         next: "التالي",
         first: "الأول",
         last: "الأخير",
@@ -2031,9 +2012,9 @@ export const translations = {
         showMore: "إظهار المزيد",
         showLess: "إظهار أقل",
         show: "إظهار",
-        perPage: "لكل صفحة"
+        perPage: "لكل صفحة",
       },
-      
+
       // Navigation
       navigation: {
         dashboard: "لوحة التحكم",
@@ -2044,7 +2025,7 @@ export const translations = {
         orders: "الطلبات",
         pos: "نقطة البيع",
         reports: "التقارير",
-        settings: "الإعدادات"
+        settings: "الإعدادات",
       },
 
       // Dashboard
@@ -2062,7 +2043,8 @@ export const translations = {
         recentActivitySubtitle: "أنشطتك وتحديثاتك الأخيرة",
         chartPlaceholder: "ستظهر المخططات البيانية هنا",
         settingsIntegration: "حالة تكامل الإعدادات",
-        settingsIntegrationSubtitle: "حالة تكامل إعدادات النظام في الوقت الفعلي",
+        settingsIntegrationSubtitle:
+          "حالة تكامل إعدادات النظام في الوقت الفعلي",
         quickSystemInfo: "معلومات النظام السريعة",
         currentLanguage: "اللغة الحالية",
         themeMode: "وضع المظهر",
@@ -2074,10 +2056,10 @@ export const translations = {
         systemIntegrationActive: "تكامل النظام نشط",
         systemIntegrationDesc: "جميع الإعدادات تعمل بشكل صحيح",
         dashboardLoaded: "تم تحميل لوحة التحكم",
-        dashboardLoadedDesc: "مرحباً بك في نظام نقطة البيع"
+        dashboardLoadedDesc: "مرحباً بك في نظام نقطة البيع",
       },
 
-      // Home Page 
+      // Home Page
       home: {
         title: "لوحة التحكم",
         welcomeMessage: "مرحباً بك! هذا ما يحدث في متجرك اليوم.",
@@ -2110,7 +2092,7 @@ export const translations = {
         quickActions: "إجراءات سريعة",
         addProduct: "إضافة منتج",
         viewReports: "إظهار التقارير",
-        manageUsers: "إدارة المستخدمين"
+        manageUsers: "إدارة المستخدمين",
       },
 
       // Products
@@ -2134,7 +2116,7 @@ export const translations = {
         selectUnit: "اختر وحدة",
         descriptionPlaceholder: "أدخل وصف المنتج (اختياري)",
         skuTooltip: "وحدة حفظ المخزون - معرف فريد",
-        lowStockHelp: "تنبيه عندما ينخفض المخزون تحت هذا المستوى"
+        lowStockHelp: "تنبيه عندما ينخفض المخزون تحت هذا المستوى",
       },
 
       // Categories
@@ -2154,9 +2136,9 @@ export const translations = {
         frenchName: "الاسم الفرنسي",
         arabicName: "الاسم العربي",
         englishNamePlaceholder: "أدخل الاسم الإنجليزي",
-        frenchNamePlaceholder: "أدخل الاسم الفرنسي", 
+        frenchNamePlaceholder: "أدخل الاسم الفرنسي",
         arabicNamePlaceholder: "أدخل الاسم العربي",
-        under: "تحت"
+        under: "تحت",
       },
 
       // Units
@@ -2176,7 +2158,7 @@ export const translations = {
         piece: "قطعة",
         weight: "وزن",
         volume: "حجم",
-        length: "طول"
+        length: "طول",
       },
 
       // Users
@@ -2200,7 +2182,7 @@ export const translations = {
         passwordPlaceholder: "أدخل كلمة المرور",
         addressPlaceholder: "أدخل العنوان الكامل (اختياري)",
         selectRole: "اختر دور المستخدم",
-        lastLogin: "آخر تسجيل دخول"
+        lastLogin: "آخر تسجيل دخول",
       },
 
       // Orders
@@ -2224,7 +2206,7 @@ export const translations = {
         cash: "Espèces",
         card: "Carte de crédit/débit",
         bankTransfer: "Virement bancaire",
-        check: "Chèque"
+        check: "Chèque",
       },
 
       // POS (Point of Sale)
@@ -2232,13 +2214,13 @@ export const translations = {
         title: "نقطة البيع",
         subtitle: "نظام نقطة البيع",
         terminal: "نقطة البيع",
-        
+
         // Search and Input
         searchPlaceholder: "البحث عن المنتجات، المستخدمين، SKU...",
         enterCustomerName: "أدخل اسم العميل...",
         selectUser: "اختر الزبون:",
         user: "الزبون",
-        
+
         // Cart and Items
         cart: "السلة",
         items: "العناصر",
@@ -2251,7 +2233,7 @@ export const translations = {
         removeFromCart: "إزالة من السلة",
         clearCart: "مسح السلة",
         emptyCart: "السلة فارغة",
-        
+
         // Checkout
         checkout: "الدفع",
         checkoutWithPrint: "الدفع مع الطباعة",
@@ -2260,7 +2242,7 @@ export const translations = {
         processingOrder: "معالجة الطلب...",
         orderComplete: "اكتمل الطلب",
         printReceipt: "طباعة الإيصال",
-        
+
         // Custom Items
         customItem: "عنصر مخصص",
         addCustomItem: "إضافة عنصر مخصص",
@@ -2268,40 +2250,40 @@ export const translations = {
         customItemPrice: "السعر",
         customItemDescription: "الوصف (اختياري)",
         customItemQuantity: "الكمية",
-        
+
         // Pending Orders
         pendingOrders: "الطلبات المعلقة",
         savePendingOrder: "حفظ معلق",
         loadPendingOrder: "تحميل الطلب",
         deletePendingOrder: "حذف الطلب",
         pendingOrderName: "اسم الطلب",
-        
+
         // Customer
         customer: "العميل",
         assignedTo: "مُعين إلى",
         customerName: "اسم العميل",
-        
+
         // Product Display
         products: "المنتجات",
         allCategories: "كل الفئات",
         inStock: "متوفر",
         outOfStock: "نفد المخزون",
         lowStock: "المخزون المنخفض",
-        
+
         // View Options
         gridView: "العرض الشبكي",
         listView: "العرض القائم",
         toggleView: "تبديل العرض",
         fullscreen: "العرض الكامل",
         exitFullscreen: "الخروج من العرض الكامل",
-        
+
         // Actions and Controls
         scan: "المسح",
         scanBarcode: "المسح بالباركود",
         enterBarcode: "أدخل الباركود...",
         keyboardShortcuts: "الاختصارات المفتاحية",
         help: "المساعدة",
-        
+
         // Messages
         itemAdded: "تم إضافة العنصر إلى السلة",
         itemRemoved: "تم إزالة العنصر من السلة",
@@ -2309,7 +2291,7 @@ export const translations = {
         orderSaved: "تم حفظ الطلب بنجاح",
         orderLoaded: "تم تحميل الطلب بنجاح",
         assignedToUser: "مُعين إلى {{user}}",
-        
+
         // Shortcuts
         shortcuts: {
           toggleView: "تبديل العرض (F1)",
@@ -2322,8 +2304,8 @@ export const translations = {
           checkoutPrint: "الدفع والطباعة (F10)",
           checkoutNoPrint: "الدفع (بدون طباعة) (F11)",
           quickCheckout: "الدفع السريع (Entrée)",
-          clearSearch: "مسح البحث (Échap)"
-        }
+          clearSearch: "مسح البحث (Échap)",
+        },
       },
 
       // Settings
@@ -2348,7 +2330,7 @@ export const translations = {
         receiptPrintingConfig: "تكوين طباعة الإيصالات والتقارير",
         posInterfaceSettings: "إعدادات واجهة نقطة البيع",
         themeVisualCustomization: "تخصيص المظهر والعرض",
-        currencyFinancialSettings: "إعدادات العملة والمالية"
+        currencyFinancialSettings: "إعدادات العملة والمالية",
       },
 
       // Status
@@ -2366,7 +2348,7 @@ export const translations = {
         delivered: "مُسلم",
         paid: "مدفوع",
         failed: "فشل",
-        refunded: "مُسترد"
+        refunded: "مُسترد",
       },
 
       // Statistics
@@ -2396,7 +2378,7 @@ export const translations = {
         activeUnits: "الوحدات النشطة",
         pieceUnits: "وحدات القطعة",
         weightUnits: "وحدات الوزن",
-        
+
         // Dynamic status stats
         active: "نشط",
         inactive: "غير نشط",
@@ -2406,7 +2388,7 @@ export const translations = {
         archived: "مؤرشف",
         deleted: "محذوف",
         unknown: "غير معروف",
-        
+
         // Time-based stats
         thisMonth: "هذا الشهر",
         lastMonth: "الشهر الماضي",
@@ -2416,7 +2398,7 @@ export const translations = {
         lastWeek: "الأسبوع الماضي",
         thisYear: "هذا العام",
         lastYear: "العام الماضي",
-        
+
         // Comparison stats
         percentage: "من الإجمالي",
         vsLastMonth: "مقارنة بالشهر الماضي",
@@ -2424,12 +2406,12 @@ export const translations = {
         vsLastYear: "مقارنة بالعام الماضي",
         growth: "نمو",
         decline: "تراجع",
-        
+
         // Selection stats
         selected: "محدد",
         filtered: "مصفى",
         visible: "مرئي",
-        hidden: "مخفي"
+        hidden: "مخفي",
       },
 
       // Bulk Actions
@@ -2441,15 +2423,16 @@ export const translations = {
         archiveSelected: "أرشفة المحدد",
         deleteConfirmation: "هل أنت متأكد من حذف العناصر؟",
         bulkArchiveSuccess: "تم أرشفة {{count}} عنصر بنجاح",
-        bulkArchiveError: "فشل في أرشفة العناصر"
+        bulkArchiveError: "فشل في أرشفة العناصر",
       },
 
       // Bulk Delete
       bulkDelete: {
         title: "حذف عناصر متعددة",
-        confirmation: "هل أنت متأكد من حذف {{count}} عنصر؟ لا يمكن التراجع عن هذا الإجراء.",
+        confirmation:
+          "هل أنت متأكد من حذف {{count}} عنصر؟ لا يمكن التراجع عن هذا الإجراء.",
         andMore: "و {{count}} آخرين...",
-        deleteAll: "حذف الكل"
+        deleteAll: "حذف الكل",
       },
 
       // Filter Options
@@ -2461,7 +2444,7 @@ export const translations = {
         dateRange: "نطاق التاريخ",
         outOfStock: "نفاد المخزون",
         lowStock: "مخزون منخفض",
-        inStock: "متوفر"
+        inStock: "متوفر",
       },
 
       // Sections
@@ -2470,7 +2453,7 @@ export const translations = {
         pricing: "التسعير والمخزون",
         classification: "التصنيف",
         contact: "معلومات الاتصال",
-        security: "الأمان"
+        security: "الأمان",
       },
 
       // Pages
@@ -2478,42 +2461,42 @@ export const translations = {
         // Dashboard
         dashboard: "لوحة التحكم",
         dashboardSubtitle: "نظرة عامة على أداء عملك",
-        
+
         // Home
         home: "الرئيسية",
         homeSubtitle: "مرحباً بك في نظام نقطة البيع الحديث",
-        
+
         // Products
         products: "المنتجات",
         productsSubtitle: "إدارة كتالوج المنتجات والمخزون",
-        
+
         // Categories
         categories: "الفئات",
         categoriesSubtitle: "تنظيم المنتجات في فئات",
-        
+
         // Units
         units: "الوحدات",
         unitsSubtitle: "إدارة وحدات قياس المنتجات",
-        
+
         // Users
         users: "المستخدمون",
         usersSubtitle: "إدارة مستخدمي النظام وأدوارهم",
-        
+
         // Orders
         orders: "الطلبات",
         ordersSubtitle: "تتبع وإدارة طلبات العملاء",
-        
+
         // POS
         pos: "نقطة البيع",
         posSubtitle: "معالجة معاملات العملاء",
-        
+
         // Reports
         reports: "التقارير",
         reportsSubtitle: "عرض تحليلات وتقارير الأعمال",
-        
+
         // Settings
         settings: "الإعدادات",
-        settingsSubtitle: "تكوين تفضيلات وخيارات النظام"
+        settingsSubtitle: "تكوين تفضيلات وخيارات النظام",
       },
 
       // Messages
@@ -2544,16 +2527,16 @@ export const translations = {
         categoriesDeleted: "تم حذف {{count}} فئة بنجاح",
         fetchError: "فشل في تحميل الفئات",
         createError: "فشل في إنشاء الفئة",
-                // User-specific messages
+        // User-specific messages
         userCreated: "تم إنشاء المستخدم بنجاح",
-        userUpdated: "تم تحديث المستخدم بنجاح", 
+        userUpdated: "تم تحديث المستخدم بنجاح",
         userDeleted: "تم حذف المستخدم بنجاح",
         usersDeleted: "تم حذف {{count}} مستخدم بنجاح",
         // Order-specific messages
         orderCreated: "تم إنشاء الطلب بنجاح",
         orderUpdated: "تم تحديث الطلب بنجاح",
         orderDeleted: "تم حذف الطلب بنجاح",
-        ordersDeleted: "تم حذف {{count}} طلب بنجاح"
+        ordersDeleted: "تم حذف {{count}} طلب بنجاح",
       },
 
       // Layout
@@ -2570,7 +2553,7 @@ export const translations = {
         systemOnline: "النظام متصل",
         version: "الإصدار {{version}}",
         modernPOS: "نقطة البيع الحديثة",
-        electronReact: "Electron + React"
+        electronReact: "Electron + React",
       },
 
       // Reports
@@ -2586,15 +2569,16 @@ export const translations = {
         comingSoon: "قريبا",
         dashboard: "لوحة التقارير",
         advancedReportsComingSoon: "تقارير متقدمة قريبا",
-        description: "هذه الصفحة ستشمل تحليلات مفصلة، الرسوم البيانية، وتقارير مصدرة لبيانات المبيعات، المخزون، والعملاء.",
-        viewDashboard: "إظهار لوحة التقارير"
+        description:
+          "هذه الصفحة ستشمل تحليلات مفصلة، الرسوم البيانية، وتقارير مصدرة لبيانات المبيعات، المخزون، والعملاء.",
+        viewDashboard: "إظهار لوحة التقارير",
       },
 
       // System
       system: {
         light: "فاتح",
-        dark: "داكن"
-      }
-    }
-  }
-}; 
+        dark: "داكن",
+      },
+    },
+  },
+};

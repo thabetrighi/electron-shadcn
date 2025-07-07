@@ -3,6 +3,8 @@ import { UsersService } from './services/users.service';
 import { CategoriesService } from './services/categories.service';
 import { UnitsService } from './services/units.service';
 import { ProductsService } from './services/products.service';
+import { OrdersService } from './services/orders.service';
+import { orderItems } from './schema';
 
 export async function seedDatabase() {
   console.log('🌱 Starting database seeding...');
@@ -200,6 +202,262 @@ export async function seedDatabase() {
     });
 
     console.log('✅ Sample products created');
+
+    // Create sample orders
+    await OrdersService.create({
+      orderNumber: 'ORD-2024-001',
+      customerId: 2, // John Customer
+      totalAmount: 25.97,
+      subtotal: 23.97,
+      taxAmount: 2.00,
+      discountAmount: 0,
+      paymentMethod: 'card',
+      paymentStatus: 'paid',
+      status: 'delivered',
+      orderDate: '2024-01-15',
+      customerName: 'John Customer',
+      customerEmail: 'john@customer.com',
+      customerPhone: '+1234567891',
+    });
+
+    await OrdersService.create({
+      orderNumber: 'ORD-2024-002',
+      customerId: null, // Walk-in customer
+      totalAmount: 15.50,
+      subtotal: 14.49,
+      taxAmount: 1.01,
+      discountAmount: 0,
+      paymentMethod: 'cash',
+      paymentStatus: 'paid',
+      status: 'completed',
+      orderDate: '2024-01-16',
+      customerName: 'Walk-in Customer',
+      customerEmail: null,
+      customerPhone: null,
+    });
+
+    await OrdersService.create({
+      orderNumber: 'ORD-2024-003',
+      customerId: 2, // John Customer
+      totalAmount: 42.95,
+      subtotal: 39.95,
+      taxAmount: 3.00,
+      discountAmount: 0,
+      paymentMethod: 'card',
+      paymentStatus: 'paid',
+      status: 'shipped',
+      orderDate: '2024-01-17',
+      customerName: 'John Customer',
+      customerEmail: 'john@customer.com',
+      customerPhone: '+1234567891',
+    });
+
+    await OrdersService.create({
+      orderNumber: 'ORD-2024-004',
+      customerId: 2, // John Customer
+      totalAmount: 18.75,
+      subtotal: 17.50,
+      taxAmount: 1.25,
+      discountAmount: 0,
+      paymentMethod: 'mobile',
+      paymentStatus: 'pending',
+      status: 'confirmed',
+      orderDate: '2024-01-18',
+      customerName: 'John Customer',
+      customerEmail: 'john@customer.com',
+      customerPhone: '+1234567891',
+    });
+
+    await OrdersService.create({
+      orderNumber: 'ORD-2024-005',
+      customerId: null, // Walk-in customer
+      totalAmount: 8.99,
+      subtotal: 8.99,
+      taxAmount: 0,
+      discountAmount: 0,
+      paymentMethod: 'cash',
+      paymentStatus: 'paid',
+      status: 'processing',
+      orderDate: '2024-01-19',
+      customerName: 'Jane Doe',
+      customerEmail: 'jane@example.com',
+      customerPhone: '+1234567899',
+    });
+
+    await OrdersService.create({
+      orderNumber: 'ORD-2024-006',
+      customerId: 2, // John Customer
+      totalAmount: 35.48,
+      subtotal: 32.98,
+      taxAmount: 2.50,
+      discountAmount: 0,
+      paymentMethod: 'card',
+      paymentStatus: 'failed',
+      status: 'cancelled',
+      orderDate: '2024-01-20',
+      customerName: 'John Customer',
+      customerEmail: 'john@customer.com',
+      customerPhone: '+1234567891',
+    });
+
+    console.log('✅ Sample orders created');
+
+    // Create sample order items
+    // Order 1 items (ORD-2024-001) - 3 items
+    await db.insert(orderItems).values([
+      {
+        orderId: 1,
+        productId: 1,
+        productName: 'Coffee - Medium Roast',
+        productSku: 'COFFEE-MED-001',
+        quantity: 2,
+        unitPrice: 12.99,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0.10,
+        taxAmount: 2.00,
+        totalPrice: 25.98,
+      }
+    ]);
+
+    // Order 2 items (ORD-2024-002) - 2 items
+    await db.insert(orderItems).values([
+      {
+        orderId: 2,
+        productId: 3,
+        productName: 'Chocolate Croissant',
+        productSku: 'PASTRY-CHOC-001',
+        quantity: 2,
+        unitPrice: 3.50,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0.08,
+        taxAmount: 0.56,
+        totalPrice: 7.00,
+      },
+      {
+        orderId: 2,
+        productId: 2,
+        productName: 'Organic Tea - Earl Grey',
+        productSku: 'TEA-EARL-001',
+        quantity: 1,
+        unitPrice: 8.99,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0.10,
+        taxAmount: 0.45,
+        totalPrice: 8.50,
+      }
+    ]);
+
+    // Order 3 items (ORD-2024-003) - 4 items
+    await db.insert(orderItems).values([
+      {
+        orderId: 3,
+        productId: 1,
+        productName: 'Coffee - Medium Roast',
+        productSku: 'COFFEE-MED-001',
+        quantity: 3,
+        unitPrice: 12.99,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0.10,
+        taxAmount: 3.00,
+        totalPrice: 38.97,
+      },
+      {
+        orderId: 3,
+        productId: 4,
+        productName: 'Blueberry Muffin',
+        productSku: 'MUFFIN-BLUE-001',
+        quantity: 1,
+        unitPrice: 2.99,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0.08,
+        taxAmount: 0.24,
+        totalPrice: 2.99,
+      }
+    ]);
+
+    // Order 4 items (ORD-2024-004) - 1 item
+    await db.insert(orderItems).values([
+      {
+        orderId: 4,
+        productId: 2,
+        productName: 'Organic Tea - Earl Grey',
+        productSku: 'TEA-EARL-001',
+        quantity: 2,
+        unitPrice: 8.99,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0.10,
+        taxAmount: 1.25,
+        totalPrice: 17.98,
+      }
+    ]);
+
+    // Order 5 items (ORD-2024-005) - 1 item
+    await db.insert(orderItems).values([
+      {
+        orderId: 5,
+        productId: 2,
+        productName: 'Organic Tea - Earl Grey',
+        productSku: 'TEA-EARL-001',
+        quantity: 1,
+        unitPrice: 8.99,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0,
+        taxAmount: 0,
+        totalPrice: 8.99,
+      }
+    ]);
+
+    // Order 6 items (ORD-2024-006) - 5 items
+    await db.insert(orderItems).values([
+      {
+        orderId: 6,
+        productId: 1,
+        productName: 'Coffee - Medium Roast',
+        productSku: 'COFFEE-MED-001',
+        quantity: 1,
+        unitPrice: 12.99,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0.10,
+        taxAmount: 1.30,
+        totalPrice: 12.99,
+      },
+      {
+        orderId: 6,
+        productId: 3,
+        productName: 'Chocolate Croissant',
+        productSku: 'PASTRY-CHOC-001',
+        quantity: 3,
+        unitPrice: 3.50,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0.08,
+        taxAmount: 0.84,
+        totalPrice: 10.50,
+      },
+      {
+        orderId: 6,
+        productId: 4,
+        productName: 'Blueberry Muffin',
+        productSku: 'MUFFIN-BLUE-001',
+        quantity: 4,
+        unitPrice: 2.99,
+        discountRate: 0,
+        discountAmount: 0,
+        taxRate: 0.08,
+        taxAmount: 0.36,
+        totalPrice: 11.96,
+      }
+    ]);
+
+    console.log('✅ Sample order items created');
     console.log('🎉 Database seeding completed successfully!');
     
     return { success: true, message: 'Database seeded successfully' };

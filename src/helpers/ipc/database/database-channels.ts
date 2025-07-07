@@ -48,6 +48,18 @@ export const ORDER_CHANNELS = {
   GET_ORDERS_BY_USER: 'order:get-by-user',
 } as const;
 
+// Order Item channels
+export const ORDER_ITEM_CHANNELS = {
+  GET_ALL_ORDER_ITEMS: 'order-item:get-all',
+  GET_ORDER_ITEM_BY_ID: 'order-item:get-by-id',
+  GET_ORDER_ITEMS_BY_ORDER: 'order-item:get-by-order',
+  CREATE_ORDER_ITEM: 'order-item:create',
+  CREATE_MULTIPLE_ORDER_ITEMS: 'order-item:create-multiple',
+  UPDATE_ORDER_ITEM: 'order-item:update',
+  DELETE_ORDER_ITEM: 'order-item:delete',
+  DELETE_ORDER_ITEMS_BY_ORDER: 'order-item:delete-by-order',
+} as const;
+
 // Settings channels
 export const SETTINGS_CHANNELS = {
   GET_ALL_SETTINGS: 'settings:get-all',

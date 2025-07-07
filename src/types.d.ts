@@ -60,6 +60,16 @@ interface DatabaseAPI {
     delete: (id: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
     getByUser: (userId: number) => Promise<{ success: boolean; data?: any[]; error?: string }>;
   };
+  orderItems: {
+    getAll: () => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    getById: (id: number) => Promise<{ success: boolean; data?: any; error?: string }>;
+    getByOrderId: (orderId: number) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    create: (itemData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    createMultiple: (items: any[]) => Promise<{ success: boolean; data?: any[]; error?: string }>;
+    update: (id: number, itemData: any) => Promise<{ success: boolean; data?: any; error?: string }>;
+    delete: (id: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
+    deleteByOrderId: (orderId: number) => Promise<{ success: boolean; data?: boolean; error?: string }>;
+  };
   settings: {
     getAll: (filter?: any) => Promise<{ success: boolean; data?: any[]; error?: string }>;
     get: (key: string) => Promise<{ success: boolean; data?: any; error?: string }>;

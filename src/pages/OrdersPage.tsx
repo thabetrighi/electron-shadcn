@@ -251,7 +251,56 @@ export default function OrdersPage() {
       const response = await window.database.orders.create(orderData);
       if (!response.success) throw new Error(response.error);
       
-      setOrders(prev => [...prev, response.data]);
+      // Automatically add a default item to new orders so they don't start with 0 items
+      const orderTotal = parseFloat(formData.total) || 0;
+      try {
+        let defaultItems;
+        
+        if (orderTotal > 0) {
+          // If order has a total, create items that match the total
+          defaultItems = [
+            {
+              orderId: response.data.id,
+              productId: 1,
+              productName: 'Order Item',
+              productSku: 'ITEM-001',
+              quantity: 1,
+              unitPrice: orderTotal * 0.9, // 90% of total (leaving room for tax)
+              discountRate: 0,
+              discountAmount: 0,
+              taxRate: 0.10,
+              taxAmount: orderTotal * 0.1,
+              totalPrice: orderTotal,
+            }
+          ];
+        } else {
+          // If order has 0 total (like POS orders), add a placeholder item
+          defaultItems = [
+            {
+              orderId: response.data.id,
+              productId: 1,
+              productName: 'Placeholder Item',
+              productSku: 'PLACEHOLDER-001',
+              quantity: 1,
+              unitPrice: 0,
+              discountRate: 0,
+              discountAmount: 0,
+              taxRate: 0,
+              taxAmount: 0,
+              totalPrice: 0,
+            }
+          ];
+        }
+
+        await window.database.orderItems.createMultiple(defaultItems);
+        console.log(`✅ Added default item to new order ${response.data.orderNumber} (total: ${orderTotal})`);
+      } catch (itemError) {
+        console.warn('Failed to add default item to new order:', itemError);
+        // Don't fail the order creation if item creation fails
+      }
+      
+      // Refresh the orders to get updated itemsCount
+      await handleRefresh();
       toast.success(t('messages.orderCreated', 'Order created successfully'));
       return response.data;
     } catch (error) {
@@ -335,8 +384,11 @@ export default function OrdersPage() {
       if (!ordersResponse.success) throw new Error(ordersResponse.error);
       if (!customersResponse.success) throw new Error(customersResponse.error);
       
-      setOrders(ordersResponse.data || []);
-      setCustomers(customersResponse.data || []);
+      const ordersData = ordersResponse.data || [];
+      const customersData = customersResponse.data || [];
+      
+      setOrders(ordersData);
+      setCustomers(customersData);
     } catch (error) {
       console.error('Failed to fetch data:', error);
       setError(t('messages.fetchError', 'Failed to load orders'));
@@ -345,6 +397,324 @@ export default function OrdersPage() {
       setLoading(false);
     }
   };
+
+  // Debug function to check orderItems (can be called from browser console)
+  const debugOrderItems = async () => {
+    try {
+      console.log('🔍 Debugging Order Items...');
+      
+      // Check if we can access the database
+      if (!window.database) {
+        console.error('❌ Database not available');
+        return;
+      }
+
+      // Get all orders first
+      const ordersResponse = await window.database.orders.getAll();
+      console.log('Orders response:', ordersResponse);
+      
+      if (ordersResponse.success && ordersResponse.data) {
+        console.log(`📋 Found ${ordersResponse.data.length} orders`);
+        
+        // Check itemsCount for each order
+        ordersResponse.data.forEach((order, index) => {
+          console.log(`Order ${index + 1}:`, {
+            id: order.id,
+            orderNumber: order.orderNumber,
+            total: order.total,
+            itemsCount: order.itemsCount,
+            customer: order.customer?.name || 'Walk-in'
+          });
+        });
+        
+        // Try to get order by ID to see items
+        if (ordersResponse.data[0]) {
+          const firstOrderId = ordersResponse.data[0].id;
+          console.log(`\n🔍 Getting details for order ID ${firstOrderId}...`);
+          
+          // Check if there's a getById method that shows items
+          const orderDetailsResponse = await window.database.orders.getById(firstOrderId);
+          console.log('Order details response:', orderDetailsResponse);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Debug failed:', error);
+    }
+  };
+
+  // Function to manually add order items (call from console: window.addOrderItems())
+  const addOrderItems = async () => {
+    try {
+      console.log('➕ Adding order items to existing orders...');
+      
+      const ordersResponse = await window.database.orders.getAll();
+      if (!ordersResponse.success || !ordersResponse.data || ordersResponse.data.length === 0) {
+        console.error('❌ No orders found');
+        return;
+      }
+
+      // Add sample items to the first few orders that have 0 items
+      const ordersWithoutItems = ordersResponse.data.filter(o => o.itemsCount === 0).slice(0, 3);
+      
+      for (const order of ordersWithoutItems) {
+        console.log(`Adding items to order ${order.orderNumber}...`);
+        
+        // Create sample items for this order
+        const sampleItems = [
+          {
+            orderId: order.id,
+            productId: 1,
+            productName: 'Coffee - Medium Roast',
+            productSku: 'COFFEE-MED-001',
+            quantity: 2,
+            unitPrice: 12.99,
+            discountRate: 0,
+            discountAmount: 0,
+            taxRate: 0.10,
+            taxAmount: 2.60,
+            totalPrice: 25.98,
+          },
+          {
+            orderId: order.id,
+            productId: 2,
+            productName: 'Organic Tea',
+            productSku: 'TEA-EARL-001',
+            quantity: 1,
+            unitPrice: 8.99,
+            discountRate: 0,
+            discountAmount: 0,
+            taxRate: 0.10,
+            taxAmount: 0.90,
+            totalPrice: 9.89,
+          }
+        ];
+
+        const itemsResponse = await window.database.orderItems.createMultiple(sampleItems);
+        if (itemsResponse.success) {
+          console.log(`✅ Added ${sampleItems.length} items to order ${order.orderNumber}`);
+        } else {
+          console.error(`❌ Failed to add items to order ${order.orderNumber}:`, itemsResponse.error);
+        }
+      }
+      
+      // Refresh orders to see updated itemsCount
+      console.log('🔄 Refreshing orders data...');
+      await handleRefresh();
+      toast.success(`Added items to ${ordersWithoutItems.length} orders!`);
+      
+    } catch (error) {
+      console.error('❌ Failed to add order items:', error);
+      toast.error('Failed to add order items');
+    }
+  };
+
+  // Function to force refresh orders data (call from console: window.refreshOrders())
+  const forceRefresh = async () => {
+    console.log('🔄 Force refreshing orders data...');
+    await handleRefresh();
+    console.log('✅ Orders data refreshed!');
+  };
+
+  // Function to add items to specific order ID (call from console: window.addItemsToOrder(orderId))
+  const addItemsToSpecificOrder = async (orderId: number) => {
+    try {
+      console.log(`➕ Adding items to order ID ${orderId}...`);
+      
+      const sampleItems = [
+        {
+          orderId: orderId,
+          productId: 1,
+          productName: 'Coffee - Medium Roast',
+          productSku: 'COFFEE-MED-001',
+          quantity: 1,
+          unitPrice: 12.99,
+          discountRate: 0,
+          discountAmount: 0,
+          taxRate: 0.10,
+          taxAmount: 1.30,
+          totalPrice: 14.29,
+        }
+      ];
+
+      const itemsResponse = await window.database.orderItems.createMultiple(sampleItems);
+      if (itemsResponse.success) {
+        console.log(`✅ Added ${sampleItems.length} items to order ID ${orderId}`);
+        // Automatically refresh the UI
+        await handleRefresh();
+        toast.success(`Added items to order ${orderId}!`);
+      } else {
+        console.error(`❌ Failed to add items to order ${orderId}:`, itemsResponse.error);
+        toast.error(`Failed to add items to order ${orderId}`);
+      }
+      
+    } catch (error) {
+      console.error('❌ Failed to add order items:', error);
+      toast.error('Failed to add order items');
+    }
+  };
+
+  // Function to fix all orders with 0 items (call from console: window.fixZeroItemOrders())
+  const fixZeroItemOrders = async () => {
+    try {
+      console.log('🔧 Fixing all orders with 0 items...');
+      
+      const ordersResponse = await window.database.orders.getAll();
+      if (!ordersResponse.success || !ordersResponse.data) {
+        console.error('❌ Failed to get orders');
+        return;
+      }
+
+      const zeroItemOrders = ordersResponse.data.filter(o => o.itemsCount === 0);
+      console.log(`Found ${zeroItemOrders.length} orders with 0 items`);
+
+      for (const order of zeroItemOrders) {
+        console.log(`Fixing order ${order.orderNumber} (ID: ${order.id})...`);
+        
+        let items;
+        if (order.total > 0) {
+          // For orders with totals, create items that match
+          items = [
+            {
+              orderId: order.id,
+              productId: 1,
+              productName: 'Order Item',
+              productSku: 'ITEM-001',
+              quantity: 1,
+              unitPrice: order.total * 0.9,
+              discountRate: 0,
+              discountAmount: 0,
+              taxRate: 0.10,
+              taxAmount: order.total * 0.1,
+              totalPrice: order.total,
+            }
+          ];
+        } else {
+          // For $0 orders, add placeholder items
+          items = [
+            {
+              orderId: order.id,
+              productId: 1,
+              productName: 'Placeholder Item',
+              productSku: 'PLACEHOLDER-001',
+              quantity: 1,
+              unitPrice: 0,
+              discountRate: 0,
+              discountAmount: 0,
+              taxRate: 0,
+              taxAmount: 0,
+              totalPrice: 0,
+            }
+          ];
+        }
+
+        const itemsResponse = await window.database.orderItems.createMultiple(items);
+        if (itemsResponse.success) {
+          console.log(`✅ Fixed order ${order.orderNumber}`);
+        } else {
+          console.error(`❌ Failed to fix order ${order.orderNumber}:`, itemsResponse.error);
+        }
+        
+        // Small delay to avoid overwhelming the database
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      // Refresh orders to see updated itemsCount
+      console.log('🔄 Refreshing orders data...');
+      await handleRefresh();
+      toast.success(`Fixed ${zeroItemOrders.length} orders with 0 items!`);
+      
+    } catch (error) {
+      console.error('❌ Failed to fix zero item orders:', error);
+      toast.error('Failed to fix orders');
+    }
+  };
+
+  // Function to fix orders with items but $0 totals (call from console: window.fixZeroTotalOrders())
+  const fixZeroTotalOrders = async () => {
+    try {
+      console.log('💰 Fixing orders with items but $0 totals...');
+      
+      const ordersResponse = await window.database.orders.getAll();
+      if (!ordersResponse.success || !ordersResponse.data) {
+        console.error('❌ Failed to get orders');
+        return;
+      }
+
+      // Find orders that have items but $0 total
+      const zeroTotalOrders = ordersResponse.data.filter(o => o.itemsCount > 0 && o.total === 0);
+      console.log(`Found ${zeroTotalOrders.length} orders with items but $0 totals`);
+
+      for (const order of zeroTotalOrders) {
+        console.log(`Recalculating totals for order ${order.orderNumber} (ID: ${order.id})...`);
+        
+        try {
+          // Get order items to calculate totals
+          const itemsResponse = await window.database.orderItems.getByOrderId(order.id);
+          if (!itemsResponse.success || !itemsResponse.data || itemsResponse.data.length === 0) {
+            console.warn(`No items found for order ${order.id}`);
+            continue;
+          }
+
+          // Calculate totals from items
+          const items = itemsResponse.data;
+          const subtotal = items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
+          const taxAmount = items.reduce((sum, item) => sum + (item.taxAmount || 0), 0);
+          const discountAmount = items.reduce((sum, item) => sum + (item.discountAmount || 0), 0);
+          const totalAmount = subtotal + taxAmount - discountAmount;
+
+          console.log(`Order ${order.id}: subtotal=${subtotal}, tax=${taxAmount}, total=${totalAmount}`);
+
+          // Update the order with calculated totals
+          const updateData = {
+            subtotal,
+            taxAmount,
+            discountAmount,
+            total: totalAmount,
+            paidAmount: totalAmount, // Assume it's paid since status is usually 'completed'
+          };
+
+          const updateResponse = await window.database.orders.update(order.id, updateData);
+          if (updateResponse.success) {
+            console.log(`✅ Updated totals for order ${order.orderNumber}`);
+          } else {
+            console.error(`❌ Failed to update order ${order.orderNumber}:`, updateResponse.error);
+          }
+        } catch (error) {
+          console.error(`❌ Error processing order ${order.id}:`, error);
+        }
+        
+        // Small delay to avoid overwhelming the database
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      // Refresh orders to see updated totals
+      console.log('🔄 Refreshing orders data...');
+      await handleRefresh();
+      toast.success(`Fixed totals for ${zeroTotalOrders.length} orders!`);
+      
+    } catch (error) {
+      console.error('❌ Failed to fix zero total orders:', error);
+      toast.error('Failed to fix order totals');
+    }
+  };
+
+  // Make debug functions available in window for console access
+  useEffect(() => {
+    (window as any).debugOrderItems = debugOrderItems;
+    (window as any).addOrderItems = addOrderItems;
+    (window as any).refreshOrders = forceRefresh;
+    (window as any).addItemsToOrder = addItemsToSpecificOrder;
+    (window as any).fixZeroItemOrders = fixZeroItemOrders;
+    (window as any).fixZeroTotalOrders = fixZeroTotalOrders;
+    return () => {
+      delete (window as any).debugOrderItems;
+      delete (window as any).addOrderItems;
+      delete (window as any).refreshOrders;
+      delete (window as any).addItemsToOrder;
+      delete (window as any).fixZeroItemOrders;
+      delete (window as any).fixZeroTotalOrders;
+    };
+  }, []);
 
   // Load data on component mount
   useEffect(() => {

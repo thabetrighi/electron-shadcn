@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS } from './database-channels';
+import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, ORDER_ITEM_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS } from './database-channels';
 
 // Database API
 export const databaseAPI = {
@@ -54,6 +54,18 @@ export const databaseAPI = {
     update: (id: number, orderData: any) => ipcRenderer.invoke(ORDER_CHANNELS.UPDATE_ORDER, id, orderData),
     delete: (id: number) => ipcRenderer.invoke(ORDER_CHANNELS.DELETE_ORDER, id),
     getByUser: (userId: number) => ipcRenderer.invoke(ORDER_CHANNELS.GET_ORDERS_BY_USER, userId),
+  },
+
+  // Order Item operations
+  orderItems: {
+    getAll: () => ipcRenderer.invoke(ORDER_ITEM_CHANNELS.GET_ALL_ORDER_ITEMS),
+    getById: (id: number) => ipcRenderer.invoke(ORDER_ITEM_CHANNELS.GET_ORDER_ITEM_BY_ID, id),
+    getByOrderId: (orderId: number) => ipcRenderer.invoke(ORDER_ITEM_CHANNELS.GET_ORDER_ITEMS_BY_ORDER, orderId),
+    create: (itemData: any) => ipcRenderer.invoke(ORDER_ITEM_CHANNELS.CREATE_ORDER_ITEM, itemData),
+    createMultiple: (items: any[]) => ipcRenderer.invoke(ORDER_ITEM_CHANNELS.CREATE_MULTIPLE_ORDER_ITEMS, items),
+    update: (id: number, itemData: any) => ipcRenderer.invoke(ORDER_ITEM_CHANNELS.UPDATE_ORDER_ITEM, id, itemData),
+    delete: (id: number) => ipcRenderer.invoke(ORDER_ITEM_CHANNELS.DELETE_ORDER_ITEM, id),
+    deleteByOrderId: (orderId: number) => ipcRenderer.invoke(ORDER_ITEM_CHANNELS.DELETE_ORDER_ITEMS_BY_ORDER, orderId),
   },
 
   // Settings operations
