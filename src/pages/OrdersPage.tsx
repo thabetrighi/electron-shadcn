@@ -22,6 +22,7 @@ interface Order {
   updatedAt: string;
   customer?: { name: string; email: string };
   itemsCount?: number;
+  staff?: { name: string; phone?: string; role?: string };
 }
 
 export default function OrdersPage() {
@@ -53,12 +54,32 @@ export default function OrdersPage() {
     {
       key: 'customer',
       header: t('orders.customer', 'Customer'),
-      render: (customer: any) => customer ? (
-        <div>
-          <div className="font-medium text-gray-900">{customer.name}</div>
-          <div className="text-sm text-gray-500">{customer.email}</div>
-        </div>
-      ) : <span className="text-gray-400">-</span>,
+      render: (customer: any, order: any) => {
+        console.log('Customer render - customer:', customer, 'order:', order);
+        // Show assigned user first, then customer name
+        if (order.staff && order.staff.name) {
+          console.log('Showing staff:', order.staff.name);
+          return (
+            <div>
+              <div className="font-medium text-blue-900">{order.staff.name}</div>
+              <div className="text-sm text-blue-500">
+                {order.staff.phone && `${order.staff.phone} • `}{t(`users.roles.${order.staff.role || 'user'}`, order.staff.role || 'User')}
+              </div>
+            </div>
+          );
+        } else if (customer && customer.name) {
+          console.log('Showing customer:', customer.name);
+          return (
+            <div>
+              <div className="font-medium text-gray-900">{customer.name}</div>
+              <div className="text-sm text-gray-500">{customer.email}</div>
+            </div>
+          );
+        } else {
+          console.log('No customer or staff found');
+          return <span className="text-gray-400">-</span>;
+        }
+      },
       filterable: true,
       exportable: true
     },
@@ -734,8 +755,17 @@ export default function OrdersPage() {
               <Hash className="w-4 h-4 text-gray-400" />
               <h3 className="font-semibold text-lg text-blue-600">{order.orderNumber}</h3>
             </div>
-            {order.customer && (
+            {order.staff && order.staff.name ? (
+              <div>
+                <p className="text-sm text-blue-600 font-medium">{order.staff.name}</p>
+                <p className="text-xs text-blue-500">
+                  {order.staff.phone && `${order.staff.phone} • `}{t(`users.roles.${order.staff.role || 'user'}`, order.staff.role || 'User')}
+                </p>
+              </div>
+            ) : order.customer && order.customer.name ? (
               <p className="text-sm text-gray-500">{order.customer.name}</p>
+            ) : (
+              <p className="text-sm text-gray-400">{t('orders.noCustomerAssigned', 'No customer assigned')}</p>
             )}
           </div>
         </div>

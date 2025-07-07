@@ -24,6 +24,7 @@ export class OrdersService {
           customerName: orders.customerName,
           customerPhone: orders.customerPhone,
           customerEmail: orders.customerEmail,
+          staffId: orders.staffId,
           // Join customer data
           customer: {
             name: users.name,
@@ -47,19 +48,47 @@ export class OrdersService {
         })
       );
 
-              // Map the results with customer data and items count
-        const mappedResult = result.map(order => ({
-          ...order,
-          // Use joined customer data if available, otherwise use order fields
-          customer: (order.customer && order.customer.name) ? order.customer : (
-            order.customerName ? {
-              name: order.customerName,
-              email: order.customerEmail || '',
-              phone: order.customerPhone || '',
-            } : null
-          ),
-          itemsCount: itemsCounts.find(ic => ic.orderId === order.id)?.count || 0,
-        }));
+      // Map the results with customer data, staff data, and items count
+      const mappedResult = result.map(order => ({
+        ...order,
+        // Use joined customer data if available, otherwise use order fields
+        customer: (order.customer && order.customer.name) ? order.customer : (
+          order.customerName ? {
+            name: order.customerName,
+            email: order.customerEmail || '',
+            phone: order.customerPhone || '',
+          } : null
+        ),
+        // Add staff information (we'll fetch this separately if needed)
+        staff: order.staffId ? { id: order.staffId, name: 'Staff Member' } : null,
+        itemsCount: itemsCounts.find(ic => ic.orderId === order.id)?.count || 0,
+      }));
+
+      // Fetch staff information for orders that have staffId
+      for (const order of mappedResult) {
+        if (order.staffId) {
+          try {
+            const staffResult = await db
+              .select({
+                id: users.id,
+                name: users.name,
+                email: users.email,
+                phone: users.phone,
+              })
+              .from(users)
+              .where(eq(users.id, order.staffId));
+            
+            if (staffResult.length > 0) {
+              order.staff = staffResult[0];
+              console.log(`✅ Fetched staff data for order ${order.id}:`, staffResult[0]);
+            } else {
+              console.warn(`⚠️ No staff found for order ${order.id} with staffId ${order.staffId}`);
+            }
+          } catch (error) {
+            console.warn(`Failed to fetch staff data for order ${order.id}:`, error);
+          }
+        }
+      }
 
       return { success: true, data: mappedResult };
     } catch (error: any) {

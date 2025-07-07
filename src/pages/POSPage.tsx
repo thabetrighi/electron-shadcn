@@ -157,6 +157,11 @@ export default function POSPage() {
     users: User[];
   }>({ products: [], users: [] });
 
+  // Debug customer name state changes
+  useEffect(() => {
+    console.log('Customer name state changed:', customerName);
+  }, [customerName]);
+
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null);
   const barcodeInputRef = useRef<HTMLInputElement>(null);
@@ -627,6 +632,10 @@ export default function POSPage() {
       const taxAmount = getCartTax();
       const total = getCartTotal();
 
+      // Debug logs
+      console.log('Selected user at checkout:', selectedUser);
+      console.log('Customer name at checkout:', customerName);
+
       const orderData = {
         orderNumber: `POS-${Date.now()}`,
         customerId: null,
@@ -652,6 +661,8 @@ export default function POSPage() {
           isCustomItem: item.isCustom
         }))
       };
+
+      console.log('Order data being sent:', orderData);
 
       const result = await window.database.orders.create(orderData);
       if (result.success) {
@@ -1256,6 +1267,7 @@ export default function POSPage() {
                           className="flex items-center gap-2 p-1.5 hover:bg-gray-50 cursor-pointer rounded text-sm"
                           onClick={() => {
                             setSelectedUser(user);
+                            setCustomerName(user.name); // Auto-set customer name to user name
                             setSearchTerm('');
                             toast.success(t('pos.assignedToUser', 'Assigned to {{user}}', { user: user.name }));
                           }}
@@ -1328,12 +1340,15 @@ export default function POSPage() {
               {/* User Assignment - Clickable Icon */}
               <div className="relative">
                 <div 
-                  onClick={() => setShowUserSelector(!showUserSelector)}
+                  onClick={() => {
+                    console.log('User selector clicked, current state:', showUserSelector);
+                    setShowUserSelector(!showUserSelector);
+                  }}
                   className="flex items-center gap-2 cursor-pointer hover:bg-blue-50 px-3 py-2 rounded-lg border border-blue-200 transition-colors"
                 >
                   <Users className="w-5 h-5 text-blue-600" />
                   <span className="text-sm font-medium text-blue-700">
-                    {selectedUser ? selectedUser.name : t('pos.user', 'User')}
+                    {selectedUser ? `${selectedUser.name}${customerName && customerName !== selectedUser.name ? ` (${customerName})` : ''}` : t('pos.user', 'User')}
                   </span>
                 </div>
                 
@@ -1343,30 +1358,73 @@ export default function POSPage() {
                     {/* Backdrop to close dropdown */}
                     <div 
                       className="fixed inset-0 z-40" 
-                      onClick={() => setShowUserSelector(false)}
+                      onClick={() => {
+                        console.log('Modal backdrop clicked, closing modal. Customer name at close:', customerName);
+                        setShowUserSelector(false);
+                      }}
                     />
                     <div className="absolute top-full left-0 mt-1 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                       <div className="p-3 space-y-2">
                         <Input
                           placeholder={t('pos.enterCustomerName', 'Enter customer name...')}
                           value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
+                          onChange={(e) => {
+                            console.log('Customer name input changed:', e.target.value);
+                            setCustomerName(e.target.value);
+                          }}
                           className="h-8 text-sm"
                         />
                         <div className="border-t pt-2">
                           <div className="text-xs text-gray-500 mb-1">{t('pos.selectUser', 'Assign User:')}</div>
+                          
+                          {/* Clear Assignment Button */}
+                          {selectedUser && (
+                            <div
+                              onClick={() => {
+                                setSelectedUser(null);
+                                setCustomerName('');
+                                setShowUserSelector(false);
+                                toast.success('User assignment cleared');
+                              }}
+                              className="flex items-center gap-2 p-2 rounded cursor-pointer text-sm transition-colors bg-red-50 hover:bg-red-100 border border-red-200 mb-2"
+                            >
+                              <X className="w-4 h-4 text-red-600" />
+                              <div className="flex-1">
+                                <div className="font-medium text-red-700">Clear Assignment</div>
+                                <div className="text-xs text-red-500">Remove user assignment</div>
+                              </div>
+                            </div>
+                          )}
+                          
                           {users.map(user => (
                             <div
                               key={user.id}
                               onClick={() => {
                                 setSelectedUser(user);
+                                setCustomerName(user.name); // Auto-set customer name to user name
                                 setShowUserSelector(false);
+                                toast.success(t('pos.assignedToUser', 'Assigned to {{user}}', { user: user.name }));
                               }}
-                              className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer text-sm"
+                              className={`flex items-center gap-2 p-2 rounded cursor-pointer text-sm transition-colors ${
+                                selectedUser?.id === user.id 
+                                  ? 'bg-blue-100 border border-blue-200' 
+                                  : 'hover:bg-gray-50'
+                              }`}
                             >
-                              <User className="w-4 h-4 text-gray-500" />
-                              <span>{user.name}</span>
-                              <span className="text-xs text-gray-500">({user.role})</span>
+                              <User className={`w-4 h-4 ${selectedUser?.id === user.id ? 'text-blue-600' : 'text-gray-500'}`} />
+                              <div className="flex-1">
+                                <div className={`font-medium ${selectedUser?.id === user.id ? 'text-blue-700' : 'text-gray-900'}`}>
+                                  {user.name}
+                                </div>
+                                <div className="text-xs text-gray-500">{user.email}</div>
+                              </div>
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                selectedUser?.id === user.id 
+                                  ? 'bg-blue-200 text-blue-700' 
+                                  : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                {user.role}
+                              </span>
                             </div>
                           ))}
                         </div>
