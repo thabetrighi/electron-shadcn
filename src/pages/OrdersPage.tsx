@@ -2,12 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrudPageTemplate } from '../components/CrudPageTemplate';
 import { FormField, createTextField, createSelectField, createCurrencyField, createDateField } from '../components/FormModal';
-import { Column } from '../components/AdvancedDataTable';
+import { Column, Action } from '../components/AdvancedDataTable';
 import { Badge } from '../components/ui/badge';
-import { ShoppingCart, Hash, CheckCircle2, Clock, XCircle, Truck, DollarSign, Activity } from 'lucide-react';
+import { ShoppingCart, Hash, CheckCircle2, Clock, XCircle, Truck, DollarSign, Activity, Eye, Printer, Edit, Copy, Download, Trash2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { formatCurrency } from '../utils/formatters';
 import { renderStatus, renderDate } from '../utils/renderers';
+import { Button } from '../components/ui/button';
+import { X } from 'lucide-react';
 
 interface Order {
   id: number;
@@ -816,28 +818,563 @@ export default function OrdersPage() {
     </div>
   );
 
+  // Enhanced actions for orders
+  const actions = useMemo((): Action<Record<string, any>>[] => [
+    {
+      label: t('orders.viewDetails', 'View Details'),
+      icon: Eye,
+      onClick: (order) => {
+        setSelectedOrder(order);
+        setShowOrderDetails(true);
+      },
+    },
+    {
+      label: t('orders.printReceipt', 'Print Receipt'),
+      icon: Printer,
+      onClick: async (order) => {
+        try {
+          await printOrderReceipt(order);
+          toast.success(t('orders.receiptPrinted', 'Receipt printed successfully'));
+        } catch (error) {
+          console.error('Print failed:', error);
+          toast.error(t('orders.printFailed', 'Failed to print receipt'));
+        }
+      },
+    },
+    {
+      label: t('orders.editInPOS', 'Edit in POS'),
+      icon: Edit,
+      onClick: (order) => {
+        // Navigate to POS with order data
+        window.location.hash = '#/pos';
+        // Store order data for POS to load
+        localStorage.setItem('editOrderData', JSON.stringify(order));
+        toast.success(t('orders.loadingInPOS', 'Loading order in POS...'));
+      },
+    },
+    {
+      label: t('orders.duplicate', 'Duplicate Order'),
+      icon: Copy,
+      onClick: async (order) => {
+        try {
+          const { id, createdAt, updatedAt, ...orderData } = order;
+          const newOrderData = {
+            ...orderData,
+            orderNumber: `ORD-${Date.now()}`,
+            orderDate: new Date().toISOString().split('T')[0],
+            status: 'pending',
+            paymentStatus: 'pending',
+          };
+          
+          const result = await handleAdd(newOrderData);
+          if (result) {
+            toast.success(t('orders.duplicated', 'Order duplicated successfully'));
+          }
+        } catch (error) {
+          console.error('Duplicate failed:', error);
+          toast.error(t('orders.duplicateFailed', 'Failed to duplicate order'));
+        }
+      },
+    },
+    {
+      label: t('orders.export', 'Export Order'),
+      icon: Download,
+      onClick: (order) => {
+        exportOrderData(order);
+      },
+    },
+    {
+      label: t('orders.delete', 'Delete Order'),
+      icon: Trash2,
+      variant: 'destructive',
+      onClick: async (order) => {
+        if (window.confirm(t('orders.confirmDelete', 'Are you sure you want to delete this order?'))) {
+          await handleDelete(order.id);
+        }
+      },
+    },
+  ], [t, handleAdd, handleDelete]);
+
+  // State for order details modal
+  const [selectedOrder, setSelectedOrder] = useState<Record<string, any> | null>(null);
+  const [showOrderDetails, setShowOrderDetails] = useState(false);
+
+  // Helper function to print order receipt
+  const printOrderReceipt = async (order: Record<string, any>) => {
+    try {
+      // Get order items
+      const itemsResponse = await window.database.orderItems.getByOrderId(order.id);
+      if (!itemsResponse.success) {
+        throw new Error('Failed to get order items');
+      }
+
+      const receiptData = {
+        orderNumber: order.orderNumber,
+        orderDate: order.orderDate,
+        customerName: order.staff?.name || order.customer?.name || 'Walk-in Customer',
+        customerPhone: order.staff?.phone || order.customer?.phone || '',
+        items: itemsResponse.data || [],
+        subtotal: order.subtotal,
+        taxAmount: order.taxAmount,
+        total: order.total,
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
+        staffName: order.staff?.name || '',
+      };
+
+      // Create receipt HTML
+      const receiptHTML = generateReceiptHTML(receiptData);
+      
+      // Print the receipt
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(receiptHTML);
+        printWindow.document.close();
+        printWindow.print();
+        printWindow.close();
+      } else {
+        // Fallback: show receipt in new tab
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          newWindow.document.write(receiptHTML);
+          newWindow.document.close();
+        }
+      }
+    } catch (error) {
+      console.error('Print receipt failed:', error);
+      throw error;
+    }
+  };
+
+  // Helper function to generate receipt HTML
+  const generateReceiptHTML = (receiptData: any) => {
+    const itemsHTML = receiptData.items.map((item: any) => `
+      <tr>
+        <td>${item.productName}</td>
+        <td>${item.quantity}</td>
+        <td>${formatCurrency(item.unitPrice)}</td>
+        <td>${formatCurrency(item.totalPrice)}</td>
+      </tr>
+    `).join('');
+
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Receipt - ${receiptData.orderNumber}</title>
+        <style>
+          body { font-family: 'Courier New', monospace; font-size: 12px; margin: 20px; }
+          .header { text-align: center; margin-bottom: 20px; }
+          .order-info { margin-bottom: 20px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          th, td { padding: 5px; text-align: left; border-bottom: 1px solid #ddd; }
+          th { background-color: #f5f5f5; }
+          .totals { text-align: right; margin-top: 20px; }
+          .footer { text-align: center; margin-top: 30px; font-size: 10px; }
+          @media print { body { margin: 0; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h2>RECEIPT</h2>
+          <h3>${receiptData.orderNumber}</h3>
+        </div>
+        
+        <div class="order-info">
+          <p><strong>Date:</strong> ${receiptData.orderDate}</p>
+          <p><strong>Customer:</strong> ${receiptData.customerName}</p>
+          ${receiptData.customerPhone ? `<p><strong>Phone:</strong> ${receiptData.customerPhone}</p>` : ''}
+          ${receiptData.staffName ? `<p><strong>Staff:</strong> ${receiptData.staffName}</p>` : ''}
+        </div>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsHTML}
+          </tbody>
+        </table>
+        
+        <div class="totals">
+          <p><strong>Subtotal:</strong> ${formatCurrency(receiptData.subtotal)}</p>
+          <p><strong>Tax:</strong> ${formatCurrency(receiptData.taxAmount)}</p>
+          <p><strong>Total:</strong> ${formatCurrency(receiptData.total)}</p>
+          <p><strong>Payment:</strong> ${receiptData.paymentMethod} (${receiptData.paymentStatus})</p>
+        </div>
+        
+        <div class="footer">
+          <p>Thank you for your purchase!</p>
+          <p>Generated on ${new Date().toLocaleString()}</p>
+        </div>
+      </body>
+      </html>
+    `;
+  };
+
+  // Helper function to export order data
+  const exportOrderData = (order: Record<string, any>) => {
+    try {
+      const exportData = {
+        orderNumber: order.orderNumber,
+        orderDate: order.orderDate,
+        customer: order.staff?.name || order.customer?.name,
+        customerPhone: order.staff?.phone || order.customer?.phone,
+        customerEmail: order.customer?.email,
+        staff: order.staff?.name,
+        subtotal: order.subtotal,
+        taxAmount: order.taxAmount,
+        total: order.total,
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
+        status: order.status,
+        itemsCount: order.itemsCount,
+        createdAt: order.createdAt,
+      };
+
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `order-${order.orderNumber}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      
+      toast.success(t('orders.exported', 'Order data exported successfully'));
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error(t('orders.exportFailed', 'Failed to export order data'));
+    }
+  };
+
+  // Order Items List Component
+  const OrderItemsList = ({ orderId }: { orderId: number }) => {
+    const [items, setItems] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const loadItems = async () => {
+        try {
+          const response = await window.database.orderItems.getByOrderId(orderId);
+          if (response.success) {
+            setItems(response.data || []);
+          }
+        } catch (error) {
+          console.error('Failed to load order items:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      loadItems();
+    }, [orderId]);
+
+    if (loading) {
+      return (
+        <div className="p-4 text-center">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+        </div>
+      );
+    }
+
+    if (items.length === 0) {
+      return (
+        <div className="p-4 text-center text-gray-500">
+          <ShoppingCart className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+          <p>No items found for this order</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Item
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                SKU
+              </th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Quantity
+              </th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Unit Price
+              </th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Discount
+              </th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Tax
+              </th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Total
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {items.map((item, index) => (
+              <tr key={index} className="hover:bg-gray-50">
+                <td className="px-4 py-3">
+                  <div>
+                    <div className="font-medium text-gray-900">{item.productName}</div>
+                    {item.isCustomItem && (
+                      <Badge variant="outline" className="text-xs">Custom Item</Badge>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-500">
+                  {item.productSku || '-'}
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium">
+                    {item.quantity}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-right text-sm font-medium">
+                  {formatCurrency(item.unitPrice)}
+                </td>
+                <td className="px-4 py-3 text-right text-sm text-gray-500">
+                  {formatCurrency(item.discountAmount)}
+                </td>
+                <td className="px-4 py-3 text-right text-sm text-gray-500">
+                  {formatCurrency(item.taxAmount)}
+                </td>
+                <td className="px-4 py-3 text-right text-sm font-semibold text-green-600">
+                  {formatCurrency(item.totalPrice)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  // Helper functions for status variants
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case 'completed': return 'default';
+      case 'pending': return 'secondary';
+      case 'cancelled': return 'destructive';
+      default: return 'outline';
+    }
+  };
+
+  const getPaymentStatusVariant = (status: string) => {
+    switch (status) {
+      case 'paid': return 'default';
+      case 'pending': return 'secondary';
+      case 'failed': return 'destructive';
+      default: return 'outline';
+    }
+  };
+
   return (
-    <CrudPageTemplate
-      data={orders}
-      loading={loading}
-      error={error}
-      entityName="order"
-      entityNamePlural="orders"
-      entityConfig={{
-        icon: ShoppingCart,
-        color: "text-purple-600",
-        description: t("pages.ordersSubtitle", "Manage customer orders and transactions"),
-        category: "sales",
-      }}
-      columns={columns}
-      stats={stats}
-      formFields={formFields}
-      cardRenderer={cardRenderer}
-      onAdd={handleAdd}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-      onBulkDelete={handleBulkDelete}
-      onRefresh={handleRefresh}
-    />
+    <div>
+      <CrudPageTemplate
+        data={orders}
+        loading={loading}
+        error={error}
+        entityName="order"
+        entityNamePlural="orders"
+        entityConfig={{
+          icon: ShoppingCart,
+          color: "text-purple-600",
+          description: t("pages.ordersSubtitle", "Manage customer orders and transactions"),
+          category: "sales",
+        }}
+        columns={columns}
+        stats={stats}
+        formFields={formFields}
+        cardRenderer={cardRenderer}
+        onAdd={handleAdd}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onBulkDelete={handleBulkDelete}
+        onRefresh={handleRefresh}
+        customActions={actions}
+        showDefaultActions={false}
+      />
+
+      {/* Order Details Modal */}
+      {showOrderDetails && selectedOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-600 rounded-lg">
+                  <ShoppingCart className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Order Details - {selectedOrder.orderNumber}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {selectedOrder.orderDate} • {selectedOrder.status}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      await printOrderReceipt(selectedOrder);
+                      toast.success(t('orders.receiptPrinted', 'Receipt printed successfully'));
+                    } catch (error) {
+                      toast.error(t('orders.printFailed', 'Failed to print receipt'));
+                    }
+                  }}
+                >
+                  <Printer className="w-4 h-4 mr-2" />
+                  Print Receipt
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowOrderDetails(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Order Information */}
+                <div className="space-y-4">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-900 mb-3">Order Information</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Order Number:</span>
+                        <span className="font-medium">{selectedOrder.orderNumber}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Date:</span>
+                        <span className="font-medium">{selectedOrder.orderDate}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Status:</span>
+                        <Badge variant={getStatusVariant(selectedOrder.status)}>
+                          {selectedOrder.status}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Payment Status:</span>
+                        <Badge variant={getPaymentStatusVariant(selectedOrder.paymentStatus)}>
+                          {selectedOrder.paymentStatus}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Payment Method:</span>
+                        <span className="font-medium capitalize">{selectedOrder.paymentMethod}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Customer Information */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-900 mb-3">Customer Information</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Name:</span>
+                        <span className="font-medium">
+                          {selectedOrder.staff?.name || selectedOrder.customer?.name || 'Walk-in Customer'}
+                        </span>
+                      </div>
+                      {selectedOrder.staff?.phone && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Phone:</span>
+                          <span className="font-medium">{selectedOrder.staff.phone}</span>
+                        </div>
+                      )}
+                      {selectedOrder.customer?.email && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Email:</span>
+                          <span className="font-medium">{selectedOrder.customer.email}</span>
+                        </div>
+                      )}
+                      {selectedOrder.staff?.role && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Role:</span>
+                          <span className="font-medium capitalize">{selectedOrder.staff.role}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Financial Summary */}
+                <div className="space-y-4">
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-900 mb-3">Financial Summary</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-lg">
+                        <span className="text-gray-600">Subtotal:</span>
+                        <span className="font-semibold">{formatCurrency(selectedOrder.subtotal)}</span>
+                      </div>
+                      <div className="flex justify-between text-lg">
+                        <span className="text-gray-600">Tax:</span>
+                        <span className="font-semibold">{formatCurrency(selectedOrder.taxAmount)}</span>
+                      </div>
+                      <div className="border-t pt-3">
+                        <div className="flex justify-between text-xl font-bold text-green-600">
+                          <span>Total:</span>
+                          <span>{formatCurrency(selectedOrder.total)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Order Statistics */}
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-900 mb-3">Order Statistics</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Items Count:</span>
+                        <span className="font-medium">{selectedOrder.itemsCount}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Created:</span>
+                        <span className="font-medium">
+                          {new Date(selectedOrder.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                      {selectedOrder.updatedAt && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Last Updated:</span>
+                          <span className="font-medium">
+                            {new Date(selectedOrder.updatedAt).toLocaleString()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Items */}
+              <div className="bg-white border border-gray-200 rounded-lg">
+                <div className="px-4 py-3 border-b border-gray-200">
+                  <h3 className="font-semibold text-gray-900">Order Items</h3>
+                </div>
+                <OrderItemsList orderId={selectedOrder.id} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 } 

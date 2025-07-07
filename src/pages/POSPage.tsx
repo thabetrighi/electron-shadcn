@@ -170,7 +170,73 @@ export default function POSPage() {
   useEffect(() => {
     loadData();
     loadPendingCarts();
+    loadOrderForEditing();
   }, []);
+
+  // Load order data for editing if coming from Orders page
+  const loadOrderForEditing = () => {
+    const editOrderData = localStorage.getItem('editOrderData');
+    if (editOrderData) {
+      try {
+        const orderData = JSON.parse(editOrderData);
+        console.log('Loading order for editing:', orderData);
+        
+        // Clear the stored data
+        localStorage.removeItem('editOrderData');
+        
+        // Load order items
+        loadOrderItemsForEditing(orderData.id);
+        
+        // Set customer name and user
+        if (orderData.staff?.name) {
+          setSelectedUser(orderData.staff);
+          setCustomerName(orderData.staff.name);
+        } else if (orderData.customer?.name) {
+          setCustomerName(orderData.customer.name);
+        }
+        
+        toast.success(`Editing order ${orderData.orderNumber}`);
+      } catch (error) {
+        console.error('Failed to load order for editing:', error);
+        toast.error('Failed to load order for editing');
+      }
+    }
+  };
+
+  // Load order items for editing
+  const loadOrderItemsForEditing = async (orderId: number) => {
+    try {
+      const response = await window.database.orderItems.getByOrderId(orderId);
+      if (response.success && response.data) {
+        const cartItems: CartItem[] = response.data.map((item: any) => ({
+          id: Date.now().toString() + Math.random(),
+          product: item.productId ? {
+            id: item.productId,
+            name: item.productName,
+            sellingPrice: item.unitPrice,
+            currentStock: 999, // We don't have stock info for editing
+            sku: item.productSku,
+          } : undefined,
+          customItem: !item.productId ? {
+            name: item.productName,
+            price: item.unitPrice,
+            description: '',
+          } : undefined,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          discount: item.discountAmount,
+          total: item.totalPrice,
+          isCustom: !item.productId,
+        }));
+        
+        setCart(cartItems);
+        toast.success(`Loaded ${cartItems.length} items from order`);
+      }
+    } catch (error) {
+      console.error('Failed to load order items for editing:', error);
+      toast.error('Failed to load order items');
+    }
+  };
 
   // Ensure drag is ready when products are loaded
   useEffect(() => {

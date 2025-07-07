@@ -168,6 +168,9 @@ interface CrudPageTemplateProps<T> {
     slack?: boolean;
     webhook?: boolean;
   };
+
+  // New prop
+  showDefaultActions?: boolean;
 }
 
 export function CrudPageTemplate<T extends Record<string, any>>({
@@ -238,6 +241,7 @@ export function CrudPageTemplate<T extends Record<string, any>>({
   enableDragAndDrop = false,
   enableInlineEditing = false,
   integrations = {},
+  showDefaultActions = true,
 }: CrudPageTemplateProps<T>) {
   const { t } = useTranslation();
 
@@ -856,6 +860,11 @@ export function CrudPageTemplate<T extends Record<string, any>>({
       : undefined,
   };
 
+  // Setup actions for the table
+  const actionsToUse = showDefaultActions
+    ? enhancedActions
+    : customActions;
+
   if (error) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
@@ -924,7 +933,7 @@ export function CrudPageTemplate<T extends Record<string, any>>({
         <AdvancedDataTable
           data={data}
           columns={columns}
-          actions={enhancedActions}
+          actions={actionsToUse}
           bulkActions={enhancedBulkActions}
           loading={loading}
           searchable={searchable}
