@@ -49,20 +49,20 @@ export class OrdersService {
       );
 
       // Map the results with customer data, staff data, and items count
-      const mappedResult = result.map(order => ({
-        ...order,
-        // Use joined customer data if available, otherwise use order fields
-        customer: (order.customer && order.customer.name) ? order.customer : (
-          order.customerName ? {
-            name: order.customerName,
-            email: order.customerEmail || '',
-            phone: order.customerPhone || '',
-          } : null
-        ),
+        const mappedResult = result.map(order => ({
+          ...order,
+          // Use joined customer data if available, otherwise use order fields
+          customer: (order.customer && order.customer.name) ? order.customer : (
+            order.customerName ? {
+              name: order.customerName,
+              email: order.customerEmail || '',
+              phone: order.customerPhone || '',
+            } : null
+          ),
         // Add staff information (we'll fetch this separately if needed)
         staff: order.staffId ? { id: order.staffId, name: 'Staff Member' } : null,
-        itemsCount: itemsCounts.find(ic => ic.orderId === order.id)?.count || 0,
-      }));
+          itemsCount: itemsCounts.find(ic => ic.orderId === order.id)?.count || 0,
+        }));
 
       // Fetch staff information for orders that have staffId
       for (const order of mappedResult) {

@@ -72,10 +72,10 @@ export default function OrdersPage() {
         } else if (customer && customer.name) {
           console.log('Showing customer:', customer.name);
           return (
-            <div>
-              <div className="font-medium text-gray-900">{customer.name}</div>
-              <div className="text-sm text-gray-500">{customer.email}</div>
-            </div>
+        <div>
+          <div className="font-medium text-gray-900">{customer.name}</div>
+          <div className="text-sm text-gray-500">{customer.email}</div>
+        </div>
           );
         } else {
           console.log('No customer or staff found');
@@ -1076,7 +1076,7 @@ export default function OrdersPage() {
     }, [orderId]);
 
     if (loading) {
-      return (
+  return (
         <div className="p-4 text-center">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
         </div>
@@ -1180,27 +1180,27 @@ export default function OrdersPage() {
 
   return (
     <div>
-      <CrudPageTemplate
-        data={orders}
-        loading={loading}
-        error={error}
-        entityName="order"
-        entityNamePlural="orders"
-        entityConfig={{
-          icon: ShoppingCart,
-          color: "text-purple-600",
-          description: t("pages.ordersSubtitle", "Manage customer orders and transactions"),
-          category: "sales",
-        }}
-        columns={columns}
-        stats={stats}
-        formFields={formFields}
-        cardRenderer={cardRenderer}
-        onAdd={handleAdd}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onBulkDelete={handleBulkDelete}
-        onRefresh={handleRefresh}
+    <CrudPageTemplate
+      data={orders}
+      loading={loading}
+      error={error}
+      entityName="order"
+      entityNamePlural="orders"
+      entityConfig={{
+        icon: ShoppingCart,
+        color: "text-purple-600",
+        description: t("pages.ordersSubtitle", "Manage customer orders and transactions"),
+        category: "sales",
+      }}
+      columns={columns}
+      stats={stats}
+      formFields={formFields}
+      cardRenderer={cardRenderer}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      onBulkDelete={handleBulkDelete}
+      onRefresh={handleRefresh}
         customActions={actions}
         showDefaultActions={false}
       />

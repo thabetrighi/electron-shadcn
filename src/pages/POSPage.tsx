@@ -114,7 +114,6 @@ const KEYBOARD_SHORTCUTS = {
   'F8': 'clearCart',
   'F9': 'savePendingCart',
   'F10': 'checkoutWithPrint',
-  'F11': 'checkoutWithoutPrint',
   'Escape': 'clearSearch',
   'Enter': 'quickCheckout',
 };
@@ -156,6 +155,8 @@ export default function POSPage() {
     products: Product[];
     users: User[];
   }>({ products: [], users: [] });
+  const [showReceiptModalState, setShowReceiptModalState] = useState(false);
+  const [receiptData, setReceiptData] = useState<{ orderData: any; cartItems: CartItem[] } | null>(null);
 
   // Debug customer name state changes
   useEffect(() => {
@@ -312,9 +313,6 @@ export default function POSPage() {
         break;
               case 'checkoutWithPrint':
           handleCheckout(true);
-          break;
-        case 'checkoutWithoutPrint':
-          handleCheckout(false);
           break;
       case 'clearSearch':
         setSearchTerm('');
@@ -791,18 +789,152 @@ export default function POSPage() {
   // Print receipt function
   const printReceipt_ = async (orderData: any, cartItems: CartItem[]) => {
     try {
-      // Here you would integrate with your printer
-      // For now, we'll simulate printing
       console.log('Printing receipt for order:', orderData.orderNumber);
       
-      // You can add actual printer integration here
-      // Example: await window.electronAPI.printReceipt(orderData, cartItems);
+      // Generate receipt HTML content
+      const receiptHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Receipt - ${orderData.orderNumber}</title>
+          <style>
+            body { 
+              font-family: 'Courier New', monospace; 
+              font-size: 12px; 
+              line-height: 1.2; 
+              margin: 0; 
+              padding: 10px;
+              width: 300px;
+            }
+            .header { 
+              text-align: center; 
+              border-bottom: 1px dashed #000; 
+              padding-bottom: 10px; 
+              margin-bottom: 10px; 
+            }
+            .title { 
+              font-size: 16px; 
+              font-weight: bold; 
+              margin-bottom: 5px; 
+            }
+            .order-info { 
+              margin-bottom: 10px; 
+            }
+            .items { 
+              margin-bottom: 10px; 
+            }
+            .item { 
+              display: flex; 
+              justify-content: space-between; 
+              margin-bottom: 3px; 
+            }
+            .item-name { 
+              flex: 1; 
+            }
+            .item-price { 
+              text-align: right; 
+            }
+            .totals { 
+              border-top: 1px dashed #000; 
+              padding-top: 10px; 
+              margin-top: 10px; 
+            }
+            .total-row { 
+              display: flex; 
+              justify-content: space-between; 
+              margin-bottom: 3px; 
+            }
+            .grand-total { 
+              font-weight: bold; 
+              font-size: 14px; 
+              border-top: 1px solid #000; 
+              padding-top: 5px; 
+              margin-top: 5px; 
+            }
+            .footer { 
+              text-align: center; 
+              margin-top: 15px; 
+              font-size: 10px; 
+              color: #666; 
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="title">POS SYSTEM</div>
+            <div>Receipt</div>
+            <div>${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
+          </div>
+          
+          <div class="order-info">
+            <div><strong>Order:</strong> ${orderData.orderNumber}</div>
+            <div><strong>Customer:</strong> ${orderData.customerName || 'Walk-in Customer'}</div>
+            ${orderData.userAssigned ? `<div><strong>Staff:</strong> ${orderData.userAssigned}</div>` : ''}
+          </div>
+          
+          <div class="items">
+            ${cartItems.map(item => `
+              <div class="item">
+                <div class="item-name">${item.product?.name || item.customItem?.name} × ${item.quantity}</div>
+                <div class="item-price">${formatCurrency(item.total)}</div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="totals">
+            <div class="total-row">
+              <div>Subtotal:</div>
+              <div>${formatCurrency(orderData.subtotal)}</div>
+            </div>
+            ${orderData.taxAmount > 0 ? `
+              <div class="total-row">
+                <div>Tax:</div>
+                <div>${formatCurrency(orderData.taxAmount)}</div>
+              </div>
+            ` : ''}
+            <div class="total-row grand-total">
+              <div>TOTAL:</div>
+              <div>${formatCurrency(orderData.totalAmount)}</div>
+            </div>
+          </div>
+          
+          <div class="footer">
+            <div>Thank you for your purchase!</div>
+            <div>Please come again</div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Create a new window for printing
+      const printWindow = window.open('', '_blank', 'width=400,height=600');
+      if (printWindow) {
+        printWindow.document.write(receiptHTML);
+        printWindow.document.close();
+        
+        // Wait for content to load then print
+        printWindow.onload = () => {
+          printWindow.print();
+          printWindow.close();
+        };
+        
+        toast.success('Receipt printed successfully');
+      } else {
+        // Fallback: show receipt in modal if popup is blocked
+        showReceiptModal(orderData, cartItems);
+        toast.success('Receipt generated - check popup or modal');
+      }
       
-      toast.success('Receipt sent to printer');
     } catch (error) {
       console.error('Print failed:', error);
       toast.error('Print failed - order saved successfully');
     }
+  };
+
+  // Show receipt in modal as fallback
+  const showReceiptModal = (orderData: any, cartItems: CartItem[]) => {
+    setReceiptData({ orderData, cartItems });
+    setShowReceiptModalState(true);
   };
 
   // Filter products
@@ -1763,25 +1895,39 @@ export default function POSPage() {
           
           {/* Fixed Checkout Button at Bottom */}
           {cart.length > 0 && (
-            <div className="flex-none p-3 border-t border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50 space-y-2">
-              {/* Primary Checkout with Print */}
+            <div className="flex-none p-3 border-t border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
+              {/* Modern Checkout Layout */}
+              <div className="flex gap-2">
+                {/* Main Checkout Button */}
               <Button
-                onClick={() => handleCheckout(true)}
-                className="w-full h-12 bg-green-600 hover:bg-green-700 font-bold text-lg shadow-lg"
+                  onClick={() => handleCheckout(false)}
+                  className="flex-1 h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 font-bold text-lg shadow-lg border-0 text-white transform transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-xl"
               >
-                <CheckCircle2 className="w-5 h-5 mr-2" />
-                {t('pos.checkoutAndPrint', 'Checkout & Print')} ({formatCurrency(getCartTotal())})
+                  <CheckCircle2 className="w-5 h-5 mr-2 animate-pulse" />
+                  {t('pos.checkout', 'Checkout')} ({formatCurrency(getCartTotal())})
               </Button>
               
-              {/* Secondary Checkout without Print */}
+                {/* Print Button */}
               <Button
-                onClick={() => handleCheckout(false)}
-                variant="outline"
-                className="w-full h-8 text-sm border-green-300 text-green-700 hover:bg-green-50"
-              >
-                <Receipt className="w-4 h-4 mr-2" />
-                {t('pos.checkoutNoPrint', 'Checkout without Print')} (F11)
+                  onClick={() => handleCheckout(true)}
+                  className="h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg border-0 text-white p-0 transform transition-all duration-200 hover:scale-110 active:scale-95 hover:rotate-3 hover:shadow-xl"
+                  title={t('pos.checkoutAndPrint', 'Checkout & Print')}
+                >
+                  <Receipt className="w-5 h-5" />
               </Button>
+              </div>
+              
+              {/* Quick Actions Row */}
+              <div className="flex items-center justify-between mt-2 text-xs text-gray-600">
+                <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-full border border-gray-200 shadow-sm">
+                  <Zap className="w-3 h-3 text-yellow-500" />
+                  Press F10 for quick checkout
+                </span>
+                <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-full border border-gray-200 shadow-sm">
+                  <Keyboard className="w-3 h-3 text-blue-500" />
+                  F1-F11 shortcuts
+                </span>
+              </div>
             </div>
           )}
         </div>
@@ -2093,15 +2239,9 @@ export default function POSPage() {
                         <kbd className="px-2 py-1 bg-green-200 rounded text-xs font-mono">F10</kbd>
                         <span className="text-sm font-semibold">Checkout & Print</span>
                       </div>
-                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      <Receipt className="w-4 h-4 text-green-600" />
                     </div>
-                    <div className="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-200">
-                      <div className="flex items-center gap-2">
-                        <kbd className="px-2 py-1 bg-blue-200 rounded text-xs font-mono">F11</kbd>
-                        <span className="text-sm font-semibold">Checkout No Print</span>
-                      </div>
-                      <Receipt className="w-4 h-4 text-blue-600" />
-                    </div>
+
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">ESC</kbd>
@@ -2133,6 +2273,171 @@ export default function POSPage() {
                     Got it!
                   </Button>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Receipt Modal */}
+      {showReceiptModalState && receiptData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md mx-4">
+            <CardHeader className="pb-3 bg-gradient-to-r from-green-50 to-emerald-50 border-b">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Receipt className="w-5 h-5 text-green-600" />
+                  Receipt - {receiptData.orderData.orderNumber}
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowReceiptModalState(false)}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="font-mono text-sm space-y-3">
+                {/* Header */}
+                <div className="text-center border-b border-dashed border-gray-300 pb-3">
+                  <div className="font-bold text-lg">POS SYSTEM</div>
+                  <div>Receipt</div>
+                  <div className="text-xs text-gray-500">
+                    {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}
+                  </div>
+                </div>
+                
+                {/* Order Info */}
+                <div className="space-y-1">
+                  <div><strong>Order:</strong> {receiptData.orderData.orderNumber}</div>
+                  <div><strong>Customer:</strong> {receiptData.orderData.customerName || 'Walk-in Customer'}</div>
+                  {receiptData.orderData.userAssigned && (
+                    <div><strong>Staff:</strong> {receiptData.orderData.userAssigned}</div>
+                  )}
+                </div>
+                
+                {/* Items */}
+                <div className="space-y-1">
+                  {receiptData.cartItems.map((item, index) => (
+                    <div key={index} className="flex justify-between">
+                      <div className="flex-1">
+                        {item.product?.name || item.customItem?.name} × {item.quantity}
+                      </div>
+                      <div className="text-right">{formatCurrency(item.total)}</div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Totals */}
+                <div className="border-t border-dashed border-gray-300 pt-3 space-y-1">
+                  <div className="flex justify-between">
+                    <div>Subtotal:</div>
+                    <div>{formatCurrency(receiptData.orderData.subtotal)}</div>
+                  </div>
+                  {receiptData.orderData.taxAmount > 0 && (
+                    <div className="flex justify-between">
+                      <div>Tax:</div>
+                      <div>{formatCurrency(receiptData.orderData.taxAmount)}</div>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-bold text-lg border-t border-gray-300 pt-2">
+                    <div>TOTAL:</div>
+                    <div>{formatCurrency(receiptData.orderData.totalAmount)}</div>
+                  </div>
+                </div>
+                
+                {/* Footer */}
+                <div className="text-center text-xs text-gray-500 pt-3">
+                  <div>Thank you for your purchase!</div>
+                  <div>Please come again</div>
+                </div>
+              </div>
+              
+              {/* Actions */}
+              <div className="flex gap-2 mt-4 pt-4 border-t">
+                <Button
+                  onClick={() => {
+                    const printWindow = window.open('', '_blank');
+                    if (printWindow) {
+                      const receiptHTML = `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                          <title>Receipt - ${receiptData.orderData.orderNumber}</title>
+                          <style>
+                            body { font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.2; margin: 0; padding: 10px; width: 300px; }
+                            .header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
+                            .title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+                            .item { display: flex; justify-content: space-between; margin-bottom: 3px; }
+                            .totals { border-top: 1px dashed #000; padding-top: 10px; margin-top: 10px; }
+                            .total-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+                            .grand-total { font-weight: bold; font-size: 14px; border-top: 1px solid #000; padding-top: 5px; margin-top: 5px; }
+                            .footer { text-align: center; margin-top: 15px; font-size: 10px; color: #666; }
+                          </style>
+                        </head>
+                        <body>
+                          <div class="header">
+                            <div class="title">POS SYSTEM</div>
+                            <div>Receipt</div>
+                            <div>${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
+                          </div>
+                          <div><strong>Order:</strong> ${receiptData.orderData.orderNumber}</div>
+                          <div><strong>Customer:</strong> ${receiptData.orderData.customerName || 'Walk-in Customer'}</div>
+                          ${receiptData.orderData.userAssigned ? `<div><strong>Staff:</strong> ${receiptData.orderData.userAssigned}</div>` : ''}
+                          <div style="margin: 10px 0;">
+                            ${receiptData.cartItems.map(item => `
+                              <div class="item">
+                                <div>${item.product?.name || item.customItem?.name} × ${item.quantity}</div>
+                                <div>${formatCurrency(item.total)}</div>
+                              </div>
+                            `).join('')}
+                          </div>
+                          <div class="totals">
+                            <div class="total-row">
+                              <div>Subtotal:</div>
+                              <div>${formatCurrency(receiptData.orderData.subtotal)}</div>
+                            </div>
+                            ${receiptData.orderData.taxAmount > 0 ? `
+                              <div class="total-row">
+                                <div>Tax:</div>
+                                <div>${formatCurrency(receiptData.orderData.taxAmount)}</div>
+                              </div>
+                            ` : ''}
+                            <div class="total-row grand-total">
+                              <div>TOTAL:</div>
+                              <div>${formatCurrency(receiptData.orderData.totalAmount)}</div>
+                            </div>
+                          </div>
+                          <div class="footer">
+                            <div>Thank you for your purchase!</div>
+                            <div>Please come again</div>
+                          </div>
+                        </body>
+                        </html>
+                      `;
+                      printWindow.document.write(receiptHTML);
+                      printWindow.document.close();
+                      printWindow.onload = () => {
+                        printWindow.print();
+                        printWindow.close();
+                      };
+                    }
+                  }}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  <Receipt className="w-4 h-4 mr-2" />
+                  Print Receipt
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowReceiptModalState(false)}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
               </div>
             </CardContent>
           </Card>
