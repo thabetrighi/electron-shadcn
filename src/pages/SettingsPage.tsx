@@ -10,6 +10,7 @@ import { Checkbox } from '../components/ui/checkbox';
 import { Switch } from '../components/ui/switch';
 import { Separator } from '../components/ui/separator';
 import { useSettings } from '../hooks/useSettings';
+import { useSettingsCache } from '../hooks/useSettingsCache';
 import { useTranslation } from 'react-i18next';
 import { setAppLanguage } from '../helpers/language_helpers';
 import { 
@@ -23,7 +24,7 @@ import {
   RotateCcw,
   CheckCircle,
   AlertCircle,
-  DollarSign,
+  Coins,
   Globe,
   ShoppingCart,
   FileText,
@@ -42,6 +43,9 @@ import {
   Clock
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
+import SettingsTest from '../components/SettingsTest';
+import SettingsCacheStatus from '../components/SettingsCacheStatus';
+
 
 type SettingCategory = 'general' | 'printing' | 'pos' | 'appearance' | 'currency';
 
@@ -57,8 +61,38 @@ export default function SettingsPage() {
   const [availablePrinters, setAvailablePrinters] = useState<Array<{value: string; label: string}>>([]);
   const [loadingPrinters, setLoadingPrinters] = useState(false);
 
+  // Get printer capabilities and display them
+  const [printerCapabilities, setPrinterCapabilities] = useState<any>(null);
+  const [selectedPrinterInfo, setSelectedPrinterInfo] = useState<any>(null);
+
+  // Use settings cache
+  const settingsCache = useSettingsCache();
+
+  // Get printer capabilities when printer is selected
+  const getPrinterCapabilities = async (printerName: string) => {
+    try {
+      const result = await (window as any).printer.getPrinterStatus(printerName);
+      if (result.success) {
+        setPrinterCapabilities(result.data.capabilities);
+        setSelectedPrinterInfo(result.data);
+      }
+    } catch (error) {
+      console.error('Error getting printer capabilities:', error);
+    }
+  };
+
+  // Update printer capabilities when printer changes
+  useEffect(() => {
+    if (formData['printer.printerName'] && formData['printer.printerName'] !== 'none') {
+      getPrinterCapabilities(formData['printer.printerName']);
+    } else {
+      setPrinterCapabilities(null);
+      setSelectedPrinterInfo(null);
+    }
+  }, [formData['printer.printerName']]);
+
   const { settings, loading, error, refresh } = useSettings();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   // Apply settings changes immediately to the system
   const applySettingToSystem = async (key: string, value: any) => {
@@ -236,7 +270,7 @@ export default function SettingsPage() {
           
         default:
           // For other settings, show appropriate feedback
-          if (['printer_name', 'printer_type', 'paper_size', 'invoice_printer'].includes(key)) {
+          if (['printer.printerName', 'printer_type', 'paper_size', 'invoice_printer'].includes(key)) {
             if (value === 'none') {
               toast.success(`${key.replace(/[_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} cleared`, {
                 icon: '🖨️',
@@ -283,31 +317,66 @@ export default function SettingsPage() {
   // Initialize form data when settings load
   useEffect(() => {
     const initialData: SettingFormData = {};
+    console.log('Initializing form data with settings:', settings.length);
+    
     settings.forEach(setting => {
       let value = setting.value || setting.defaultValue || '';
       // Handle printer settings - convert empty values to 'none'
-      if ((setting.key === 'printer_name' || setting.key === 'invoice_printer') && value === '') {
+      if ((setting.key === 'printer.printerName' || setting.key === 'invoice_printer') && value === '') {
         value = 'none';
       }
       initialData[setting.key] = value;
+      
+      // Log printer settings for debugging
+      if (setting.key.startsWith('printer.') || setting.key.includes('printer')) {
+        console.log(`Setting ${setting.key}: ${value} (original: ${setting.value}, default: ${setting.defaultValue})`);
+      }
     });
+    
+    console.log('Form data initialized:', Object.keys(initialData).filter(key => key.startsWith('printer.') || key.includes('printer')));
     setFormData(initialData);
   }, [settings]);
 
   // Initialize default settings using the service
   const initializeDefaultSettings = async () => {
     try {
-      // Use the service's proper initialization method
-      const result = await (window.database.settings as any).initializeDefaults();
+      console.log('🔧 Initializing default settings...');
+      
+      // First, check database health
+      const healthCheck = await window.database.settings.checkDatabaseHealth?.();
+      console.log('Database health check:', healthCheck);
+      
+      if (!healthCheck?.success) {
+        toast.error('Database connection issue detected');
+        return;
+      }
+      
+      // Initialize defaults using database service
+      const result = await window.database.settings.initializeDefaults();
+      
       if (result.success) {
-        toast.success('Default settings initialized successfully');
-        await refresh();
+        console.log('✅ Default settings initialized successfully');
+        
+        // Refresh cache to get the new settings
+        await settingsCache.refreshCache();
+        
+        toast.success(`Settings initialized: ${result.created || 0} created, ${result.updated || 0} updated`, {
+          icon: '✅',
+          duration: 3000
+        });
       } else {
-        toast.error(`Failed to initialize settings: ${result.error}`);
+        console.error('❌ Failed to initialize default settings:', result.error);
+        toast.error(`Failed to initialize settings: ${result.error}`, {
+          icon: '❌',
+          duration: 5000
+        });
       }
     } catch (error) {
-      toast.error('Failed to initialize settings');
-      console.error('Error initializing settings:', error);
+      console.error('Error initializing default settings:', error);
+      toast.error(`Initialization error: ${error}`, {
+        icon: '❌',
+        duration: 5000
+      });
     }
   };
 
@@ -434,31 +503,75 @@ export default function SettingsPage() {
     }));
     setHasChanges(true);
     
-    // Save to database immediately
+    // Special handling for printer settings
+    if (key === 'printer.printerName' && value !== 'none') {
+      try {
+        // Set the printer as default in the system
+        const result = await (window as any).printer.setDefaultPrinter(value);
+        if (result.success) {
+          toast.success(`Default printer set to ${value}`, {
+            icon: '🖨️',
+            duration: 2000
+          });
+        } else {
+          toast.error(`Failed to set default printer: ${result.error}`, {
+            icon: '❌',
+            duration: 3000
+          });
+        }
+      } catch (error) {
+        console.error('Error setting default printer:', error);
+        toast.error('Failed to set default printer');
+      }
+    }
+    
+    // Save to cache and database immediately
     try {
-      const result = await window.database.settings.set(key, value);
-      if (result.success) {
+      console.log(`Attempting to save setting: ${key} = ${value}`);
+      const success = await settingsCache.setSetting(key, value);
+      
+      if (success) {
+        console.log(`Setting ${key} saved successfully: ${value}`);
         // Apply the change to the system immediately
         await applySettingToSystem(key, value);
+        
+        // Show success feedback for important settings
+        if (key.includes('printer') || key.includes('currency') || key.includes('company')) {
+          toast.success(`${key.replace(/[_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} updated`, {
+            icon: '✅',
+            duration: 2000
+          });
+        }
+      } else {
+        console.error('Failed to save setting to cache');
+        toast.error(`Failed to save ${key}`, {
+          icon: '❌',
+          duration: 4000
+        });
       }
     } catch (error) {
       console.error('Error saving setting:', error);
-      toast.error(`Failed to save ${key} setting`);
+      toast.error(`Failed to save ${key}: ${error}`, {
+        icon: '❌',
+        duration: 4000
+      });
     }
   };
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Save each setting individually via IPC
-      const savePromises = Object.entries(formData).map(([key, value]) => 
-        window.database.settings.set(key, value)
-      );
+      // Save all changes to cache and database
+      const success = await settingsCache.bulkUpdateSettings(formData);
       
-      await Promise.all(savePromises);
-      toast.success('Settings saved successfully');
-      setHasChanges(false);
-      await refresh();
+      if (success) {
+        toast.success('Settings saved successfully');
+        setHasChanges(false);
+        // Refresh cache to ensure we have latest data
+        await settingsCache.refreshCache();
+      } else {
+        toast.error('Failed to save settings');
+      }
     } catch (error) {
       toast.error('Failed to save settings');
       console.error('Error saving settings:', error);
@@ -470,14 +583,24 @@ export default function SettingsPage() {
   const handleReset = async () => {
     try {
       const categorySettings = settings.filter(s => s.category === activeTab);
-      const resetPromises = categorySettings.map(setting => 
-        window.database.settings.set(setting.key, setting.defaultValue)
-      );
+      const resetUpdates: Record<string, any> = {};
       
-      await Promise.all(resetPromises);
-      toast.success('Settings reset to defaults');
-      await refresh();
-      setHasChanges(false);
+      // Prepare reset updates
+      categorySettings.forEach(setting => {
+        resetUpdates[setting.key] = setting.defaultValue;
+      });
+      
+      // Reset settings using cache
+      const success = await settingsCache.bulkUpdateSettings(resetUpdates);
+      
+      if (success) {
+        toast.success('Settings reset to defaults');
+        // Refresh cache and form data
+        await settingsCache.refreshCache();
+        setHasChanges(false);
+      } else {
+        toast.error('Failed to reset settings');
+      }
     } catch (error) {
       toast.error('Failed to reset settings');
       console.error('Error resetting settings:', error);
@@ -652,21 +775,22 @@ export default function SettingsPage() {
         ];
       case 'currency_code':
         return [
-          { value: 'USD', label: 'US Dollar (USD)' },
-          { value: 'EUR', label: 'Euro (EUR)' },
-          { value: 'GBP', label: 'British Pound (GBP)' },
-          { value: 'CAD', label: 'Canadian Dollar (CAD)' },
-          { value: 'AUD', label: 'Australian Dollar (AUD)' },
-          { value: 'JPY', label: 'Japanese Yen (JPY)' },
-          { value: 'CHF', label: 'Swiss Franc (CHF)' },
-          { value: 'CNY', label: 'Chinese Yuan (CNY)' },
-          { value: 'INR', label: 'Indian Rupee (INR)' },
-          { value: 'SEK', label: 'Swedish Krona (SEK)' },
-          { value: 'NOK', label: 'Norwegian Krone (NOK)' },
-          { value: 'DKK', label: 'Danish Krone (DKK)' },
-          { value: 'PLN', label: 'Polish Zloty (PLN)' },
-          { value: 'CZK', label: 'Czech Koruna (CZK)' },
-          { value: 'HUF', label: 'Hungarian Forint (HUF)' }
+          { value: 'DZD', label: '🇩🇿 Algerian Dinar (دج)' },
+          { value: 'USD', label: '🇺🇸 US Dollar (USD)' },
+          { value: 'EUR', label: '🇪🇺 Euro (EUR)' },
+          { value: 'GBP', label: '🇬🇧 British Pound (GBP)' },
+          { value: 'CAD', label: '🇨🇦 Canadian Dollar (CAD)' },
+          { value: 'AUD', label: '🇦🇺 Australian Dollar (AUD)' },
+          { value: 'JPY', label: '🇯🇵 Japanese Yen (JPY)' },
+          { value: 'CHF', label: '🇨🇭 Swiss Franc (CHF)' },
+          { value: 'CNY', label: '🇨🇳 Chinese Yuan (CNY)' },
+          { value: 'INR', label: '🇮🇳 Indian Rupee (INR)' },
+          { value: 'SEK', label: '🇸🇪 Swedish Krona (SEK)' },
+          { value: 'NOK', label: '🇳🇴 Norwegian Krone (NOK)' },
+          { value: 'DKK', label: '🇩🇰 Danish Krone (DKK)' },
+          { value: 'PLN', label: '🇵🇱 Polish Zloty (PLN)' },
+          { value: 'CZK', label: '🇨🇿 Czech Koruna (CZK)' },
+          { value: 'HUF', label: '🇭🇺 Hungarian Forint (HUF)' }
         ];
       case 'currency_position':
         return [
@@ -783,6 +907,7 @@ export default function SettingsPage() {
       // Enhanced Printing Options  
       case 'printer_name':
       case 'invoice_printer':
+      case 'printer.printerName':
         return availablePrinters.length > 0 ? [
           { value: 'none', label: 'Select Printer...' },
           ...availablePrinters
@@ -798,6 +923,28 @@ export default function SettingsPage() {
           { value: 'brother_ql820nwb', label: '👥 Brother QL-820NWB' },
           { value: 'canon_pixma', label: '🖨️ Canon PIXMA Series' },
           { value: 'hp_laserjet', label: '🖨️ HP LaserJet Series' },
+        ];
+
+      case 'printer.copies':
+        return [
+          { value: '1', label: '1 Copy' },
+          { value: '2', label: '2 Copies' },
+          { value: '3', label: '3 Copies' },
+          { value: '4', label: '4 Copies' },
+          { value: '5', label: '5 Copies' }
+        ];
+      case 'printer.silent':
+      case 'printer.preview':
+        return [
+          { value: 'true', label: 'Yes' },
+          { value: 'false', label: 'No' }
+        ];
+      case 'printer.timeOutPerLine':
+        return [
+          { value: '200', label: '200ms (Fast)' },
+          { value: '400', label: '400ms (Normal)' },
+          { value: '600', label: '600ms (Slow)' },
+          { value: '800', label: '800ms (Very Slow)' }
         ];
       case 'print_quality':
         return [
@@ -858,6 +1005,33 @@ export default function SettingsPage() {
           { value: 'A5', label: 'A5 (148 × 210 mm)' },
           { value: 'Tabloid', label: 'Tabloid (11 × 17 in)' }
         ];
+      case 'printer_quality':
+        return [
+          { value: 'draft', label: 'Draft (Fast, Low Quality)' },
+          { value: 'normal', label: 'Normal (Standard)' },
+          { value: 'high', label: 'High Quality (Slow)' },
+          { value: 'best', label: 'Best Quality (Very Slow)' }
+        ];
+      case 'printer_color_mode':
+        return [
+          { value: 'monochrome', label: 'Monochrome (Black & White)' },
+          { value: 'color', label: 'Color (Full Color)' },
+          { value: 'grayscale', label: 'Grayscale (Shades of Gray)' }
+        ];
+      case 'printer_font_family':
+        return [
+          { value: 'Arial', label: 'Arial (Sans-serif)' },
+          { value: 'Times New Roman', label: 'Times New Roman (Serif)' },
+          { value: 'Courier New', label: 'Courier New (Monospace)' },
+          { value: 'Helvetica', label: 'Helvetica (Clean)' },
+          { value: 'Georgia', label: 'Georgia (Elegant)' },
+          { value: 'Verdana', label: 'Verdana (Readable)' }
+        ];
+      case 'printer_orientation':
+        return [
+          { value: 'portrait', label: 'Portrait (Vertical)' },
+          { value: 'landscape', label: 'Landscape (Horizontal)' }
+        ];
       default:
         return [];
     }
@@ -891,7 +1065,7 @@ export default function SettingsPage() {
     {
       id: 'currency' as SettingCategory,
       label: 'Currency',
-      icon: DollarSign,
+      icon: Coins,
       description: 'Currency and financial settings'
     }
   ];
@@ -907,6 +1081,9 @@ export default function SettingsPage() {
       if (settings.length < 30) {
         console.log('Triggering auto-initialization');
         initializeDefaultSettings();
+      } else {
+        // Check for missing printer settings even if we have enough settings
+        checkAndFixPrinterSettings();
       }
     }
   }, [loading, error, settings.length]);
@@ -949,24 +1126,16 @@ export default function SettingsPage() {
   const detectPrinters = async () => {
     setLoadingPrinters(true);
     try {
-      // Mock printer detection - in real implementation this would call OS APIs
-      const mockPrinters = [
-        { value: 'default', label: '🖨️ System Default Printer' },
-        { value: 'microsoft_print_to_pdf', label: '📄 Microsoft Print to PDF' },
-        { value: 'thermal_pos_printer', label: '🧾 Thermal POS Printer (COM3)' },
-        { value: 'epson_tm_t88v', label: '🖨️ EPSON TM-T88V Receipt Printer' },
-        { value: 'star_tsp143iii', label: '⭐ Star TSP143III Ethernet' },
-        { value: 'zebra_zd220', label: '🦓 Zebra ZD220 Label Printer' },
-        { value: 'brother_ql820nwb', label: '👥 Brother QL-820NWB Network' },
-        { value: 'canon_pixma_g4210', label: '🖨️ Canon PIXMA G4210' },
-        { value: 'hp_laserjet_p1102w', label: '🖨️ HP LaserJet P1102w' },
-      ];
+      // Use the actual printer API
+      const result = await (window as any).printer.getAvailablePrinters();
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setAvailablePrinters(mockPrinters);
-      toast.success(`Found ${mockPrinters.length} printers`);
+      if (result.success) {
+        setAvailablePrinters(result.data);
+        toast.success(`Found ${result.data.length} printers`);
+      } else {
+        toast.error('Failed to detect printers');
+        console.error('Printer detection failed:', result.error);
+      }
     } catch (error) {
       toast.error('Failed to detect printers');
       console.error('Error detecting printers:', error);
@@ -979,6 +1148,208 @@ export default function SettingsPage() {
   useEffect(() => {
     detectPrinters();
   }, []);
+
+  // Test printer function
+  const testPrinter = async (printerName?: string) => {
+    try {
+      // If no printer name provided, use the current default printer from settings
+      const targetPrinter = printerName || formData['printer.printerName'] || 'none';
+      
+      if (targetPrinter === 'none') {
+        toast.error('No printer selected. Please select a printer first.');
+        return;
+      }
+      
+      console.log(`Testing printer: ${targetPrinter}`);
+      
+      const result = await (window as any).printer.testPrinter(targetPrinter);
+      
+      if (result.success) {
+        toast.success(`Test print completed successfully to ${result.data.printer}`, {
+          icon: '✅',
+          duration: 3000
+        });
+      } else {
+        toast.error(`Test print failed: ${result.error}`, {
+          icon: '❌',
+          duration: 3000
+        });
+      }
+    } catch (error) {
+      toast.error('Failed to test printer');
+      console.error('Error testing printer:', error);
+    }
+  };
+
+  // Test current printer from settings
+  const testCurrentPrinter = async () => {
+    try {
+      const currentPrinter = formData['printer.printerName'];
+      
+      if (!currentPrinter || currentPrinter === 'none') {
+        toast.error('No printer selected in settings. Please select a printer first.');
+        return;
+      }
+      
+      console.log(`Testing current printer from settings: ${currentPrinter}`);
+      
+      const result = await (window as any).printer.testPrinter(currentPrinter);
+      
+      if (result.success) {
+        toast.success(`Test print completed successfully to ${result.data.printer}`, {
+          icon: '✅',
+          duration: 3000
+        });
+      } else {
+        toast.error(`Test print failed: ${result.error}`, {
+          icon: '❌',
+          duration: 3000
+        });
+      }
+    } catch (error) {
+      toast.error('Failed to test current printer');
+      console.error('Error testing current printer:', error);
+    }
+  };
+
+  // Get default printer on component mount
+  useEffect(() => {
+    const getDefaultPrinter = async () => {
+      try {
+        const result = await (window as any).printer.getDefaultPrinter();
+        if (result.success) {
+          // Update form data with default printer
+          setFormData(prev => ({
+            ...prev,
+            'printer.printerName': result.data
+          }));
+        }
+      } catch (error) {
+        console.error('Error getting default printer:', error);
+      }
+    };
+    
+    getDefaultPrinter();
+  }, []);
+
+  // Check and fix missing printer settings
+  const checkAndFixPrinterSettings = async () => {
+    try {
+      const printerSettings = [
+        'printer.printerName', 'printer.pageSize', 'printer.copies', 'printer.margin',
+        'printer.silent', 'printer.preview', 'printer.timeOutPerLine', 'invoice_printer'
+      ];
+      
+      let missingSettings = 0;
+      for (const settingKey of printerSettings) {
+        try {
+          const result = await window.database.settings.get(settingKey);
+          if (result === null) {
+            console.log(`Missing printer setting: ${settingKey}`);
+            missingSettings++;
+          }
+        } catch (error) {
+          console.log(`Error checking setting ${settingKey}:`, error);
+          missingSettings++;
+        }
+      }
+      
+      if (missingSettings > 0) {
+        console.log(`Found ${missingSettings} missing printer settings, initializing...`);
+        await initializeDefaultSettings();
+      }
+    } catch (error) {
+      console.error('Error checking printer settings:', error);
+    }
+  };
+
+  // Debug function to log current printer settings
+  const debugPrinterSettings = async () => {
+    try {
+      console.log('=== DEBUG: Current Printer Settings ===');
+      
+      const printerSettings = [
+        'printer.printerName', 'printer.pageSize', 'printer.copies', 'printer.margin',
+        'printer.silent', 'printer.preview', 'printer.timeOutPerLine', 'invoice_printer'
+      ];
+      
+      for (const settingKey of printerSettings) {
+        try {
+          const result = await window.database.settings.get(settingKey);
+          console.log(`${settingKey}: ${result}`);
+        } catch (error) {
+          console.log(`${settingKey}: ERROR - ${error}`);
+        }
+      }
+      
+      console.log('=== END DEBUG ===');
+      toast.success('Printer settings logged to console');
+    } catch (error) {
+      console.error('Error debugging printer settings:', error);
+      toast.error('Failed to debug printer settings');
+    }
+  };
+
+  // Test function to manually save a printer setting
+  const testSavePrinterSetting = async () => {
+    try {
+      console.log('Testing manual save of printer setting...');
+      
+      const testKey = 'printer.printerName';
+      const testValue = 'Test Printer Manual';
+      
+      console.log(`Manually saving ${testKey} = ${testValue}`);
+      
+      const result = await window.database.settings.set(testKey, testValue);
+      
+      if (result.success) {
+        console.log('Manual save successful');
+        toast.success('Manual printer setting save successful');
+        
+        // Try to retrieve it
+        const retrieved = await window.database.settings.get(testKey);
+        console.log(`Retrieved value: ${retrieved}`);
+        
+        await refresh();
+      } else {
+        console.error('Manual save failed:', result.error);
+        toast.error(`Manual save failed: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Error in manual test:', error);
+      toast.error(`Manual test failed: ${error}`);
+    }
+  };
+
+  // Function to update currency to Algerian Dinar
+  const updateCurrencyToDZD = async () => {
+    try {
+      const result = await window.database.settings.updateCurrencyToDZD();
+      if (result.success) {
+        toast.success(t('settings.currencyUpdated', 'Currency updated to Algerian Dinar (دج)'));
+        refreshSettings();
+        refreshCache();
+      } else {
+        toast.error(t('settings.currencyUpdateError', 'Failed to update currency'));
+      }
+    } catch (error) {
+      console.error('Failed to update currency:', error);
+      toast.error(t('settings.currencyUpdateError', 'Failed to update currency'));
+    }
+  };
+
+  // Function to check current currency
+  const checkCurrency = async () => {
+    try {
+      const result = await window.database.settings.checkCurrentCurrency();
+      if (result.success) {
+        console.log('Current currency settings:', result);
+        toast.success(`Current currency: ${result.currencyCode} (${result.currencySymbol})`);
+      }
+    } catch (error) {
+      console.error('Failed to check currency:', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -1037,6 +1408,42 @@ export default function SettingsPage() {
           
           <Button
             variant="outline"
+            onClick={checkAndFixPrinterSettings}
+            className="border-green-300 text-green-600 hover:bg-green-50"
+          >
+            <Printer className="w-4 h-4 mr-2" />
+            Fix Printer Settings
+          </Button>
+          
+          <Button
+            variant="outline"
+            onClick={debugPrinterSettings}
+            className="border-purple-300 text-purple-600 hover:bg-purple-50"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Debug Settings
+          </Button>
+          
+          <Button
+            variant="outline"
+            onClick={testSavePrinterSetting}
+            className="border-orange-300 text-orange-600 hover:bg-orange-50"
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Test Save
+          </Button>
+          
+          <Button
+            variant="outline"
+            onClick={testCurrentPrinter}
+            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+          >
+            <Printer className="w-4 h-4 mr-2" />
+            Test Current Printer
+          </Button>
+          
+          <Button
+            variant="outline"
             onClick={handleReset}
             className="border-gray-300"
           >
@@ -1063,6 +1470,14 @@ export default function SettingsPage() {
           </Button>
         </div>
       </div>
+      
+      {/* Settings Test Panel - Only show in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <>
+          <SettingsTest />
+          <SettingsCacheStatus />
+        </>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar Navigation */}
@@ -1184,93 +1599,103 @@ export default function SettingsPage() {
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Printer className="w-5 h-5" />
-                            Printer Configuration
+                            Basic Printer Settings
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={detectPrinters}
-                            disabled={loadingPrinters}
-                            className="text-xs"
-                          >
-                            {loadingPrinters ? (
-                              <>
-                                <Settings className="w-3 h-3 mr-1 animate-spin" />
-                                Detecting...
-                              </>
-                            ) : (
-                              <>
-                                <Wifi className="w-3 h-3 mr-1" />
-                                Refresh Printers
-                              </>
-                            )}
-                          </Button>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => testPrinter(formData['printer.printerName'])}
+                              disabled={!formData['printer.printerName'] || formData['printer.printerName'] === 'none'}
+                              className="text-xs"
+                            >
+                              <Printer className="w-3 h-3 mr-1" />
+                              Test Print
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={detectPrinters}
+                              disabled={loadingPrinters}
+                              className="text-xs"
+                            >
+                              {loadingPrinters ? (
+                                <>
+                                  <Settings className="w-3 h-3 mr-1 animate-spin" />
+                                  Detecting...
+                                </>
+                              ) : (
+                                <>
+                                  <Wifi className="w-3 h-3 mr-1" />
+                                  Refresh Printers
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={initializeDefaultSettings}
+                              className="text-xs bg-green-50 text-green-700 border-green-300 hover:bg-green-100"
+                            >
+                              <Database className="w-3 h-3 mr-1" />
+                              Reset Settings
+                            </Button>
+                          </div>
                         </h3>
+                        
+                        {/* Printer Info Display */}
+                        {selectedPrinterInfo && (
+                          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-semibold text-blue-900 flex items-center gap-2">
+                                <Printer className="w-4 h-4" />
+                                {selectedPrinterInfo.name}
+                              </h4>
+                              <Badge 
+                                variant={selectedPrinterInfo.status === 'ready' ? 'default' : 'destructive'}
+                                className="text-xs"
+                              >
+                                {selectedPrinterInfo.status}
+                              </Badge>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                              <div>
+                                <span className="font-medium text-gray-700">Type:</span>
+                                <div className="text-gray-600 capitalize">{selectedPrinterInfo.type}</div>
+                              </div>
+                              <div>
+                                <span className="font-medium text-gray-700">Connection:</span>
+                                <div className="text-gray-600 capitalize">{selectedPrinterInfo.connection}</div>
+                              </div>
+                              <div>
+                                <span className="font-medium text-gray-700">Status:</span>
+                                <div className="text-gray-600 capitalize">{selectedPrinterInfo.status}</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {categorySettings.filter(s => 
-                            (s.key.includes('printer') && !s.key.includes('invoice')) || 
-                            s.key.includes('paper_size') || 
-                            s.key.includes('print_quality') || 
-                            s.key.includes('print_speed')
-                          ).filter(s => s.key !== 'auto_print_receipt').map((setting) => (
-                            <div key={setting.key} className="space-y-2">
-                              {renderSettingField(setting)}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <Separator />
-                      
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                          <Ruler className="w-5 h-5" />
-                          Ticket Configuration
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          {categorySettings.filter(s => s.key.includes('ticket') || (s.key.includes('margin') && !s.key.includes('invoice'))).map((setting) => (
-                            <div key={setting.key} className="space-y-2">
-                              {renderSettingField(setting)}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <Separator />
-                      
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                          <Receipt className="w-5 h-5" />
-                          Receipt Content & Features
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {categorySettings.filter(s => 
-                            s.key.includes('receipt') || 
-                            (s.key.includes('logo') && !s.key.includes('invoice')) ||
-                            (s.key.includes('print_') && !s.key.includes('auto_print_invoice')) ||
-                            (s.key.includes('auto_print') && !s.key.includes('invoice'))
+                            s.key === 'printer.printerName' ||
+                            s.key === 'printer.pageSize' ||
+                            s.key === 'printer.copies' ||
+                            s.key === 'printer.margin' ||
+                            s.key === 'printer.silent' ||
+                            s.key === 'printer.preview' ||
+                            s.key === 'printer.timeOutPerLine'
                           ).map((setting) => (
                             <div key={setting.key} className="space-y-2">
                               {renderSettingField(setting)}
+                              {setting.description && (
+                                <p className="text-xs text-gray-500">{setting.description}</p>
+                              )}
                             </div>
                           ))}
                         </div>
-                      </div>
-                      
-                      <Separator />
-                      
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                          <FileText className="w-5 h-5" />
-                          Invoice & A4 Printing
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {categorySettings.filter(s => s.key.includes('invoice')).map((setting) => (
-                            <div key={setting.key} className="space-y-2">
-                              {renderSettingField(setting)}
-                            </div>
-                          ))}
-                        </div>
+                        
+
                       </div>
                     </div>
                   )}
@@ -1279,7 +1704,7 @@ export default function SettingsPage() {
                     <div className="space-y-6">
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                          <DollarSign className="w-5 h-5" />
+                          <Coins className="w-5 h-5" />
                           Currency Display
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1332,6 +1757,13 @@ export default function SettingsPage() {
                           ))}
                         </div>
                       </div>
+                      {activeTab === 'currency' && (
+                        <div className="mt-6">
+                          <Button variant="outline" onClick={updateCurrencyToDZD}>
+                            {t('settings.setAlgerianDinar', 'تعيين الدينار الجزائري (دج) كعملة افتراضية')}
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   )}
                   

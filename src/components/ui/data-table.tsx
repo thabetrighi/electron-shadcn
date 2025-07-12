@@ -273,7 +273,7 @@ export const renderCurrency = (amount: number | null | undefined) => {
   if (amount == null) return '-';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD'
+    currency: 'DZD'
   }).format(amount);
 };
 

@@ -7,7 +7,7 @@ import {
   XCircle, 
   Activity, 
   Truck, 
-  DollarSign,
+  Coins,
   Crown,
   UserCheck,
   Building,
@@ -51,7 +51,7 @@ export const renderStatus = (status: string) => {
     shipped: { color: 'bg-indigo-100 text-indigo-800 border-indigo-200', icon: Truck },
     delivered: { color: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle2 },
     cancelled: { color: 'bg-red-100 text-red-800 border-red-200', icon: XCircle },
-    paid: { color: 'bg-green-100 text-green-800 border-green-200', icon: DollarSign },
+    paid: { color: 'bg-green-100 text-green-800 border-green-200', icon: Coins },
     failed: { color: 'bg-red-100 text-red-800 border-red-200', icon: XCircle },
     refunded: { color: 'bg-orange-100 text-orange-800 border-orange-200', icon: Activity }
   };

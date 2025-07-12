@@ -5,7 +5,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+
 import { 
   Search, 
   ShoppingCart, 
@@ -19,27 +19,23 @@ import {
   Minimize2,
   Users,
   Clock,
-  CreditCard,
   DollarSign,
   Package,
   Trash2,
   Save,
-  ArrowLeft,
   Keyboard,
-  Filter,
-  Tag,
   Receipt,
   CheckCircle2,
   AlertCircle,
-  Calendar,
-  TrendingUp,
   Star,
-  Heart,
   Zap,
-  User
+  User,
+  Printer,
+  Coins
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { formatCurrency, formatNumber } from '../utils/formatters';
+import { formatCurrency } from '../utils/formatters';
+import { useSettingsCache } from '../hooks/useSettingsCache';
 
 interface Product {
   id: number;
@@ -139,7 +135,7 @@ export default function POSPage() {
   const [showUserSelector, setShowUserSelector] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [customerName, setCustomerName] = useState('');
-  const [activeTab, setActiveTab] = useState('current');
+
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [customItemForm, setCustomItemForm] = useState({
     name: '',
@@ -157,6 +153,9 @@ export default function POSPage() {
   }>({ products: [], users: [] });
   const [showReceiptModalState, setShowReceiptModalState] = useState(false);
   const [receiptData, setReceiptData] = useState<{ orderData: any; cartItems: CartItem[] } | null>(null);
+
+  // Use settings cache
+  const settingsCache = useSettingsCache();
 
   // Debug customer name state changes
   useEffect(() => {
@@ -339,11 +338,11 @@ export default function POSPage() {
       }
       
       if (categoriesResult.success) {
-        setCategories(categoriesResult.data?.filter(cat => cat.status === 'active') || []);
+        setCategories(categoriesResult.data?.filter((cat: any) => cat.status === 'active') || []);
       }
 
       if (usersResult.success) {
-        setUsers(usersResult.data?.filter(user => user.status === 'active') || []);
+        setUsers(usersResult.data?.filter((user: any) => user.status === 'active') || []);
       }
     } catch (error) {
       console.error('Failed to load data:', error);
@@ -575,7 +574,7 @@ export default function POSPage() {
       setCart(pendingCart.items);
       setCustomerName(pendingCart.customerName || '');
       setCurrentPendingCartId(cartId);
-      setActiveTab('current');
+
       toast.success('Cart loaded successfully');
     }
   };
@@ -778,156 +777,63 @@ export default function POSPage() {
     }
   };
 
-  const handleCheckoutWithPrint = async () => {
-    await handleCheckout(true);
-  };
 
-  const handleCheckoutWithoutPrint = async () => {
-    await handleCheckout(false);
-  };
 
   // Print receipt function
   const printReceipt_ = async (orderData: any, cartItems: CartItem[]) => {
     try {
       console.log('Printing receipt for order:', orderData.orderNumber);
       
-      // Generate receipt HTML content
-      const receiptHTML = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Receipt - ${orderData.orderNumber}</title>
-          <style>
-            body { 
-              font-family: 'Courier New', monospace; 
-              font-size: 12px; 
-              line-height: 1.2; 
-              margin: 0; 
-              padding: 10px;
-              width: 300px;
-            }
-            .header { 
-              text-align: center; 
-              border-bottom: 1px dashed #000; 
-              padding-bottom: 10px; 
-              margin-bottom: 10px; 
-            }
-            .title { 
-              font-size: 16px; 
-              font-weight: bold; 
-              margin-bottom: 5px; 
-            }
-            .order-info { 
-              margin-bottom: 10px; 
-            }
-            .items { 
-              margin-bottom: 10px; 
-            }
-            .item { 
-              display: flex; 
-              justify-content: space-between; 
-              margin-bottom: 3px; 
-            }
-            .item-name { 
-              flex: 1; 
-            }
-            .item-price { 
-              text-align: right; 
-            }
-            .totals { 
-              border-top: 1px dashed #000; 
-              padding-top: 10px; 
-              margin-top: 10px; 
-            }
-            .total-row { 
-              display: flex; 
-              justify-content: space-between; 
-              margin-bottom: 3px; 
-            }
-            .grand-total { 
-              font-weight: bold; 
-              font-size: 14px; 
-              border-top: 1px solid #000; 
-              padding-top: 5px; 
-              margin-top: 5px; 
-            }
-            .footer { 
-              text-align: center; 
-              margin-top: 15px; 
-              font-size: 10px; 
-              color: #666; 
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="title">POS SYSTEM</div>
-            <div>Receipt</div>
-            <div>${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
-          </div>
-          
-          <div class="order-info">
-            <div><strong>Order:</strong> ${orderData.orderNumber}</div>
-            <div><strong>Customer:</strong> ${orderData.customerName || 'Walk-in Customer'}</div>
-            ${orderData.userAssigned ? `<div><strong>Staff:</strong> ${orderData.userAssigned}</div>` : ''}
-          </div>
-          
-          <div class="items">
-            ${cartItems.map(item => `
-              <div class="item">
-                <div class="item-name">${item.product?.name || item.customItem?.name} × ${item.quantity}</div>
-                <div class="item-price">${formatCurrency(item.total)}</div>
-              </div>
-            `).join('')}
-          </div>
-          
-          <div class="totals">
-            <div class="total-row">
-              <div>Subtotal:</div>
-              <div>${formatCurrency(orderData.subtotal)}</div>
-            </div>
-            ${orderData.taxAmount > 0 ? `
-              <div class="total-row">
-                <div>Tax:</div>
-                <div>${formatCurrency(orderData.taxAmount)}</div>
-              </div>
-            ` : ''}
-            <div class="total-row grand-total">
-              <div>TOTAL:</div>
-              <div>${formatCurrency(orderData.totalAmount)}</div>
-            </div>
-          </div>
-          
-          <div class="footer">
-            <div>Thank you for your purchase!</div>
-            <div>Please come again</div>
-          </div>
-        </body>
-        </html>
-      `;
-
-      // Create a new window for printing
-      const printWindow = window.open('', '_blank', 'width=400,height=600');
-      if (printWindow) {
-        printWindow.document.write(receiptHTML);
-        printWindow.document.close();
-        
-        // Wait for content to load then print
-        printWindow.onload = () => {
-          printWindow.print();
-          printWindow.close();
-        };
-        
-        toast.success('Receipt printed successfully');
-      } else {
-        // Fallback: show receipt in modal if popup is blocked
-        showReceiptModal(orderData, cartItems);
-        toast.success('Receipt generated - check popup or modal');
-      }
+      // Get printer settings from cache
+      const printerName = settingsCache.getSetting('printer.printerName') || 'Microsoft Print to PDF';
+      console.log('Printer settings from cache:', printerName);
       
+      // Create receipt data with printer information
+      const receiptData = {
+        orderNumber: orderData.orderNumber,
+        customerName: orderData.customerName || 'Walk-in Customer',
+        userAssigned: orderData.userAssigned,
+        subtotal: orderData.subtotal,
+        taxAmount: orderData.taxAmount,
+        totalAmount: orderData.totalAmount,
+        items: cartItems.map(item => ({
+          name: item.product?.name || item.customItem?.name,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          total: item.total
+        })),
+        date: new Date().toISOString(),
+        receiptNumber: `R-${Date.now()}`,
+        printerName: printerName // Use printer from cache
+      };
+      
+      console.log('Receipt data with printer:', receiptData);
+      
+      const result = await window.printer.printReceipt(receiptData);
+      
+      if (result.success) {
+        const printerName = result.data?.printer || 'default printer';
+        
+        toast.success(`Receipt printed successfully to ${printerName}`, {
+          icon: '🖨️',
+          duration: 3000
+        });
+      } else {
+        // Fallback to modal if printing fails
+        showReceiptModal(orderData, cartItems);
+        toast.error(`Print failed: ${result.error}`, {
+          icon: '❌',
+          duration: 3000
+        });
+      }
     } catch (error) {
-      console.error('Print failed:', error);
-      toast.error('Print failed - order saved successfully');
+      console.error('Error printing receipt:', error);
+      // Fallback to modal
+      showReceiptModal(orderData, cartItems);
+      toast.error('Failed to print receipt', {
+        icon: '❌',
+        duration: 3000
+      });
     }
   };
 
@@ -1646,7 +1552,7 @@ export default function POSPage() {
 
               {/* Subtotal */}
               <div className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-gray-600" />
+                <Coins className="w-5 h-5 text-gray-600" />
                 <span className="text-lg font-bold text-gray-700">{formatCurrency(getCartSubtotal())}</span>
               </div>
 
@@ -1914,6 +1820,27 @@ export default function POSPage() {
                   title={t('pos.checkoutAndPrint', 'Checkout & Print')}
                 >
                   <Receipt className="w-5 h-5" />
+              </Button>
+              
+                {/* Direct Print Button (for testing) */}
+              <Button
+                  onClick={() => {
+                    if (cart.length > 0) {
+                      const testOrderData = {
+                        orderNumber: `TEST-${Date.now()}`,
+                        customerName: 'Test Customer',
+                        userAssigned: 'Test Staff',
+                        subtotal: getCartSubtotal(),
+                        taxAmount: getCartTax(),
+                        totalAmount: getCartTotal()
+                      };
+                      printReceipt_(testOrderData, cart);
+                    }
+                  }}
+                  className="h-12 w-12 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 shadow-lg border-0 text-white p-0 transform transition-all duration-200 hover:scale-110 active:scale-95 hover:rotate-3 hover:shadow-xl"
+                  title="Direct Print Test"
+                >
+                  <Printer className="w-5 h-5" />
               </Button>
               </div>
               
@@ -2391,24 +2318,24 @@ export default function POSPage() {
                             ${receiptData.cartItems.map(item => `
                               <div class="item">
                                 <div>${item.product?.name || item.customItem?.name} × ${item.quantity}</div>
-                                <div>${formatCurrency(item.total)}</div>
+                                <div>{formatCurrency(item.total)}</div>
                               </div>
                             `).join('')}
                           </div>
                           <div class="totals">
                             <div class="total-row">
                               <div>Subtotal:</div>
-                              <div>${formatCurrency(receiptData.orderData.subtotal)}</div>
+                              <div>{formatCurrency(receiptData.orderData.subtotal)}</div>
                             </div>
                             ${receiptData.orderData.taxAmount > 0 ? `
                               <div class="total-row">
                                 <div>Tax:</div>
-                                <div>${formatCurrency(receiptData.orderData.taxAmount)}</div>
+                                <div>{formatCurrency(receiptData.orderData.taxAmount)}</div>
                               </div>
                             ` : ''}
                             <div class="total-row grand-total">
                               <div>TOTAL:</div>
-                              <div>${formatCurrency(receiptData.orderData.totalAmount)}</div>
+                                                              <div>{formatCurrency(receiptData.orderData.totalAmount)}</div>
                             </div>
                           </div>
                           <div class="footer">

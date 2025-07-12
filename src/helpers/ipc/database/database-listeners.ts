@@ -7,7 +7,7 @@ import { ProductsService } from '../../../database/services/products.service';
 import { OrdersService } from '../../../database/services/orders.service';
 import { OrderItemsService } from '../../../database/services/order-items.service';
 import { SettingsService } from '../../../database/services/settings.service';
-import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, ORDER_ITEM_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS } from './database-channels';
+import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, ORDER_ITEM_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS, PRINTER_CHANNELS } from './database-channels';
 
 export function registerDatabaseListeners() {
   console.log('Registering database IPC listeners...');
@@ -118,10 +118,6 @@ export function registerDatabaseListeners() {
     return await ProductsService.delete(id);
   });
 
-  ipcMain.handle(PRODUCT_CHANNELS.GET_PRODUCTS_BY_CATEGORY, async (_, category) => {
-    return await ProductsService.getByCategory(category);
-  });
-
   // Order operations
   ipcMain.handle(ORDER_CHANNELS.GET_ALL_ORDERS, async () => {
     return await OrdersService.getAll();
@@ -141,10 +137,6 @@ export function registerDatabaseListeners() {
 
   ipcMain.handle(ORDER_CHANNELS.DELETE_ORDER, async (_, id) => {
     return await OrdersService.delete(id);
-  });
-
-  ipcMain.handle(ORDER_CHANNELS.GET_ORDERS_BY_USER, async (_, userId) => {
-    return await OrdersService.getByUser(userId);
   });
 
   // Order Item operations
@@ -193,6 +185,10 @@ export function registerDatabaseListeners() {
     return await SettingsService.set(key, value);
   });
 
+  ipcMain.handle(SETTINGS_CHANNELS.BULK_UPDATE, async (_, updates) => {
+    return await SettingsService.bulkUpdate(updates);
+  });
+
   ipcMain.handle(SETTINGS_CHANNELS.DELETE_SETTING, async (_, key) => {
     return await SettingsService.delete(key);
   });
@@ -203,6 +199,56 @@ export function registerDatabaseListeners() {
 
   ipcMain.handle(SETTINGS_CHANNELS.INITIALIZE_DEFAULTS, async () => {
     return await SettingsService.initializeDefaults();
+  });
+
+  ipcMain.handle(SETTINGS_CHANNELS.CHECK_DATABASE_HEALTH, async () => {
+    return await SettingsService.checkDatabaseHealth();
+  });
+
+  ipcMain.handle(SETTINGS_CHANNELS.RESET_DATABASE, async () => {
+    return await SettingsService.resetDatabase();
+  });
+
+  // Currency update operations
+  ipcMain.handle('update-currency-to-dzd', async () => {
+    try {
+      await SettingsService.set('currency_code', 'DZD');
+      await SettingsService.set('currency_symbol', 'دج');
+      await SettingsService.set('currency_position', 'before');
+      await SettingsService.set('currency_precision', '2');
+      
+      console.log('✅ Currency updated to Algerian Dinar (دج)');
+      return { success: true, message: 'Currency updated successfully' };
+    } catch (error) {
+      console.error('❌ Failed to update currency:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  });
+
+  ipcMain.handle('check-current-currency', async () => {
+    try {
+      const currencyCode = await SettingsService.get('currency_code');
+      const currencySymbol = await SettingsService.get('currency_symbol');
+      const currencyPosition = await SettingsService.get('currency_position');
+      const currencyPrecision = await SettingsService.get('currency_precision');
+      
+      console.log('📊 Current Currency Settings:');
+      console.log(`  Code: ${currencyCode}`);
+      console.log(`  Symbol: ${currencySymbol}`);
+      console.log(`  Position: ${currencyPosition}`);
+      console.log(`  Precision: ${currencyPrecision}`);
+      
+      return {
+        success: true,
+        currencyCode,
+        currencySymbol,
+        currencyPosition,
+        currencyPrecision
+      };
+    } catch (error) {
+      console.error('❌ Failed to check currency settings:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
   });
 
   console.log('Database IPC listeners registered successfully');

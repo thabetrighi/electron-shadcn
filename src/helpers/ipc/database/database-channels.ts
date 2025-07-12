@@ -65,12 +65,27 @@ export const SETTINGS_CHANNELS = {
   GET_ALL_SETTINGS: 'settings:get-all',
   GET_SETTING: 'settings:get',
   SET_SETTING: 'settings:set',
+  BULK_UPDATE: 'settings:bulk-update',
   DELETE_SETTING: 'settings:delete',
   GET_BY_CATEGORY: 'settings:get-by-category',
   INITIALIZE_DEFAULTS: 'settings:initialize-defaults',
+  CHECK_DATABASE_HEALTH: 'settings:check-database-health',
+  RESET_DATABASE: 'settings:reset-database',
 } as const;
 
 // Database channels
 export const DATABASE_CHANNELS = {
   INITIALIZE: 'database:initialize',
+} as const;
+
+// Printer channels
+export const PRINTER_CHANNELS = {
+  GET_AVAILABLE_PRINTERS: 'printer:get-available',
+  GET_DEFAULT_PRINTER: 'printer:get-default',
+  SET_DEFAULT_PRINTER: 'printer:set-default',
+  PRINT_RECEIPT: 'printer:print-receipt',
+  PRINT_INVOICE: 'printer:print-invoice',
+  PRINT_PRODUCT_LABEL: 'printer:print-product-label',
+  TEST_PRINTER: 'printer:test',
+  GET_PRINTER_STATUS: 'printer:get-status',
 } as const; 

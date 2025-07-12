@@ -10,6 +10,13 @@ export async function seedDatabaseElectron() {
     console.log('🔧 Initializing default settings...');
     await SettingsService.initializeDefaults();
     console.log('✅ Default settings initialized');
+    
+    // Set Algerian Dinar as default currency
+    await SettingsService.set('currency_code', 'DZD');
+    await SettingsService.set('currency_symbol', 'دج');
+    await SettingsService.set('currency_position', 'before');
+    await SettingsService.set('currency_precision', '2');
+    console.log('✅ Algerian Dinar set as default currency');
 
     // Create admin user
     const adminUser = await db.insert(users).values({

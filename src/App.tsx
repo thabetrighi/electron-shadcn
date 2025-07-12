@@ -7,6 +7,7 @@ import { updateAppLanguage } from "./helpers/language_helpers";
 import { router } from "./routes/router";
 import { RouterProvider } from "@tanstack/react-router";
 import { Toaster } from "react-hot-toast";
+import { SettingsCacheManager } from './helpers/settings-cache';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -68,22 +69,44 @@ export default function App() {
   const { i18n: i18nHook } = useTranslation();
   const [appReady, setAppReady] = React.useState(false);
   const [initError, setInitError] = React.useState<string | null>(null);
+  const [initProgress, setInitProgress] = React.useState<string>('Initializing...');
 
+  // Initialize app with proper error handling and progress tracking
   useEffect(() => {
-    console.log('App component mounted');
-    
     const initializeApp = async () => {
       try {
-        console.log('Starting app initialization...');
+        console.log('🚀 Starting app initialization...');
+        setInitProgress('Waiting for database...');
         
+        // Wait for database to be ready
+        let dbRetries = 0;
+        const maxDbRetries = 20;
+        
+        while (!window.database && dbRetries < maxDbRetries) {
+          console.log(`Waiting for database to be ready... (attempt ${dbRetries + 1}/${maxDbRetries})`);
+          await new Promise(resolve => setTimeout(resolve, 250));
+          dbRetries++;
+        }
+        
+        if (!window.database) {
+          throw new Error('Database not available after maximum retries');
+        }
+        
+        setInitProgress('Loading settings cache...');
+        
+        // Initialize settings cache first
+        await SettingsCacheManager.initialize();
+        
+        setInitProgress('Initializing theme...');
         // Initialize theme
         syncThemeWithLocal();
-        console.log('Theme initialized');
         
+        setInitProgress('Loading language settings...');
         // Update language from storage
         const langResult = await updateAppLanguage(i18nHook);
         console.log('Language updated from storage:', langResult);
         
+        setInitProgress('Setting up language listeners...');
         // Add language change listener
         const handleLanguageChange = () => {
           console.log('Language changed, updating app...');
@@ -106,14 +129,63 @@ export default function App() {
         i18nHook.on('languageChanged', handleLanguageChange);
         console.log('Language change listener added');
         
-        console.log('App initialization completed');
+        setInitProgress('Finalizing initialization...');
+        
+        // Apply initial settings from cache
+        const applyInitialSettings = () => {
+          try {
+            // Apply theme mode
+            const themeMode = SettingsCacheManager.get('theme_mode') || 'system';
+            if (themeMode !== 'system') {
+              document.documentElement.classList.remove('light', 'dark');
+              document.documentElement.classList.add(themeMode);
+            }
+            
+            // Apply font size
+            const fontSize = SettingsCacheManager.get('font_size') || 'medium';
+            const fontSizes = { small: '14px', medium: '16px', large: '18px' };
+            const newFontSize = fontSizes[fontSize as keyof typeof fontSizes] || '16px';
+            document.documentElement.style.fontSize = newFontSize;
+            
+            // Apply compact mode
+            const compactMode = SettingsCacheManager.get('compact_mode') || 'false';
+            if (compactMode === 'true') {
+              document.documentElement.classList.add('compact-mode');
+              document.documentElement.style.setProperty('--spacing-scale', '0.75');
+            }
+            
+            // Apply sidebar position
+            const sidebarPosition = SettingsCacheManager.get('sidebar_position') || 'left';
+            document.documentElement.style.setProperty('--sidebar-position', sidebarPosition);
+            document.documentElement.setAttribute('data-sidebar-position', sidebarPosition);
+            
+            // Apply currency settings
+            const currencySymbol = SettingsCacheManager.get('currency_symbol') || 'دج';
+            const currencyPosition = SettingsCacheManager.get('currency_position') || 'before';
+            const currencyDecimals = SettingsCacheManager.get('decimal_places') || '2';
+            const currencyCode = SettingsCacheManager.get('currency_code') || 'DZD';
+            
+            document.documentElement.style.setProperty('--currency-symbol', currencySymbol);
+            document.documentElement.style.setProperty('--currency-position', currencyPosition);
+            document.documentElement.style.setProperty('--currency-decimals', currencyDecimals);
+            document.documentElement.style.setProperty('--currency-code', currencyCode);
+            
+            console.log('✅ Initial settings applied from cache');
+          } catch (error) {
+            console.warn('⚠️ Error applying initial settings:', error);
+          }
+        };
+        
+        applyInitialSettings();
+        
+        console.log('✅ App initialization completed successfully');
         setAppReady(true);
         
         return () => {
           i18nHook.off('languageChanged', handleLanguageChange);
         };
       } catch (error) {
-        console.error('Error during app initialization:', error);
+        console.error('❌ Error during app initialization:', error);
         setInitError(error instanceof Error ? error.message : 'Unknown error');
         // Still set app as ready to show error state
         setAppReady(true);
@@ -136,6 +208,7 @@ export default function App() {
         fontFamily: 'system-ui, sans-serif'
       }}>
         <div style={{ marginBottom: '20px', fontSize: '18px' }}>Loading POS System...</div>
+        <div style={{ marginBottom: '10px', fontSize: '14px', color: '#666' }}>{initProgress}</div>
         <div style={{ 
           width: '50px', 
           height: '50px', 

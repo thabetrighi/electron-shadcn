@@ -73,9 +73,14 @@ export const databaseAPI = {
     getAll: (filter?: any) => ipcRenderer.invoke(SETTINGS_CHANNELS.GET_ALL_SETTINGS, filter),
     get: (key: string) => ipcRenderer.invoke(SETTINGS_CHANNELS.GET_SETTING, key),
     set: (key: string, value: any) => ipcRenderer.invoke(SETTINGS_CHANNELS.SET_SETTING, key, value),
+    bulkUpdate: (updates: Record<string, any>) => ipcRenderer.invoke(SETTINGS_CHANNELS.BULK_UPDATE, updates),
     delete: (key: string) => ipcRenderer.invoke(SETTINGS_CHANNELS.DELETE_SETTING, key),
     getByCategory: (category: string) => ipcRenderer.invoke(SETTINGS_CHANNELS.GET_BY_CATEGORY, category),
     initializeDefaults: () => ipcRenderer.invoke(SETTINGS_CHANNELS.INITIALIZE_DEFAULTS),
+    checkDatabaseHealth: () => ipcRenderer.invoke(SETTINGS_CHANNELS.CHECK_DATABASE_HEALTH),
+    resetDatabase: () => ipcRenderer.invoke(SETTINGS_CHANNELS.RESET_DATABASE),
+    updateCurrencyToDZD: () => ipcRenderer.invoke('update-currency-to-dzd'),
+    checkCurrentCurrency: () => ipcRenderer.invoke('check-current-currency'),
   },
 };
 

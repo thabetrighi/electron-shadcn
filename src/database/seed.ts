@@ -4,12 +4,29 @@ import { CategoriesService } from './services/categories.service';
 import { UnitsService } from './services/units.service';
 import { ProductsService } from './services/products.service';
 import { OrdersService } from './services/orders.service';
+import { SettingsService } from './services/settings.service';
 import { orderItems } from './schema';
 
 export async function seedDatabase() {
   console.log('🌱 Starting database seeding...');
   
   try {
+    // Initialize default settings first
+    console.log('🔧 Initializing default settings...');
+    const settingsResult = await SettingsService.initializeDefaults();
+    if (settingsResult.success) {
+      console.log('✅ Default settings initialized');
+      
+      // Set Algerian Dinar as default currency
+      await SettingsService.set('currency_code', 'DZD');
+      await SettingsService.set('currency_symbol', 'دج');
+      await SettingsService.set('currency_position', 'before');
+      await SettingsService.set('currency_precision', '2');
+      console.log('✅ Algerian Dinar set as default currency');
+    } else {
+      console.error('❌ Failed to initialize default settings:', settingsResult.error);
+    }
+
     // Create admin user
     const adminResult = await UsersService.create({
       name: 'Admin User',
@@ -458,6 +475,7 @@ export async function seedDatabase() {
     ]);
 
     console.log('✅ Sample order items created');
+    
     console.log('🎉 Database seeding completed successfully!');
     
     return { success: true, message: 'Database seeded successfully' };

@@ -4,12 +4,13 @@ import { CrudPageTemplate } from '../components/CrudPageTemplate';
 import { FormField, createTextField, createSelectField, createCurrencyField, createDateField } from '../components/FormModal';
 import { Column, Action } from '../components/AdvancedDataTable';
 import { Badge } from '../components/ui/badge';
-import { ShoppingCart, Hash, CheckCircle2, Clock, XCircle, Truck, DollarSign, Activity, Eye, Printer, Edit, Copy, Download, Trash2 } from 'lucide-react';
+import { ShoppingCart, Hash, CheckCircle2, Clock, Truck, Coins, Eye, Printer, Edit, Copy, Download, Trash2, FileText } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { formatCurrency } from '../utils/formatters';
 import { renderStatus, renderDate } from '../utils/renderers';
 import { Button } from '../components/ui/button';
 import { X } from 'lucide-react';
+import { useSettingsCache } from '../hooks/useSettingsCache';
 
 interface Order {
   id: number;
@@ -29,6 +30,9 @@ interface Order {
 
 export default function OrdersPage() {
   const { t } = useTranslation();
+  
+  // Use settings cache
+  const settingsCache = useSettingsCache();
   
   const [orders, setOrders] = useState<Order[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
@@ -232,7 +236,7 @@ export default function OrdersPage() {
       {
         label: t('stats.totalRevenue', 'Total Revenue'),
         value: totalRevenue,
-        icon: DollarSign,
+        icon: Coins,
         color: 'text-green-600',
         format: 'currency' as const
       },
@@ -440,13 +444,13 @@ export default function OrdersPage() {
         console.log(`📋 Found ${ordersResponse.data.length} orders`);
         
         // Check itemsCount for each order
-        ordersResponse.data.forEach((order, index) => {
+        ordersResponse.data.forEach((order: any, index: number) => {
           console.log(`Order ${index + 1}:`, {
             id: order.id,
             orderNumber: order.orderNumber,
-            total: order.total,
             itemsCount: order.itemsCount,
-            customer: order.customer?.name || 'Walk-in'
+            total: order.total,
+            status: order.status
           });
         });
         
@@ -477,56 +481,57 @@ export default function OrdersPage() {
       }
 
       // Add sample items to the first few orders that have 0 items
-      const ordersWithoutItems = ordersResponse.data.filter(o => o.itemsCount === 0).slice(0, 3);
+      const ordersWithoutItems = ordersResponse.data.filter((o: any) => o.itemsCount === 0).slice(0, 3);
       
       for (const order of ordersWithoutItems) {
         console.log(`Adding items to order ${order.orderNumber}...`);
         
-        // Create sample items for this order
+        // Add 2-3 sample items to each order
         const sampleItems = [
           {
             orderId: order.id,
             productId: 1,
-            productName: 'Coffee - Medium Roast',
-            productSku: 'COFFEE-MED-001',
+            productName: 'Sample Product 1',
+            productSku: 'SP001',
             quantity: 2,
-            unitPrice: 12.99,
+            unitPrice: 15.99,
             discountRate: 0,
             discountAmount: 0,
-            taxRate: 0.10,
-            taxAmount: 2.60,
-            totalPrice: 25.98,
+            taxRate: 8.5,
+            taxAmount: 2.72,
+            totalPrice: 34.70
           },
           {
             orderId: order.id,
             productId: 2,
-            productName: 'Organic Tea',
-            productSku: 'TEA-EARL-001',
+            productName: 'Sample Product 2',
+            productSku: 'SP002',
             quantity: 1,
-            unitPrice: 8.99,
+            unitPrice: 29.99,
             discountRate: 0,
             discountAmount: 0,
-            taxRate: 0.10,
-            taxAmount: 0.90,
-            totalPrice: 9.89,
+            taxRate: 8.5,
+            taxAmount: 2.55,
+            totalPrice: 32.54
           }
         ];
-
-        const itemsResponse = await window.database.orderItems.createMultiple(sampleItems);
-        if (itemsResponse.success) {
-          console.log(`✅ Added ${sampleItems.length} items to order ${order.orderNumber}`);
-        } else {
-          console.error(`❌ Failed to add items to order ${order.orderNumber}:`, itemsResponse.error);
+        
+        try {
+          const itemsResult = await window.database.orderItems.createMultiple(sampleItems);
+          if (itemsResult.success) {
+            console.log(`✅ Added ${sampleItems.length} items to order ${order.orderNumber}`);
+          } else {
+            console.warn(`⚠️ Failed to add items to order ${order.orderNumber}:`, itemsResult.error);
+          }
+        } catch (error) {
+          console.error(`❌ Error adding items to order ${order.orderNumber}:`, error);
         }
       }
       
-      // Refresh orders to see updated itemsCount
-      console.log('🔄 Refreshing orders data...');
+      // Refresh orders after adding items
       await handleRefresh();
-      toast.success(`Added items to ${ordersWithoutItems.length} orders!`);
-      
     } catch (error) {
-      console.error('❌ Failed to add order items:', error);
+      console.error('Error adding order items:', error);
       toast.error('Failed to add order items');
     }
   };
@@ -576,148 +581,112 @@ export default function OrdersPage() {
     }
   };
 
-  // Function to fix all orders with 0 items (call from console: window.fixZeroItemOrders())
   const fixZeroItemOrders = async () => {
     try {
-      console.log('🔧 Fixing all orders with 0 items...');
+      console.log('Fixing orders with 0 items...');
       
       const ordersResponse = await window.database.orders.getAll();
-      if (!ordersResponse.success || !ordersResponse.data) {
-        console.error('❌ Failed to get orders');
-        return;
+      if (!ordersResponse.success) {
+        throw new Error('Failed to get orders');
       }
 
-      const zeroItemOrders = ordersResponse.data.filter(o => o.itemsCount === 0);
+      const zeroItemOrders = ordersResponse.data.filter((o: any) => o.itemsCount === 0);
       console.log(`Found ${zeroItemOrders.length} orders with 0 items`);
 
       for (const order of zeroItemOrders) {
-        console.log(`Fixing order ${order.orderNumber} (ID: ${order.id})...`);
+        console.log(`Fixing order ${order.orderNumber}...`);
         
-        let items;
-        if (order.total > 0) {
-          // For orders with totals, create items that match
-          items = [
-            {
-              orderId: order.id,
-              productId: 1,
-              productName: 'Order Item',
-              productSku: 'ITEM-001',
-              quantity: 1,
-              unitPrice: order.total * 0.9,
-              discountRate: 0,
-              discountAmount: 0,
-              taxRate: 0.10,
-              taxAmount: order.total * 0.1,
-              totalPrice: order.total,
-            }
-          ];
-        } else {
-          // For $0 orders, add placeholder items
-          items = [
-            {
-              orderId: order.id,
-              productId: 1,
-              productName: 'Placeholder Item',
-              productSku: 'PLACEHOLDER-001',
-              quantity: 1,
-              unitPrice: 0,
-              discountRate: 0,
-              discountAmount: 0,
-              taxRate: 0,
-              taxAmount: 0,
-              totalPrice: 0,
-            }
-          ];
-        }
-
-        const itemsResponse = await window.database.orderItems.createMultiple(items);
-        if (itemsResponse.success) {
-          console.log(`✅ Fixed order ${order.orderNumber}`);
-        } else {
-          console.error(`❌ Failed to fix order ${order.orderNumber}:`, itemsResponse.error);
-        }
+        // Add sample items to each order
+        const sampleItems = [
+          {
+            orderId: order.id,
+            productId: 1,
+            productName: 'Default Product',
+            productSku: 'DP001',
+            quantity: 1,
+            unitPrice: 19.99,
+            discountRate: 0,
+            discountAmount: 0,
+            taxRate: 8.5,
+            taxAmount: 1.70,
+            totalPrice: 21.69
+          }
+        ];
         
-        // Small delay to avoid overwhelming the database
-        await new Promise(resolve => setTimeout(resolve, 100));
+        try {
+          const itemsResult = await window.database.orderItems.createMultiple(sampleItems);
+          if (itemsResult.success) {
+            console.log(`✅ Fixed order ${order.orderNumber}`);
+          } else {
+            console.warn(`⚠️ Failed to fix order ${order.orderNumber}:`, itemsResult.error);
+          }
+        } catch (error) {
+          console.error(`❌ Error fixing order ${order.orderNumber}:`, error);
+        }
       }
       
-      // Refresh orders to see updated itemsCount
-      console.log('🔄 Refreshing orders data...');
+      // Refresh orders after fixing
       await handleRefresh();
-      toast.success(`Fixed ${zeroItemOrders.length} orders with 0 items!`);
-      
+      toast.success(`Fixed ${zeroItemOrders.length} orders with 0 items`);
     } catch (error) {
-      console.error('❌ Failed to fix zero item orders:', error);
+      console.error('Error fixing zero item orders:', error);
       toast.error('Failed to fix orders');
     }
   };
 
-  // Function to fix orders with items but $0 totals (call from console: window.fixZeroTotalOrders())
   const fixZeroTotalOrders = async () => {
     try {
-      console.log('💰 Fixing orders with items but $0 totals...');
+      console.log('Fixing orders with $0 totals...');
       
       const ordersResponse = await window.database.orders.getAll();
-      if (!ordersResponse.success || !ordersResponse.data) {
-        console.error('❌ Failed to get orders');
-        return;
+      if (!ordersResponse.success) {
+        throw new Error('Failed to get orders');
       }
 
       // Find orders that have items but $0 total
-      const zeroTotalOrders = ordersResponse.data.filter(o => o.itemsCount > 0 && o.total === 0);
+      const zeroTotalOrders = ordersResponse.data.filter((o: any) => o.itemsCount > 0 && o.total === 0);
       console.log(`Found ${zeroTotalOrders.length} orders with items but $0 totals`);
 
       for (const order of zeroTotalOrders) {
-        console.log(`Recalculating totals for order ${order.orderNumber} (ID: ${order.id})...`);
+        console.log(`Fixing order ${order.orderNumber}...`);
         
-        try {
-          // Get order items to calculate totals
-          const itemsResponse = await window.database.orderItems.getByOrderId(order.id);
-          if (!itemsResponse.success || !itemsResponse.data || itemsResponse.data.length === 0) {
-            console.warn(`No items found for order ${order.id}`);
-            continue;
-          }
-
+        // Get order items
+        const itemsResponse = await window.database.orderItems.getByOrderId(order.id);
+        if (itemsResponse.success && itemsResponse.data.length > 0) {
           // Calculate totals from items
           const items = itemsResponse.data;
-          const subtotal = items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
-          const taxAmount = items.reduce((sum, item) => sum + (item.taxAmount || 0), 0);
-          const discountAmount = items.reduce((sum, item) => sum + (item.discountAmount || 0), 0);
+          const subtotal = items.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0);
+          const taxAmount = items.reduce((sum: number, item: any) => sum + (item.taxAmount || 0), 0);
+          const discountAmount = items.reduce((sum: number, item: any) => sum + (item.discountAmount || 0), 0);
           const totalAmount = subtotal + taxAmount - discountAmount;
 
           console.log(`Order ${order.id}: subtotal=${subtotal}, tax=${taxAmount}, total=${totalAmount}`);
 
-          // Update the order with calculated totals
-          const updateData = {
-            subtotal,
-            taxAmount,
-            discountAmount,
-            total: totalAmount,
-            paidAmount: totalAmount, // Assume it's paid since status is usually 'completed'
-          };
-
-          const updateResponse = await window.database.orders.update(order.id, updateData);
-          if (updateResponse.success) {
-            console.log(`✅ Updated totals for order ${order.orderNumber}`);
-          } else {
-            console.error(`❌ Failed to update order ${order.orderNumber}:`, updateResponse.error);
+          // Update order with correct totals
+          try {
+            const updateResult = await window.database.orders.update(order.id, {
+              subtotal,
+              taxAmount,
+              total: totalAmount
+            });
+            
+            if (updateResult.success) {
+              console.log(`✅ Fixed order ${order.orderNumber} totals`);
+            } else {
+              console.warn(`⚠️ Failed to fix order ${order.orderNumber}:`, updateResult.error);
+            }
+          } catch (error) {
+            console.error(`❌ Error updating order ${order.orderNumber}:`, error);
           }
-        } catch (error) {
-          console.error(`❌ Error processing order ${order.id}:`, error);
         }
-        
-        // Small delay to avoid overwhelming the database
-        await new Promise(resolve => setTimeout(resolve, 100));
       }
       
-      // Refresh orders to see updated totals
-      console.log('🔄 Refreshing orders data...');
+      // Refresh orders after fixing
       await handleRefresh();
-      toast.success(`Fixed totals for ${zeroTotalOrders.length} orders!`);
-      
+      toast.success(`Fixed ${zeroTotalOrders.length} orders with $0 totals`);
     } catch (error) {
-      console.error('❌ Failed to fix zero total orders:', error);
-      toast.error('Failed to fix order totals');
+      console.error('Error fixing zero total orders:', error);
+      toast.error('Failed to fix orders');
     }
   };
 
@@ -833,11 +802,24 @@ export default function OrdersPage() {
       icon: Printer,
       onClick: async (order) => {
         try {
-          await printOrderReceipt(order);
+          await printReceipt(order);
           toast.success(t('orders.receiptPrinted', 'Receipt printed successfully'));
         } catch (error) {
           console.error('Print failed:', error);
           toast.error(t('orders.printFailed', 'Failed to print receipt'));
+        }
+      },
+    },
+    {
+      label: t('orders.printInvoice', 'Print Invoice'),
+      icon: FileText,
+      onClick: async (order) => {
+        try {
+          await printInvoice(order);
+          toast.success(t('orders.invoicePrinted', 'Invoice printed successfully'));
+        } catch (error) {
+          console.error('Invoice print failed:', error);
+          toast.error(t('orders.invoicePrintFailed', 'Failed to print invoice'));
         }
       },
     },
@@ -857,7 +839,7 @@ export default function OrdersPage() {
       icon: Copy,
       onClick: async (order) => {
         try {
-          const { id, createdAt, updatedAt, ...orderData } = order;
+          const { ...orderData } = order;
           const newOrderData = {
             ...orderData,
             orderNumber: `ORD-${Date.now()}`,
@@ -900,121 +882,109 @@ export default function OrdersPage() {
   const [showOrderDetails, setShowOrderDetails] = useState(false);
 
   // Helper function to print order receipt
-  const printOrderReceipt = async (order: Record<string, any>) => {
+  const printReceipt = async (order: any) => {
     try {
+      console.log('Printing receipt for order:', order.orderNumber);
+      
       // Get order items
       const itemsResponse = await window.database.orderItems.getByOrderId(order.id);
       if (!itemsResponse.success) {
         throw new Error('Failed to get order items');
       }
 
+      // Get printer settings from cache
+      const printerName = settingsCache.getSetting('printer.printerName') || 'Microsoft Print to PDF';
+      console.log('Printer settings from cache:', printerName);
+
+      // Create receipt data with printer information
       const receiptData = {
         orderNumber: order.orderNumber,
-        orderDate: order.orderDate,
         customerName: order.staff?.name || order.customer?.name || 'Walk-in Customer',
-        customerPhone: order.staff?.phone || order.customer?.phone || '',
+        userAssigned: order.staff?.name || '',
+        subtotal: order.subtotal || 0,
+        taxAmount: order.taxAmount || 0,
+        totalAmount: order.total || 0,
         items: itemsResponse.data || [],
-        subtotal: order.subtotal,
-        taxAmount: order.taxAmount,
-        total: order.total,
-        paymentMethod: order.paymentMethod,
-        paymentStatus: order.paymentStatus,
-        staffName: order.staff?.name || '',
+        date: new Date().toISOString(),
+        receiptNumber: `R-${Date.now()}`,
+        printerName: printerName // Use printer from cache
       };
 
-      // Create receipt HTML
-      const receiptHTML = generateReceiptHTML(receiptData);
+      console.log('Receipt data with printer:', receiptData);
+
+      // Use the printer API
+      const result = await window.printer.printReceipt(receiptData);
       
-      // Print the receipt
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(receiptHTML);
-        printWindow.document.close();
-        printWindow.print();
-        printWindow.close();
+      if (result.success) {
+        const printerName = result.data?.printer || 'default printer';
+        
+        toast.success(`Receipt printed successfully to ${printerName}`, {
+          icon: '🖨️',
+          duration: 3000
+        });
       } else {
-        // Fallback: show receipt in new tab
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-          newWindow.document.write(receiptHTML);
-          newWindow.document.close();
-        }
+        toast.error(`Print failed: ${result.error}`, {
+          icon: '❌',
+          duration: 3000
+        });
       }
     } catch (error) {
       console.error('Print receipt failed:', error);
-      throw error;
+      toast.error('Failed to print receipt');
     }
   };
 
-  // Helper function to generate receipt HTML
-  const generateReceiptHTML = (receiptData: any) => {
-    const itemsHTML = receiptData.items.map((item: any) => `
-      <tr>
-        <td>${item.productName}</td>
-        <td>${item.quantity}</td>
-        <td>${formatCurrency(item.unitPrice)}</td>
-        <td>${formatCurrency(item.totalPrice)}</td>
-      </tr>
-    `).join('');
+  // Helper function to print order invoice
+  const printInvoice = async (order: any) => {
+    try {
+      console.log('Printing invoice for order:', order.orderNumber);
+      
+      // Get order items
+      const itemsResponse = await window.database.orderItems.getByOrderId(order.id);
+      if (!itemsResponse.success) {
+        throw new Error('Failed to get order items');
+      }
 
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Receipt - ${receiptData.orderNumber}</title>
-        <style>
-          body { font-family: 'Courier New', monospace; font-size: 12px; margin: 20px; }
-          .header { text-align: center; margin-bottom: 20px; }
-          .order-info { margin-bottom: 20px; }
-          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-          th, td { padding: 5px; text-align: left; border-bottom: 1px solid #ddd; }
-          th { background-color: #f5f5f5; }
-          .totals { text-align: right; margin-top: 20px; }
-          .footer { text-align: center; margin-top: 30px; font-size: 10px; }
-          @media print { body { margin: 0; } }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <h2>RECEIPT</h2>
-          <h3>${receiptData.orderNumber}</h3>
-        </div>
+      // Get printer settings from cache
+      const printerName = settingsCache.getSetting('printer.printerName') || 'Microsoft Print to PDF';
+      console.log('Printer settings from cache:', printerName);
+
+      // Create invoice data with printer information
+      const invoiceData = {
+        orderNumber: order.orderNumber,
+        customerName: order.staff?.name || order.customer?.name || 'Walk-in Customer',
+        userAssigned: order.staff?.name || '',
+        subtotal: order.subtotal || 0,
+        taxAmount: order.taxAmount || 0,
+        totalAmount: order.total || 0,
+        items: itemsResponse.data || [],
+        date: new Date().toISOString(),
+        invoiceNumber: `INV-${Date.now()}`,
+        printerName: printerName // Use printer from cache
+      };
+
+      console.log('Invoice data with printer:', invoiceData);
+
+      // Use the printer API
+      const result = await window.printer.printInvoice(invoiceData);
+      
+      if (result.success) {
+        const printerName = result.data?.printer || 'default printer';
         
-        <div class="order-info">
-          <p><strong>Date:</strong> ${receiptData.orderDate}</p>
-          <p><strong>Customer:</strong> ${receiptData.customerName}</p>
-          ${receiptData.customerPhone ? `<p><strong>Phone:</strong> ${receiptData.customerPhone}</p>` : ''}
-          ${receiptData.staffName ? `<p><strong>Staff:</strong> ${receiptData.staffName}</p>` : ''}
-        </div>
-        
-        <table>
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Qty</th>
-              <th>Price</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${itemsHTML}
-          </tbody>
-        </table>
-        
-        <div class="totals">
-          <p><strong>Subtotal:</strong> ${formatCurrency(receiptData.subtotal)}</p>
-          <p><strong>Tax:</strong> ${formatCurrency(receiptData.taxAmount)}</p>
-          <p><strong>Total:</strong> ${formatCurrency(receiptData.total)}</p>
-          <p><strong>Payment:</strong> ${receiptData.paymentMethod} (${receiptData.paymentStatus})</p>
-        </div>
-        
-        <div class="footer">
-          <p>Thank you for your purchase!</p>
-          <p>Generated on ${new Date().toLocaleString()}</p>
-        </div>
-      </body>
-      </html>
-    `;
+        toast.success(`Invoice printed successfully to ${printerName}`, {
+          icon: '📄',
+          duration: 3000
+        });
+      } else {
+        toast.error(`Invoice print failed: ${result.error}`, {
+          icon: '❌',
+          duration: 3000
+        });
+      }
+    } catch (error) {
+      console.error('Print invoice failed:', error);
+      toast.error('Failed to print invoice');
+    }
   };
 
   // Helper function to export order data
@@ -1187,7 +1157,7 @@ export default function OrdersPage() {
       entityName="order"
       entityNamePlural="orders"
       entityConfig={{
-        icon: ShoppingCart,
+        icon: Coins,
         color: "text-purple-600",
         description: t("pages.ordersSubtitle", "Manage customer orders and transactions"),
         category: "sales",
@@ -1229,9 +1199,9 @@ export default function OrdersPage() {
                   size="sm"
                   onClick={async () => {
                     try {
-                      await printOrderReceipt(selectedOrder);
+                      await printReceipt(selectedOrder);
                       toast.success(t('orders.receiptPrinted', 'Receipt printed successfully'));
-                    } catch (error) {
+                    } catch {
                       toast.error(t('orders.printFailed', 'Failed to print receipt'));
                     }
                   }}

@@ -82,13 +82,85 @@ interface DatabaseAPI {
 declare interface Window {
   themeMode: ThemeModeContext;
   electronWindow: ElectronWindow;
-  database: DatabaseAPI;
-  api: {
-    database: {
-      create: (table: string, data: any) => Promise<any>;
-      update: (table: string, id: number, data: any) => Promise<any>;
-      delete: (table: string, id: number) => Promise<any>;
-      findMany: (table: string, options?: any) => Promise<any>;
-    };
+  database: {
+    users: any;
+    categories: any;
+    units: any;
+    products: any;
+    orders: any;
+    orderItems: any;
+    settings: any;
+    initialize: () => Promise<any>;
+  };
+  printer: {
+    getAvailablePrinters: () => Promise<{
+      success: boolean;
+      data?: Array<{
+        value: string;
+        label: string;
+        isDefault: boolean;
+        status: string;
+        type: string;
+        connection: string;
+      }>;
+      error?: string;
+    }>;
+    getDefaultPrinter: () => Promise<{
+      success: boolean;
+      data?: string;
+      error?: string;
+    }>;
+    setDefaultPrinter: (printerName: string) => Promise<{
+      success: boolean;
+      data?: string;
+      error?: string;
+    }>;
+    printReceipt: (receiptData: any) => Promise<{
+      success: boolean;
+      data?: {
+        printer: string;
+        orderNumber: string;
+        timestamp: string;
+      };
+      error?: string;
+    }>;
+    printInvoice: (invoiceData: any) => Promise<{
+      success: boolean;
+      data?: {
+        printer: string;
+        orderNumber: string;
+        timestamp: string;
+      };
+      error?: string;
+    }>;
+    printProductLabel: (productData: any) => Promise<{
+      success: boolean;
+      data?: {
+        printer: string;
+        productName: string;
+        timestamp: string;
+      };
+      error?: string;
+    }>;
+    testPrinter: (printerName?: string) => Promise<{
+      success: boolean;
+      data?: {
+        printer: string;
+        status: string;
+        message: string;
+      };
+      error?: string;
+    }>;
+    getPrinterStatus: (printerName?: string) => Promise<{
+      success: boolean;
+      data?: {
+        name: string;
+        status: string;
+        type: string;
+        connection: string;
+        isDefault: boolean;
+      };
+      error?: string;
+    }>;
   };
 }

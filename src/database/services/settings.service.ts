@@ -1,6 +1,6 @@
-import { eq, and, like, desc } from 'drizzle-orm';
 import { db } from '../connection';
-import { settings, type Setting, type NewSetting } from '../schema';
+import { settings } from '../schema';
+import { eq, and, like } from 'drizzle-orm';
 
 export interface SettingsFilter {
   category?: string;
@@ -108,74 +108,39 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     sortOrder: 7
   },
   {
-    key: 'date_format',
-    value: 'MM/DD/YYYY',
+    key: 'locale',
+    value: 'en-US',
     type: 'string',
     category: 'general',
-    label: 'Date Format',
-    description: 'How dates are displayed',
-    defaultValue: 'MM/DD/YYYY',
+    label: 'Locale',
+    description: 'Regional formatting',
+    defaultValue: 'en-US',
     isPublic: true,
     sortOrder: 8
   },
-  {
-    key: 'time_format',
-    value: '12h',
-    type: 'string',
-    category: 'general',
-    label: 'Time Format',
-    description: '12-hour or 24-hour time',
-    defaultValue: '12h',
-    isPublic: true,
-    sortOrder: 9
-  },
-  {
-    key: 'week_start',
-    value: 'sunday',
-    type: 'string',
-    category: 'general',
-    label: 'Week Starts On',
-    description: 'First day of the week',
-    defaultValue: 'sunday',
-    isPublic: true,
-    sortOrder: 10
-  },
-  {
-    key: 'region',
-    value: 'US',
-    type: 'string',
-    category: 'general',
-    label: 'Region',
-    description: 'Regional settings for formatting',
-    defaultValue: 'US',
-    isPublic: true,
-    sortOrder: 11
-  },
 
   // =====================================
-  // CURRENCY SETTINGS
+  // CURRENCY & FINANCIAL SETTINGS
   // =====================================
-  
-  // Currency Display
   {
     key: 'currency_code',
-    value: 'USD',
+    value: 'DZD',
     type: 'string',
     category: 'currency',
-    label: 'Primary Currency',
-    description: 'Default currency for transactions',
-    defaultValue: 'USD',
+    label: 'Currency Code',
+    description: 'Primary currency for transactions',
+    defaultValue: 'DZD',
     isPublic: true,
     sortOrder: 1
   },
   {
     key: 'currency_symbol',
-    value: '$',
+    value: 'دج',
     type: 'string',
     category: 'currency',
     label: 'Currency Symbol',
-    description: 'Currency symbol to display',
-    defaultValue: '$',
+    description: 'Currency symbol for display',
+    defaultValue: 'دج',
     isPublic: true,
     sortOrder: 2
   },
@@ -184,349 +149,117 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     value: 'before',
     type: 'string',
     category: 'currency',
-    label: 'Symbol Position',
-    description: 'Where to place currency symbol',
+    label: 'Currency Position',
+    description: 'Symbol position relative to amount',
     defaultValue: 'before',
     isPublic: true,
     sortOrder: 3
   },
   {
-    key: 'number_format',
-    value: 'comma_dot',
-    type: 'string',
-    category: 'currency',
-    label: 'Number Format',
-    description: 'How to format numbers',
-    defaultValue: 'comma_dot',
-    isPublic: true,
-    sortOrder: 4
-  },
-  {
-    key: 'decimal_places',
+    key: 'currency_precision',
     value: '2',
     type: 'number',
     category: 'currency',
     label: 'Decimal Places',
-    description: 'Number of decimal places',
+    description: 'Number of decimal places for currency',
     defaultValue: '2',
     isPublic: true,
+    sortOrder: 4
+  },
+  {
+    key: 'tax_rate',
+    value: '0.10',
+    type: 'number',
+    category: 'currency',
+    label: 'Default Tax Rate',
+    description: 'Default tax rate as decimal (e.g., 0.10 for 10%)',
+    defaultValue: '0.10',
+    isPublic: true,
     sortOrder: 5
-  },
-  {
-    key: 'round_to_nearest',
-    value: '0.01',
-    type: 'string',
-    category: 'currency',
-    label: 'Round to Nearest',
-    description: 'Round prices to nearest value',
-    defaultValue: '0.01',
-    isPublic: true,
-    sortOrder: 6
-  },
-  
-  // Tax Configuration
-  {
-    key: 'default_tax_rate',
-    value: '10.0',
-    type: 'number',
-    category: 'currency',
-    label: 'Default Tax Rate (%)',
-    description: 'Standard tax rate percentage',
-    defaultValue: '10.0',
-    isPublic: true,
-    sortOrder: 7
-  },
-  {
-    key: 'tax_calculation',
-    value: 'exclusive',
-    type: 'string',
-    category: 'currency',
-    label: 'Tax Calculation',
-    description: 'How tax is calculated',
-    defaultValue: 'exclusive',
-    isPublic: true,
-    sortOrder: 8
-  },
-  {
-    key: 'tax_display',
-    value: 'inclusive',
-    type: 'string',
-    category: 'currency',
-    label: 'Tax Display',
-    description: 'How tax is displayed to customers',
-    defaultValue: 'inclusive',
-    isPublic: true,
-    sortOrder: 9
-  },
-  {
-    key: 'tax_rounding',
-    value: 'standard',
-    type: 'string',
-    category: 'currency',
-    label: 'Tax Rounding',
-    description: 'How tax amounts are rounded',
-    defaultValue: 'standard',
-    isPublic: true,
-    sortOrder: 10
-  },
-  
-  // Pricing & Business Rules
-  {
-    key: 'allow_negative_inventory',
-    value: 'false',
-    type: 'boolean',
-    category: 'currency',
-    label: 'Allow Negative Inventory',
-    description: 'Allow sales when stock is zero',
-    defaultValue: 'false',
-    isPublic: true,
-    sortOrder: 11
-  },
-  {
-    key: 'price_change_tracking',
-    value: 'true',
-    type: 'boolean',
-    category: 'currency',
-    label: 'Track Price Changes',
-    description: 'Log all price modifications',
-    defaultValue: 'true',
-    isPublic: true,
-    sortOrder: 12
-  },
-  {
-    key: 'auto_calculate_margin',
-    value: 'true',
-    type: 'boolean',
-    category: 'currency',
-    label: 'Auto Calculate Margin',
-    description: 'Automatically calculate profit margins',
-    defaultValue: 'true',
-    isPublic: true,
-    sortOrder: 13
-  },
-  {
-    key: 'markup_percentage',
-    value: '50',
-    type: 'number',
-    category: 'currency',
-    label: 'Default Markup (%)',
-    description: 'Default markup percentage for new products',
-    defaultValue: '50',
-    isPublic: true,
-    sortOrder: 14
   },
 
   // =====================================
   // PRINTING SETTINGS
   // =====================================
-  
-  // Printer Configuration
   {
-    key: 'auto_print_receipt',
-    value: 'true',
-    type: 'boolean',
-    category: 'printing',
-    label: 'Auto Print Receipt',
-    description: 'Automatically print receipt after checkout',
-    defaultValue: 'true',
-    sortOrder: 1
-  },
-  {
-    key: 'printer_name',
+    key: 'printer.printerName',
     value: '',
     type: 'string',
     category: 'printing',
     label: 'Default Printer',
-    description: 'Select your default printer',
+    description: 'Default printer for receipts',
     defaultValue: '',
-    sortOrder: 2
+    isPublic: true,
+    sortOrder: 1
   },
   {
-    key: 'printer_type',
-    value: 'thermal',
-    type: 'string',
-    category: 'printing',
-    label: 'Printer Type',
-    description: 'Type of printer',
-    defaultValue: 'thermal',
-    sortOrder: 3
-  },
-  {
-    key: 'paper_size',
+    key: 'printer.pageSize',
     value: '80mm',
     type: 'string',
     category: 'printing',
     label: 'Paper Size',
     description: 'Receipt paper size',
     defaultValue: '80mm',
+    isPublic: true,
+    sortOrder: 2
+  },
+  {
+    key: 'printer.copies',
+    value: '1',
+    type: 'number',
+    category: 'printing',
+    label: 'Number of Copies',
+    description: 'Number of copies to print',
+    defaultValue: '1',
+    isPublic: true,
+    sortOrder: 3
+  },
+  {
+    key: 'printer.margin',
+    value: '0 0 0 0',
+    type: 'string',
+    category: 'printing',
+    label: 'Margins',
+    description: 'Print margins (top right bottom left)',
+    defaultValue: '0 0 0 0',
+    isPublic: true,
     sortOrder: 4
   },
   {
-    key: 'print_quality',
-    value: 'standard',
-    type: 'string',
-    category: 'printing',
-    label: 'Print Quality',
-    description: 'Print quality setting',
-    defaultValue: 'standard',
-    sortOrder: 5
-  },
-  {
-    key: 'print_speed',
-    value: 'normal',
-    type: 'string',
-    category: 'printing',
-    label: 'Print Speed',
-    description: 'Print speed setting',
-    defaultValue: 'normal',
-    sortOrder: 6
-  },
-  
-  // Ticket Configuration
-  {
-    key: 'ticket_width',
-    value: '80',
-    type: 'number',
-    category: 'printing',
-    label: 'Ticket Width (mm)',
-    description: 'Width of the receipt in millimeters',
-    defaultValue: '80',
-    sortOrder: 7
-  },
-  {
-    key: 'ticket_margin_top',
-    value: '5',
-    type: 'number',
-    category: 'printing',
-    label: 'Top Margin (mm)',
-    description: 'Top margin in millimeters',
-    defaultValue: '5',
-    sortOrder: 8
-  },
-  {
-    key: 'ticket_margin_bottom',
-    value: '10',
-    type: 'number',
-    category: 'printing',
-    label: 'Bottom Margin (mm)',
-    description: 'Bottom margin in millimeters',
-    defaultValue: '10',
-    sortOrder: 9
-  },
-  {
-    key: 'ticket_margin_left',
-    value: '2',
-    type: 'number',
-    category: 'printing',
-    label: 'Left Margin (mm)',
-    description: 'Left margin in millimeters',
-    defaultValue: '2',
-    sortOrder: 10
-  },
-  {
-    key: 'ticket_margin_right',
-    value: '2',
-    type: 'number',
-    category: 'printing',
-    label: 'Right Margin (mm)',
-    description: 'Right margin in millimeters',
-    defaultValue: '2',
-    sortOrder: 11
-  },
-  {
-    key: 'ticket_font_size',
-    value: '12',
-    type: 'string',
-    category: 'printing',
-    label: 'Ticket Font Size',
-    description: 'Font size for receipt text',
-    defaultValue: '12',
-    sortOrder: 12
-  },
-  
-  // Receipt Content Settings
-  {
-    key: 'receipt_header',
-    value: 'Thank you for your business!',
-    type: 'string',
-    category: 'printing',
-    label: 'Receipt Header',
-    description: 'Text at top of receipt',
-    defaultValue: 'Thank you for your business!',
-    sortOrder: 13
-  },
-  {
-    key: 'receipt_footer',
-    value: 'Please come again!',
-    type: 'string',
-    category: 'printing',
-    label: 'Receipt Footer',
-    description: 'Text at bottom of receipt',
-    defaultValue: 'Please come again!',
-    sortOrder: 14
-  },
-  {
-    key: 'print_logo',
-    value: 'false',
-    type: 'boolean',
-    category: 'printing',
-    label: 'Print Logo',
-    description: 'Print company logo on receipt',
-    defaultValue: 'false',
-    sortOrder: 15
-  },
-  {
-    key: 'logo_size',
-    value: 'medium',
-    type: 'string',
-    category: 'printing',
-    label: 'Logo Size',
-    description: 'Size of company logo on receipt',
-    defaultValue: 'medium',
-    sortOrder: 16
-  },
-  {
-    key: 'print_customer_copy',
+    key: 'printer.silent',
     value: 'true',
     type: 'boolean',
     category: 'printing',
-    label: 'Print Customer Copy',
-    description: 'Print customer copy by default',
+    label: 'Silent Printing',
+    description: 'Print without showing dialog',
     defaultValue: 'true',
-    sortOrder: 17
+    isPublic: true,
+    sortOrder: 5
   },
   {
-    key: 'print_merchant_copy',
+    key: 'printer.preview',
     value: 'false',
     type: 'boolean',
     category: 'printing',
-    label: 'Print Merchant Copy',
-    description: 'Print merchant copy automatically',
+    label: 'Show Print Preview',
+    description: 'Show print preview before printing',
     defaultValue: 'false',
-    sortOrder: 18
+    isPublic: true,
+    sortOrder: 6
   },
   {
-    key: 'print_barcode',
-    value: 'false',
-    type: 'boolean',
+    key: 'printer.timeOutPerLine',
+    value: '400',
+    type: 'number',
     category: 'printing',
-    label: 'Print Order Barcode',
-    description: 'Print barcode on receipt for order tracking',
-    defaultValue: 'false',
-    sortOrder: 19
-  },
-  {
-    key: 'print_qr_code',
-    value: 'false',
-    type: 'boolean',
-    category: 'printing',
-    label: 'Print QR Code',
-    description: 'Print QR code for digital receipt',
-    defaultValue: 'false',
-    sortOrder: 20
+    label: 'Timeout per Line',
+    description: 'Timeout in milliseconds per line',
+    defaultValue: '400',
+    isPublic: true,
+    sortOrder: 7
   },
   
-  // Invoice/A4 Print Settings
+  // Invoice printer settings
   {
     key: 'invoice_printer',
     value: '',
@@ -535,7 +268,8 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     label: 'Invoice Printer',
     description: 'Printer for invoices and reports',
     defaultValue: '',
-    sortOrder: 21
+    isPublic: true,
+    sortOrder: 8
   },
   {
     key: 'invoice_paper_size',
@@ -545,7 +279,8 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     label: 'Invoice Paper Size',
     description: 'Paper size for invoices',
     defaultValue: 'A4',
-    sortOrder: 22
+    isPublic: true,
+    sortOrder: 9
   },
   {
     key: 'invoice_orientation',
@@ -555,174 +290,236 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     label: 'Invoice Orientation',
     description: 'Page orientation for invoices',
     defaultValue: 'portrait',
-    sortOrder: 23
+    isPublic: true,
+    sortOrder: 10
   },
+  
+  // Advanced printer settings
   {
-    key: 'invoice_margin_top',
-    value: '20',
-    type: 'number',
-    category: 'printing',
-    label: 'Invoice Top Margin (mm)',
-    description: 'Top margin for invoices',
-    defaultValue: '20',
-    sortOrder: 24
-  },
-  {
-    key: 'invoice_margin_bottom',
-    value: '20',
-    type: 'number',
-    category: 'printing',
-    label: 'Invoice Bottom Margin (mm)',
-    description: 'Bottom margin for invoices',
-    defaultValue: '20',
-    sortOrder: 25
-  },
-  {
-    key: 'invoice_margin_left',
-    value: '15',
-    type: 'number',
-    category: 'printing',
-    label: 'Invoice Left Margin (mm)',
-    description: 'Left margin for invoices',
-    defaultValue: '15',
-    sortOrder: 26
-  },
-  {
-    key: 'invoice_margin_right',
-    value: '15',
-    type: 'number',
-    category: 'printing',
-    label: 'Invoice Right Margin (mm)',
-    description: 'Right margin for invoices',
-    defaultValue: '15',
-    sortOrder: 27
-  },
-  {
-    key: 'invoice_font_size',
-    value: '10',
+    key: 'printer_quality',
+    value: 'normal',
     type: 'string',
     category: 'printing',
-    label: 'Invoice Font Size',
-    description: 'Font size for invoice text',
-    defaultValue: '10',
-    sortOrder: 28
+    label: 'Print Quality',
+    description: 'Print quality setting',
+    defaultValue: 'normal',
+    isPublic: true,
+    sortOrder: 11
   },
   {
-    key: 'invoice_logo_position',
-    value: 'top-left',
+    key: 'printer_color_mode',
+    value: 'monochrome',
     type: 'string',
     category: 'printing',
-    label: 'Invoice Logo Position',
-    description: 'Position of logo on invoice',
-    defaultValue: 'top-left',
-    sortOrder: 29
+    label: 'Color Mode',
+    description: 'Print color mode',
+    defaultValue: 'monochrome',
+    isPublic: true,
+    sortOrder: 12
   },
   {
-    key: 'auto_print_invoice',
+    key: 'printer_duplex',
     value: 'false',
     type: 'boolean',
     category: 'printing',
-    label: 'Auto Print Invoice',
-    description: 'Automatically print invoice for orders above threshold',
+    label: 'Duplex Printing',
+    description: 'Print on both sides',
     defaultValue: 'false',
-    sortOrder: 30
+    isPublic: true,
+    sortOrder: 13
   },
   {
-    key: 'invoice_threshold',
-    value: '100',
+    key: 'printer_font_size',
+    value: '12',
     type: 'number',
     category: 'printing',
-    label: 'Invoice Threshold',
-    description: 'Minimum amount to auto-print invoice',
-    defaultValue: '100',
-    sortOrder: 31
+    label: 'Font Size',
+    description: 'Print font size',
+    defaultValue: '12',
+    isPublic: true,
+    sortOrder: 14
   },
-
+  {
+    key: 'printer_font_family',
+    value: 'Arial',
+    type: 'string',
+    category: 'printing',
+    label: 'Font Family',
+    description: 'Print font family',
+    defaultValue: 'Arial',
+    isPublic: true,
+    sortOrder: 15
+  },
+  {
+    key: 'printer_orientation',
+    value: 'portrait',
+    type: 'string',
+    category: 'printing',
+    label: 'Page Orientation',
+    description: 'Page orientation for printing',
+    defaultValue: 'portrait',
+    isPublic: true,
+    sortOrder: 16
+  },
+  {
+    key: 'printer_margin_top',
+    value: '10',
+    type: 'number',
+    category: 'printing',
+    label: 'Top Margin',
+    description: 'Top margin in mm',
+    defaultValue: '10',
+    isPublic: true,
+    sortOrder: 17
+  },
+  {
+    key: 'printer_margin_bottom',
+    value: '10',
+    type: 'number',
+    category: 'printing',
+    label: 'Bottom Margin',
+    description: 'Bottom margin in mm',
+    defaultValue: '10',
+    isPublic: true,
+    sortOrder: 18
+  },
+  {
+    key: 'printer_margin_left',
+    value: '10',
+    type: 'number',
+    category: 'printing',
+    label: 'Left Margin',
+    description: 'Left margin in mm',
+    defaultValue: '10',
+    isPublic: true,
+    sortOrder: 19
+  },
+  {
+    key: 'printer_margin_right',
+    value: '10',
+    type: 'number',
+    category: 'printing',
+    label: 'Right Margin',
+    description: 'Right margin in mm',
+    defaultValue: '10',
+    isPublic: true,
+    sortOrder: 20
+  },
+  {
+    key: 'printer_header_template',
+    value: 'POS SYSTEM\nReceipt\n{date} {time}',
+    type: 'string',
+    category: 'printing',
+    label: 'Header Template',
+    description: 'Receipt header template with placeholders',
+    defaultValue: 'POS SYSTEM\nReceipt\n{date} {time}',
+    isPublic: true,
+    sortOrder: 21
+  },
+  {
+    key: 'printer_footer_template',
+    value: 'Thank you for your purchase!\nPlease come again',
+    type: 'string',
+    category: 'printing',
+    label: 'Footer Template',
+    description: 'Receipt footer template',
+    defaultValue: 'Thank you for your purchase!\nPlease come again',
+    isPublic: true,
+    sortOrder: 22
+  },
+  {
+    key: 'printer_auto_cut',
+    value: 'true',
+    type: 'boolean',
+    category: 'printing',
+    label: 'Auto Cut',
+    description: 'Automatically cut receipt paper',
+    defaultValue: 'true',
+    isPublic: true,
+    sortOrder: 23
+  },
+  {
+    key: 'printer_open_drawer',
+    value: 'false',
+    type: 'boolean',
+    category: 'printing',
+    label: 'Open Drawer',
+    description: 'Open cash drawer after printing',
+    defaultValue: 'false',
+    isPublic: true,
+    sortOrder: 24
+  },
+  
   // =====================================
   // POS SETTINGS
   // =====================================
   {
-    key: 'pos_layout',
-    value: 'grid',
+    key: 'pos_receipt_title',
+    value: 'POS SYSTEM',
     type: 'string',
     category: 'pos',
-    label: 'Default Layout',
-    description: 'Default product view layout',
-    defaultValue: 'grid',
+    label: 'Receipt Title',
+    description: 'Title shown on receipts',
+    defaultValue: 'POS SYSTEM',
+    isPublic: true,
     sortOrder: 1
   },
   {
-    key: 'products_per_page',
-    value: '50',
-    type: 'number',
+    key: 'pos_show_tax',
+    value: 'true',
+    type: 'boolean',
     category: 'pos',
-    label: 'Products Per Page',
-    description: 'Number of products to display',
-    defaultValue: '50',
+    label: 'Show Tax on Receipt',
+    description: 'Display tax information on receipts',
+    defaultValue: 'true',
+    isPublic: true,
     sortOrder: 2
   },
   {
-    key: 'enable_barcode_scanner',
+    key: 'pos_show_change',
     value: 'true',
     type: 'boolean',
     category: 'pos',
-    label: 'Enable Barcode Scanner',
-    description: 'Enable barcode scanning',
+    label: 'Show Change on Receipt',
+    description: 'Display change amount on receipts',
     defaultValue: 'true',
+    isPublic: true,
     sortOrder: 3
   },
   {
-    key: 'sound_effects',
+    key: 'pos_auto_print',
     value: 'true',
     type: 'boolean',
     category: 'pos',
-    label: 'Sound Effects',
-    description: 'Play sounds for actions',
+    label: 'Auto Print Receipts',
+    description: 'Automatically print receipts after sale',
     defaultValue: 'true',
+    isPublic: true,
     sortOrder: 4
   },
   {
-    key: 'show_product_images',
-    value: 'true',
-    type: 'boolean',
-    category: 'pos',
-    label: 'Show Product Images',
-    description: 'Display product images',
-    defaultValue: 'true',
-    sortOrder: 5
-  },
-  {
-    key: 'enable_quick_sale',
-    value: 'true',
-    type: 'boolean',
-    category: 'pos',
-    label: 'Enable Quick Sale',
-    description: 'Allow quick sale without customer details',
-    defaultValue: 'true',
-    sortOrder: 6
-  },
-  {
-    key: 'require_customer_info',
+    key: 'pos_require_customer_info',
     value: 'false',
     type: 'boolean',
     category: 'pos',
     label: 'Require Customer Info',
     description: 'Require customer information for sales',
     defaultValue: 'false',
-    sortOrder: 7
+    isPublic: true,
+    sortOrder: 5
   },
-
+  
   // =====================================
   // APPEARANCE SETTINGS
   // =====================================
   {
     key: 'theme_mode',
-    value: 'light',
+    value: 'system',
     type: 'string',
     category: 'appearance',
     label: 'Theme Mode',
-    description: 'Light or dark theme',
-    defaultValue: 'light',
+    description: 'Application theme mode',
+    defaultValue: 'system',
     isPublic: true,
     sortOrder: 1
   },
@@ -738,105 +535,26 @@ export const DEFAULT_SETTINGS: SettingDefinition[] = [
     sortOrder: 2
   },
   {
-    key: 'compact_mode',
-    value: 'false',
-    type: 'boolean',
-    category: 'appearance',
-    label: 'Compact Mode',
-    description: 'Use compact interface',
-    defaultValue: 'false',
-    isPublic: true,
-    sortOrder: 3
-  },
-  {
     key: 'show_animations',
     value: 'true',
     type: 'boolean',
     category: 'appearance',
     label: 'Show Animations',
-    description: 'Enable interface animations',
+    description: 'Enable UI animations',
     defaultValue: 'true',
     isPublic: true,
+    sortOrder: 3
+  },
+  {
+    key: 'compact_mode',
+    value: 'false',
+    type: 'boolean',
+    category: 'appearance',
+    label: 'Compact Mode',
+    description: 'Use compact layout',
+    defaultValue: 'false',
+    isPublic: true,
     sortOrder: 4
-  },
-  {
-    key: 'sidebar_position',
-    value: 'left',
-    type: 'string',
-    category: 'appearance',
-    label: 'Sidebar Position',
-    description: 'Position of the navigation sidebar',
-    defaultValue: 'left',
-    isPublic: true,
-    sortOrder: 5
-  },
-  {
-    key: 'color_scheme',
-    value: 'blue',
-    type: 'string',
-    category: 'appearance',
-    label: 'Accent Color',
-    description: 'Primary accent color for the interface',
-    defaultValue: 'blue',
-    isPublic: true,
-    sortOrder: 6
-  },
-  {
-    key: 'layout_density',
-    value: 'comfortable',
-    type: 'string',
-    category: 'appearance',
-    label: 'Layout Density',
-    description: 'How compact the interface should be',
-    defaultValue: 'comfortable',
-    isPublic: true,
-    sortOrder: 7
-  },
-
-  // =====================================
-  // LEGACY SETTINGS (for compatibility)
-  // =====================================
-  {
-    key: 'app_name',
-    value: 'POS System',
-    type: 'string',
-    category: 'general',
-    label: 'Application Name',
-    description: 'The name of your POS application',
-    defaultValue: 'POS System',
-    isPublic: true,
-    sortOrder: 50
-  },
-  {
-    key: 'receipt_printer_name',
-    value: '',
-    type: 'string',
-    category: 'printing',
-    label: 'Receipt Printer Name',
-    description: 'Name of the receipt printer',
-    defaultValue: '',
-    sortOrder: 50
-  },
-  {
-    key: 'receipt_width',
-    value: '80',
-    type: 'number',
-    category: 'printing',
-    label: 'Receipt Width (mm)',
-    description: 'Width of receipt paper in millimeters',
-    defaultValue: '80',
-    sortOrder: 51
-  },
-  {
-    key: 'tax_rate',
-    value: '0',
-    type: 'number',
-    category: 'general',
-    label: 'Legacy Tax Rate (%)',
-    description: 'Legacy tax rate percentage',
-    defaultValue: '0',
-    isPublic: true,
-    sortOrder: 51
   }
 ];
 
@@ -878,20 +596,27 @@ export class SettingsService {
   // Get setting by key
   static async get(key: string): Promise<string | null> {
     try {
+      console.log(`SettingsService.get called with key: ${key}`);
+      
       const result = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
+      
       if (result.length > 0) {
-        return result[0].value || result[0].defaultValue || null;
+        const value = result[0].value || result[0].defaultValue || null;
+        console.log(`Setting ${key} found in database: ${value}`);
+        return value;
       }
       
       // Check if it's a default setting
       const defaultSetting = DEFAULT_SETTINGS.find(s => s.key === key);
       if (defaultSetting) {
+        console.log(`Setting ${key} found in defaults: ${defaultSetting.defaultValue}`);
         return defaultSetting.defaultValue || null;
       }
       
+      console.log(`Setting ${key} not found anywhere`);
       return null;
     } catch (error) {
-      console.error('Error getting setting:', error);
+      console.error(`Error getting setting ${key}:`, error);
       return null;
     }
   }
@@ -941,9 +666,14 @@ export class SettingsService {
   // Set setting value
   static async set(key: string, value: any) {
     try {
+      console.log(`SettingsService.set called with key: ${key}, value: ${value}`);
+      
       // Find existing setting or default definition
       const existing = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
       const defaultSetting = DEFAULT_SETTINGS.find(s => s.key === key);
+      
+      console.log(`Existing setting found: ${existing.length > 0}`);
+      console.log(`Default setting found: ${!!defaultSetting}`);
       
       let stringValue = String(value);
       if (typeof value === 'object') {
@@ -952,14 +682,17 @@ export class SettingsService {
       
       if (existing.length > 0) {
         // Update existing
+        console.log(`Updating existing setting: ${key} = ${stringValue}`);
         await db.update(settings)
           .set({ 
             value: stringValue,
             updatedAt: new Date().toISOString()
           })
           .where(eq(settings.key, key));
+        console.log(`Setting updated successfully`);
       } else if (defaultSetting) {
         // Create from default definition
+        console.log(`Creating new setting from default: ${key} = ${stringValue}`);
         await db.insert(settings).values({
           key,
           value: stringValue,
@@ -972,8 +705,10 @@ export class SettingsService {
           isPublic: defaultSetting.isPublic || false,
           sortOrder: defaultSetting.sortOrder || 0
         });
+        console.log(`Setting created successfully`);
       } else {
         // Create new custom setting
+        console.log(`Creating new custom setting: ${key} = ${stringValue}`);
         await db.insert(settings).values({
           key,
           value: stringValue,
@@ -982,11 +717,13 @@ export class SettingsService {
           label: key,
           isPublic: false
         });
+        console.log(`Custom setting created successfully`);
       }
       
+      console.log(`SettingsService.set completed successfully for: ${key}`);
       return { success: true };
     } catch (error) {
-      console.error('Error setting value:', error);
+      console.error(`Error setting value for ${key}:`, error);
       return { success: false, error: String(error) };
     }
   }
@@ -1009,10 +746,15 @@ export class SettingsService {
   // Initialize default settings
   static async initializeDefaults() {
     try {
+      console.log('Initializing default settings...');
+      let createdCount = 0;
+      let updatedCount = 0;
+      
       for (const setting of DEFAULT_SETTINGS) {
         const existing = await db.select().from(settings).where(eq(settings.key, setting.key)).limit(1);
         
         if (existing.length === 0) {
+          // Create new setting
           await db.insert(settings).values({
             key: setting.key,
             value: setting.value,
@@ -1025,10 +767,33 @@ export class SettingsService {
             isPublic: setting.isPublic || false,
             sortOrder: setting.sortOrder || 0
           });
+          createdCount++;
+          console.log(`Created setting: ${setting.key}`);
+        } else {
+          // Update existing setting with default values if needed
+          const existingSetting = existing[0];
+          if (!existingSetting.defaultValue || !existingSetting.label || !existingSetting.category) {
+            await db.update(settings)
+              .set({
+                defaultValue: setting.defaultValue,
+                label: setting.label,
+                description: setting.description,
+                category: setting.category,
+                type: setting.type,
+                isRequired: setting.isRequired || false,
+                isPublic: setting.isPublic || false,
+                sortOrder: setting.sortOrder || 0,
+                updatedAt: new Date().toISOString()
+              })
+              .where(eq(settings.key, setting.key));
+            updatedCount++;
+            console.log(`Updated setting: ${setting.key}`);
+          }
         }
       }
       
-      return { success: true };
+      console.log(`Settings initialization completed: ${createdCount} created, ${updatedCount} updated`);
+      return { success: true, created: createdCount, updated: updatedCount };
     } catch (error) {
       console.error('Error initializing default settings:', error);
       return { success: false, error: String(error) };
@@ -1070,6 +835,35 @@ export class SettingsService {
       return { success: false, error: 'No default value found' };
     } catch (error) {
       console.error('Error resetting setting:', error);
+      return { success: false, error: String(error) };
+    }
+  }
+
+  // Check if settings table is properly initialized
+  static async checkDatabaseHealth() {
+    try {
+      const result = await db.select().from(settings).limit(1);
+      return { success: true, tableExists: true, recordCount: result.length };
+    } catch (error) {
+      console.error('Settings table health check failed:', error);
+      return { success: false, error: String(error), tableExists: false };
+    }
+  }
+
+  // Reset database (for troubleshooting)
+  static async resetDatabase() {
+    try {
+      console.log('Resetting settings database...');
+      
+      // Delete all settings
+      await db.delete(settings);
+      
+      // Reinitialize with defaults
+      const result = await this.initializeDefaults();
+      
+      return { success: true, message: 'Database reset and reinitialized', ...result };
+    } catch (error) {
+      console.error('Error resetting database:', error);
       return { success: false, error: String(error) };
     }
   }

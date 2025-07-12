@@ -22,13 +22,15 @@ import {
   AlertTriangle,
   TrendingUp,
   TrendingDown,
-  DollarSign,
+  Coins,
   Activity,
   BarChart3,
-  XCircle
+  XCircle,
+  Printer
 } from 'lucide-react';
 import { formatCurrency, formatNumber } from '../utils/formatters';
 import { renderCurrency, renderDate, renderStock, renderStatus } from '../utils/renderers';
+import { useSettingsCache } from '../hooks/useSettingsCache';
 
 // Enhanced Product interface
 interface Product {
@@ -54,10 +56,14 @@ interface Product {
   price?: number;
   stock?: number;
   lowStockThreshold?: number;
+  barcode?: string; // Added for printing label
 }
 
 export default function ProductsPage() {
   const { t } = useTranslation();
+  
+  // Use settings cache
+  const settingsCache = useSettingsCache();
   
   // State management
   const [products, setProducts] = useState<Product[]>([]);
@@ -305,7 +311,7 @@ export default function ProductsPage() {
       {
         label: t('stats.totalValue', 'Total Inventory Value'),
         value: totalValue,
-        icon: DollarSign,
+        icon: Coins,
         color: 'text-purple-600',
         format: 'currency' as const
       },
@@ -570,6 +576,36 @@ export default function ProductsPage() {
     }
   }, [products, categories, units]);
 
+  // Add print label action for table/list view
+  const printLabelAction: Action<Product> = {
+    label: t('products.printLabel', 'Print Label'),
+    icon: Printer,
+    onClick: async (product) => {
+      try {
+        // Get printer settings from cache
+        const printerName = settingsCache.getSetting('printer.printerName') || 'Microsoft Print to PDF';
+        
+        const result = await window.printer.printProductLabel({
+          name: product.name,
+          price: product.sellingPrice,
+          sku: product.sku,
+          barcode: product.barcode,
+          stock: product.currentStock,
+          category: product.category?.name,
+          printerName: printerName // Use printer from cache
+        });
+        if (result.success) {
+          toast.success(t('products.labelPrinted', 'Label printed successfully'));
+        } else {
+          toast.error(result.error || t('products.labelPrintFailed', 'Failed to print label'));
+        }
+      } catch (error) {
+        console.error('Print label failed:', error);
+        toast.error(t('products.labelPrintFailed', 'Failed to print label'));
+      }
+    }
+  };
+
   // Custom card renderer for products
   const cardRenderer = (product: Product) => (
     <div className="space-y-3">
@@ -609,6 +645,36 @@ export default function ProductsPage() {
       {product.description && (
         <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
       )}
+      <button
+        className="mt-2 flex items-center gap-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded shadow text-sm"
+        onClick={async () => {
+          try {
+            // Get printer settings from cache
+            const printerName = settingsCache.getSetting('printer.printerName') || 'Microsoft Print to PDF';
+            
+            const result = await window.printer.printProductLabel({
+              name: product.name,
+              price: product.sellingPrice,
+              sku: product.sku,
+              barcode: product.barcode,
+              stock: product.currentStock,
+              category: product.category?.name,
+              printerName: printerName // Use printer from cache
+            });
+            if (result.success) {
+              toast.success(t('products.labelPrinted', 'Label printed successfully'));
+            } else {
+              toast.error(result.error || t('products.labelPrintFailed', 'Failed to print label'));
+            }
+          } catch (error) {
+            console.error('Print label failed:', error);
+            toast.error(t('products.labelPrintFailed', 'Failed to print label'));
+          }
+        }}
+      >
+        <Printer className="w-4 h-4" />
+        {t('products.printLabel', 'Print Label')}
+      </button>
     </div>
   );
 
@@ -685,6 +751,7 @@ export default function ProductsPage() {
       refreshInterval={60000}
       preserveSelection={false}
       density="comfortable"
+      customActions={[printLabelAction]}
     />
   );
 } 

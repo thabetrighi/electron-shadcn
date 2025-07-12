@@ -10,7 +10,7 @@ import {
   createCurrencyField,
   createEmailField,
 } from "./FormModal";
-import { Package, Users, DollarSign } from "lucide-react";
+import { Package, Users, Coins } from "lucide-react";
 import toast from "react-hot-toast";
 
 // =============================================
@@ -37,7 +37,7 @@ export function EnhancedProductsPage() {
       key: "price",
       header: "Price",
       sortable: true,
-      render: (value) => `$${value.toFixed(2)}`,
+      render: (value) => `دج${value.toFixed(2)}`,
       type: "currency",
       align: "right",
     },
@@ -121,7 +121,7 @@ export function EnhancedProductsPage() {
     {
       label: "Total Value",
       value: products.reduce((sum, p) => sum + p.price * p.stock, 0),
-      icon: DollarSign,
+      icon: Coins,
       color: "text-green-600",
       format: "currency",
     },

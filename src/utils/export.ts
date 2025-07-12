@@ -431,8 +431,8 @@ export async function printReceipt(
           <div class="item">
             <div class="item-name">${item.productName}</div>
             <div class="item-details">
-              <span>${item.quantity} x $${item.unitPrice.toFixed(2)}</span>
-              <span>$${item.totalPrice.toFixed(2)}</span>
+                              <span>${item.quantity} x دج${item.unitPrice.toFixed(2)}</span>
+              <span>دج${item.totalPrice.toFixed(2)}</span>
             </div>
           </div>
         `).join('')}
@@ -441,34 +441,34 @@ export async function printReceipt(
       <div class="totals">
         <div class="total-line">
           <span>Subtotal:</span>
-          <span>$${orderData.subtotal.toFixed(2)}</span>
+          <span>دج${orderData.subtotal.toFixed(2)}</span>
         </div>
         ${orderData.discountAmount > 0 ? `
           <div class="total-line">
             <span>Discount:</span>
-            <span>-$${orderData.discountAmount.toFixed(2)}</span>
+            <span>-دج${orderData.discountAmount.toFixed(2)}</span>
           </div>
         ` : ''}
         ${orderData.taxAmount > 0 ? `
           <div class="total-line">
             <span>Tax:</span>
-            <span>$${orderData.taxAmount.toFixed(2)}</span>
+            <span>دج${orderData.taxAmount.toFixed(2)}</span>
           </div>
         ` : ''}
         <div class="total-line total-final">
           <span>TOTAL:</span>
-          <span>$${orderData.totalAmount.toFixed(2)}</span>
+          <span>دج${orderData.totalAmount.toFixed(2)}</span>
         </div>
         ${orderData.paidAmount ? `
           <div class="total-line">
             <span>Paid:</span>
-            <span>$${orderData.paidAmount.toFixed(2)}</span>
+            <span>دج${orderData.paidAmount.toFixed(2)}</span>
           </div>
         ` : ''}
         ${orderData.changeAmount > 0 ? `
           <div class="total-line">
             <span>Change:</span>
-            <span>$${orderData.changeAmount.toFixed(2)}</span>
+            <span>دج${orderData.changeAmount.toFixed(2)}</span>
           </div>
         ` : ''}
       </div>
@@ -518,7 +518,7 @@ export function createExporter<T>(
 }
 
 // Enhanced currency formatting with dynamic currency support
-export const formatCurrency = (amount: number, currency = 'USD', locale?: string) => {
+export const formatCurrency = (amount: number, currency = 'DZD', locale?: string) => {
   try {
     return new Intl.NumberFormat(locale || navigator.language || 'en-US', {
       style: 'currency',
@@ -527,13 +527,8 @@ export const formatCurrency = (amount: number, currency = 'USD', locale?: string
       maximumFractionDigits: 2
     }).format(amount || 0);
   } catch (error) {
-    // Fallback to USD if currency is not supported
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount || 0);
+    // Fallback to DZD if currency is not supported
+    return `دج${(amount || 0).toFixed(2)}`;
   }
 };
 

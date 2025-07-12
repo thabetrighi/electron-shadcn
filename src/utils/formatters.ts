@@ -4,10 +4,10 @@
 export const getCurrencySettings = () => {
   const root = document.documentElement;
   return {
-    symbol: root.style.getPropertyValue('--currency-symbol') || '$',
+    symbol: root.style.getPropertyValue('--currency-symbol') || 'دج',
     position: root.style.getPropertyValue('--currency-position') || 'before',
     decimals: parseInt(root.style.getPropertyValue('--currency-decimals') || '2'),
-    code: root.style.getPropertyValue('--currency-code') || 'USD'
+    code: root.style.getPropertyValue('--currency-code') || 'DZD'
   };
 };
 
@@ -15,7 +15,7 @@ export const getCurrencySettings = () => {
 export const formatCurrency = (amount: number | null | undefined): string => {
   // Handle null, undefined, or invalid values
   if (amount === null || amount === undefined || isNaN(amount)) {
-    return '$0.00';
+    return 'دج0.00';
   }
   
   const settings = getCurrencySettings();

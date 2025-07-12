@@ -17,7 +17,7 @@ export interface GlobalSettings {
 
 // Default settings
 const DEFAULT_GLOBAL_SETTINGS: GlobalSettings = {
-  currency_code: 'USD',
+  currency_code: 'DZD',
   currency_precision: 2,
   locale: 'en-US',
   number_format: 'decimal',
