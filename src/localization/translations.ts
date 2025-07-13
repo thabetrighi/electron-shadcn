@@ -38,6 +38,11 @@ export const translations = {
       // Common Terms
       none: "None",
       all: "All",
+
+      // Common
+      common: {
+        none: "None",
+      },
       any: "Any",
       yes: "Yes",
       no: "No",
@@ -192,6 +197,28 @@ export const translations = {
         downloading: "Downloading...",
       },
 
+      // Filters
+      filters: {
+        dateRange: "Date Range",
+        status: "Status",
+        category: "Category",
+        priceRange: "Price Range",
+        stockLevel: "Stock Level",
+        outOfStock: "Out of Stock",
+        lowStock: "Low Stock",
+        inStock: "In Stock",
+      },
+
+      // Actions
+      actions: {
+        view: "View",
+        edit: "Edit",
+        duplicate: "Duplicate",
+        delete: "Delete",
+        create: "Create",
+        cancel: "Cancel",
+      },
+
       // Table Filters
       tableFilters: {
         filters: "Filters",
@@ -271,6 +298,8 @@ export const translations = {
         showLess: "Show Less",
         show: "Show",
         perPage: "per page",
+        goToPreviousPage: "Go to previous page",
+        goToNextPage: "Go to next page",
       },
 
       // Navigation
@@ -376,6 +405,10 @@ export const translations = {
         descriptionPlaceholder: "Enter product description (optional)",
         skuTooltip: "Stock Keeping Unit - unique identifier",
         lowStockHelp: "Alert when stock falls below this level",
+        printLabel: "Print Label",
+        noProducts: "No products found",
+        addProduct: "Add Product",
+        deleteProduct: "Delete Product",
       },
 
       // Categories
@@ -562,6 +595,16 @@ export const translations = {
         totalItems: "Total Items",
         cartEmpty: "Cart is empty",
         addItemsToCart: "Add items to cart to proceed",
+        addProductsHint: "Add products by clicking or drag & drop here",
+        dropProductHere: "Drop product here!",
+        releaseToAdd: "Release to add to cart",
+        tryAdjustingSearch: "Try adjusting your search or category filter",
+        checkoutAndPrint: "Checkout & Print",
+        itemName: "Item Name",
+        enterItemName: "Enter item name",
+        pricePlaceholder: "0.00",
+        quantityPlaceholder: "1",
+        optionalDescription: "Optional description",
         printReceipt: "Print Receipt",
         emailReceipt: "Email Receipt",
         taxIncluded: "Tax Included",
@@ -741,6 +784,13 @@ export const translations = {
         filtered: "Filtered",
         visible: "Visible",
         hidden: "Hidden",
+        true: "True",
+        false: "False",
+        totalRevenue: "Total Revenue",
+        avgOrderValue: "Average Order Value",
+        confirmedOrders: "Confirmed Orders",
+        deliveredOrders: "Delivered Orders",
+        completed: "Completed",
       },
 
       // Bulk Actions
@@ -836,6 +886,23 @@ export const translations = {
       order: "Order",
       setting: "Setting",
       report: "Report",
+
+      // Standalone Keys
+      noProducts: "No products found",
+      addProduct: "Add Product",
+      deleteProduct: "Delete Product",
+      noCategories: "No categories found",
+      addCategory: "Add Category",
+      deleteCategory: "Delete Category",
+      noUnits: "No units found",
+      addUnit: "Add Unit",
+      deleteUnit: "Delete Unit",
+      noUsers: "No users found",
+      addUser: "Add User",
+      deleteUser: "Delete User",
+      noOrders: "No orders found",
+      addOrder: "Add Order",
+      deleteOrder: "Delete Order",
 
       // Empty States
       emptyState: {
@@ -971,6 +1038,11 @@ export const translations = {
       // Common Terms
       none: "Aucun",
       all: "Tous",
+
+      // Common
+      common: {
+        none: "Aucun",
+      },
       any: "N'importe quel",
       yes: "Oui",
       no: "Non",
@@ -1125,6 +1197,28 @@ export const translations = {
         downloading: "Téléchargement...",
       },
 
+      // Filters
+      filters: {
+        dateRange: "Plage de dates",
+        status: "Statut",
+        category: "Catégorie",
+        priceRange: "Plage de prix",
+        stockLevel: "Niveau de stock",
+        outOfStock: "En rupture de stock",
+        lowStock: "Stock faible",
+        inStock: "En stock",
+      },
+
+      // Actions
+      actions: {
+        view: "Voir",
+        edit: "Modifier",
+        duplicate: "Dupliquer",
+        delete: "Supprimer",
+        create: "Créer",
+        cancel: "Annuler",
+      },
+
       // Table Filters
       tableFilters: {
         filters: "Filtres",
@@ -1204,6 +1298,8 @@ export const translations = {
         showLess: "Afficher moins",
         show: "Afficher",
         perPage: "par page",
+        goToPreviousPage: "Aller à la page précédente",
+        goToNextPage: "Aller à la page suivante",
       },
 
       // Navigation
@@ -1309,6 +1405,10 @@ export const translations = {
         descriptionPlaceholder: "Entrez la description du produit (optionnel)",
         skuTooltip: "Unité de gestion des stocks - identifiant unique",
         lowStockHelp: "Alerte lorsque le stock descend en dessous de ce niveau",
+        printLabel: "Imprimer l'étiquette",
+        noProducts: "Aucun produit trouvé",
+        addProduct: "Ajouter un produit",
+        deleteProduct: "Supprimer le produit",
       },
 
       // Categories
@@ -1495,6 +1595,16 @@ export const translations = {
         totalItems: "Total des articles",
         cartEmpty: "Le panier est vide",
         addItemsToCart: "Ajoutez des articles au panier pour continuer",
+        addProductsHint: "Ajoutez des produits en cliquant ou en glissant-déposant ici",
+        dropProductHere: "Déposez le produit ici !",
+        releaseToAdd: "Relâchez pour ajouter au panier",
+        tryAdjustingSearch: "Essayez d'ajuster votre recherche ou filtre de catégorie",
+        checkoutAndPrint: "Payer et imprimer",
+        itemName: "Nom de l'article",
+        enterItemName: "Entrez le nom de l'article",
+        pricePlaceholder: "0,00",
+        quantityPlaceholder: "1",
+        optionalDescription: "Description optionnelle",
         printReceipt: "Imprimer le reçu",
         emailReceipt: "Envoyer le reçu par email",
         taxIncluded: "Taxe incluse",
@@ -1674,6 +1784,13 @@ export const translations = {
         filtered: "Filtré",
         visible: "Visible",
         hidden: "Masqué",
+        true: "Vrai",
+        false: "Faux",
+        totalRevenue: "Revenu total",
+        avgOrderValue: "Valeur moyenne des commandes",
+        confirmedOrders: "Commandes confirmées",
+        deliveredOrders: "Commandes livrées",
+        completed: "Terminé",
       },
 
       // Bulk Actions
@@ -1769,6 +1886,23 @@ export const translations = {
       order: "Commande",
       setting: "Paramètre",
       report: "Rapport",
+
+      // Standalone Keys
+      noProducts: "Aucun produit trouvé",
+      addProduct: "Ajouter un produit",
+      deleteProduct: "Supprimer le produit",
+      noCategories: "Aucune catégorie trouvée",
+      addCategory: "Ajouter une catégorie",
+      deleteCategory: "Supprimer la catégorie",
+      noUnits: "Aucune unité trouvée",
+      addUnit: "Ajouter une unité",
+      deleteUnit: "Supprimer l'unité",
+      noUsers: "Aucun utilisateur trouvé",
+      addUser: "Ajouter un utilisateur",
+      deleteUser: "Supprimer l'utilisateur",
+      noOrders: "Aucune commande trouvée",
+      addOrder: "Ajouter une commande",
+      deleteOrder: "Supprimer la commande",
 
       // Empty States
       emptyState: {
@@ -1904,6 +2038,11 @@ export const translations = {
       // Common Terms
       none: "لا شيء",
       all: "الكل",
+
+      // Common
+      common: {
+        none: "لا شيء",
+      },
       any: "أي",
       yes: "نعم",
       no: "لا",
@@ -2058,6 +2197,28 @@ export const translations = {
         downloading: "جاري التحميل...",
       },
 
+      // Filters
+      filters: {
+        dateRange: "نطاق التاريخ",
+        status: "الحالة",
+        category: "الفئة",
+        priceRange: "نطاق السعر",
+        stockLevel: "مستوى المخزون",
+        outOfStock: "غير متوفر في المخزون",
+        lowStock: "مخزون منخفض",
+        inStock: "متوفر في المخزون",
+      },
+
+      // Actions
+      actions: {
+        view: "عرض",
+        edit: "تعديل",
+        duplicate: "تكرار",
+        delete: "حذف",
+        create: "إنشاء",
+        cancel: "إلغاء",
+      },
+
       // Table Filters
       tableFilters: {
         filters: "فلاتر",
@@ -2137,6 +2298,8 @@ export const translations = {
         showLess: "عرض أقل",
         show: "عرض",
         perPage: "لكل صفحة",
+        goToPreviousPage: "الذهاب إلى الصفحة السابقة",
+        goToNextPage: "الذهاب إلى الصفحة التالية",
       },
 
       // Navigation
@@ -2242,6 +2405,10 @@ export const translations = {
         descriptionPlaceholder: "أدخل وصف المنتج (اختياري)",
         skuTooltip: "وحدة حفظ المخزون - معرف فريد",
         lowStockHelp: "تنبيه عندما ينخفض المخزون عن هذا المستوى",
+        printLabel: "طباعة التسمية",
+        noProducts: "لا توجد منتجات",
+        addProduct: "إضافة منتج",
+        deleteProduct: "حذف المنتج",
       },
 
       // Categories
@@ -2428,6 +2595,16 @@ export const translations = {
         totalItems: "إجمالي العناصر",
         cartEmpty: "العربة فارغة",
         addItemsToCart: "أضف عناصر إلى العربة للمتابعة",
+        addProductsHint: "أضف المنتجات بالنقر أو السحب والإفلات هنا",
+        dropProductHere: "أفلت المنتج هنا!",
+        releaseToAdd: "أفلت لإضافة إلى العربة",
+        tryAdjustingSearch: "حاول تعديل البحث أو فلتر الفئة",
+        checkoutAndPrint: "الدفع والطباعة",
+        itemName: "اسم العنصر",
+        enterItemName: "أدخل اسم العنصر",
+        pricePlaceholder: "0.00",
+        quantityPlaceholder: "1",
+        optionalDescription: "وصف اختياري",
         printReceipt: "طباعة الإيصال",
         emailReceipt: "إرسال الإيصال بالبريد",
         taxIncluded: "شامل الضريبة",
@@ -2607,6 +2784,13 @@ export const translations = {
         filtered: "مفلتر",
         visible: "مرئي",
         hidden: "مخفي",
+        true: "صحيح",
+        false: "خطأ",
+        totalRevenue: "إجمالي الإيرادات",
+        avgOrderValue: "متوسط قيمة الطلب",
+        confirmedOrders: "الطلبات المؤكدة",
+        deliveredOrders: "الطلبات المسلمة",
+        completed: "مكتمل",
       },
 
       // Bulk Actions
@@ -2702,6 +2886,23 @@ export const translations = {
       order: "طلب",
       setting: "إعداد",
       report: "تقرير",
+
+      // Standalone Keys
+      noProducts: "لا توجد منتجات",
+      addProduct: "إضافة منتج",
+      deleteProduct: "حذف المنتج",
+      noCategories: "لا توجد فئات",
+      addCategory: "إضافة فئة",
+      deleteCategory: "حذف الفئة",
+      noUnits: "لا توجد وحدات",
+      addUnit: "إضافة وحدة",
+      deleteUnit: "حذف الوحدة",
+      noUsers: "لا يوجد مستخدمون",
+      addUser: "إضافة مستخدم",
+      deleteUser: "حذف المستخدم",
+      noOrders: "لا توجد طلبات",
+      addOrder: "إضافة طلب",
+      deleteOrder: "حذف الطلب",
 
       // Empty States
       emptyState: {
