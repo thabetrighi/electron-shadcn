@@ -5,14 +5,11 @@ import { Badge } from '../components/ui/badge';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '../utils/formatters';
-import { useSettingsCache } from '../hooks/useSettingsCache';
 import {
   ShoppingCart,
   Package,
   Users,
   Coins,
-  TrendingUp,
-  TrendingDown,
   AlertTriangle,
   Eye,
   Plus,
@@ -22,9 +19,7 @@ import {
   Clock,
   Star,
   Target,
-  BarChart3,
-  PieChart,
-  Activity
+  BarChart3
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -106,7 +101,7 @@ export default function HomePage() {
       const users = usersResponse.data || [];
 
       // Calculate real statistics
-      const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+      const totalRevenue = orders.reduce((sum: number, order: any) => sum + (order.total || 0), 0);
       const totalOrders = orders.length;
       const totalProducts = products.length;
       const totalUsers = users.length;
@@ -114,30 +109,30 @@ export default function HomePage() {
       // Calculate today's orders
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const todayOrders = orders.filter(order => {
+      const todayOrders = orders.filter((order: any) => {
         const orderDate = new Date(order.createdAt || order.orderDate);
         return orderDate >= today;
       }).length;
 
       // Calculate pending orders
-      const pendingOrders = orders.filter(order => order.status === 'pending').length;
+      const pendingOrders = orders.filter((order: any) => order.status === 'pending').length;
 
       // Calculate low stock items (less than 10 items)
-      const lowStockItems = products.filter(product => 
+      const lowStockItems = products.filter((product: any) => 
         (product.currentStock || 0) < 10 && product.trackStock
       ).length;
 
       // Calculate featured products (products with high sales or low stock)
-      const featuredProducts = products.filter(product => 
+      const featuredProducts = products.filter((product: any) => 
         (product.currentStock || 0) < 20 || (product.sellingPrice || 0) > 1000
       ).length;
 
       // Get recent orders (last 5 orders)
       const recentOrdersData = await Promise.all(
         orders
-          .sort((a, b) => new Date(b.createdAt || b.orderDate).getTime() - new Date(a.createdAt || a.orderDate).getTime())
+          .sort((a: any, b: any) => new Date(b.createdAt || b.orderDate).getTime() - new Date(a.createdAt || a.orderDate).getTime())
           .slice(0, 5)
-          .map(async order => {
+          .map(async (order: any) => {
             // Get order items count
             const itemsResponse = await window.database.orderItems.getByOrderId(order.id);
             const itemsCount = itemsResponse.success ? (itemsResponse.data?.length || 0) : 0;
@@ -155,15 +150,15 @@ export default function HomePage() {
 
       // Get top products by revenue and stock
       const topProductsData = products
-        .filter(product => product.isActive)
-        .sort((a, b) => {
+        .filter((product: any) => product.isActive)
+        .sort((a: any, b: any) => {
           // Sort by selling price first, then by stock level
           const priceDiff = (b.sellingPrice || 0) - (a.sellingPrice || 0);
           if (priceDiff !== 0) return priceDiff;
           return (b.currentStock || 0) - (a.currentStock || 0);
         })
         .slice(0, 4)
-        .map(product => ({
+        .map((product: any) => ({
           id: product.id,
           name: product.name,
           sales: Math.floor(Math.random() * 50) + 10, // Mock sales data for now
@@ -172,14 +167,14 @@ export default function HomePage() {
         }));
 
       // Calculate change percentages based on real data
-      const lastMonthOrders = orders.filter(order => {
+      const lastMonthOrders = orders.filter((order: any) => {
         const orderDate = new Date(order.createdAt || order.orderDate);
         const lastMonth = new Date();
         lastMonth.setMonth(lastMonth.getMonth() - 1);
         return orderDate >= lastMonth;
       });
       
-      const lastMonthRevenue = lastMonthOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+      const lastMonthRevenue = lastMonthOrders.reduce((sum: number, order: any) => sum + (order.total || 0), 0);
       const revenueChange = totalRevenue > 0 ? ((totalRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 : 0;
       const ordersChange = totalOrders > 0 ? ((totalOrders - lastMonthOrders.length) / lastMonthOrders.length) * 100 : 0;
       const productsChange = 5.1; // Mock data for now
@@ -290,12 +285,6 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const { settingsCache } = useSettingsCache();
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString();
   };
 
   const getStatusColor = (status: string) => {

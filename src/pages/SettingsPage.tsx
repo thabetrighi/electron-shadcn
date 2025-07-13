@@ -6,7 +6,6 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
-import { Checkbox } from '../components/ui/checkbox';
 import { Switch } from '../components/ui/switch';
 import { Separator } from '../components/ui/separator';
 import { useSettings } from '../hooks/useSettings';
@@ -28,19 +27,11 @@ import {
   Globe,
   ShoppingCart,
   FileText,
-  Bell,
-  Shield,
   Database,
   Wifi,
-  HardDrive,
-  Maximize2,
-  Ruler,
-  Image,
-  Layout,
   Zap,
   Eye,
-  Type,
-  Clock
+  Type
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import SettingsTest from '../components/SettingsTest';
@@ -62,7 +53,6 @@ export default function SettingsPage() {
   const [loadingPrinters, setLoadingPrinters] = useState(false);
 
   // Get printer capabilities and display them
-  const [printerCapabilities, setPrinterCapabilities] = useState<any>(null);
   const [selectedPrinterInfo, setSelectedPrinterInfo] = useState<any>(null);
 
   // Use settings cache
@@ -73,7 +63,6 @@ export default function SettingsPage() {
     try {
       const result = await (window as any).printer.getPrinterStatus(printerName);
       if (result.success) {
-        setPrinterCapabilities(result.data.capabilities);
         setSelectedPrinterInfo(result.data);
       }
     } catch (error) {
@@ -86,7 +75,6 @@ export default function SettingsPage() {
     if (formData['printer.printerName'] && formData['printer.printerName'] !== 'none') {
       getPrinterCapabilities(formData['printer.printerName']);
     } else {
-      setPrinterCapabilities(null);
       setSelectedPrinterInfo(null);
     }
   }, [formData['printer.printerName']]);
@@ -111,27 +99,31 @@ export default function SettingsPage() {
           
         case 'theme_mode':
           // Apply theme change immediately
-          const theme = value === 'system' ? 
-            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : 
-            value;
-          document.documentElement.classList.remove('light', 'dark');
-          document.documentElement.classList.add(theme);
-          localStorage.setItem('theme', value);
-          toast.success(`Theme changed to ${value}`, {
-            icon: '🎨',
-            duration: 2000
-          });
+          {
+            const theme = value === 'system' ? 
+              (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : 
+              value;
+            document.documentElement.classList.remove('light', 'dark');
+            document.documentElement.classList.add(theme);
+            localStorage.setItem('theme', value);
+            toast.success(`Theme changed to ${value}`, {
+              icon: '🎨',
+              duration: 2000
+            });
+          }
           break;
           
         case 'font_size':
           // Apply font size change immediately
-          const fontSizes = { small: '14px', medium: '16px', large: '18px' };
-          const newFontSize = fontSizes[value as keyof typeof fontSizes] || '16px';
-          document.documentElement.style.fontSize = newFontSize;
-          toast.success(`Font size changed to ${value} (${newFontSize})`, {
-            icon: '🔤',
-            duration: 2000
-          });
+          {
+            const fontSizes = { small: '14px', medium: '16px', large: '18px' };
+            const newFontSize = fontSizes[value as keyof typeof fontSizes] || '16px';
+            document.documentElement.style.fontSize = newFontSize;
+            toast.success(`Font size changed to ${value} (${newFontSize})`, {
+              icon: '🔤',
+              duration: 2000
+            });
+          }
           break;
           
         case 'currency_code':
@@ -139,133 +131,147 @@ export default function SettingsPage() {
         case 'currency_position':
         case 'decimal_places':
           // Show currency format preview and create CSS custom properties for the app
-          const currentSymbol = key === 'currency_symbol' ? value : (formData.currency_symbol || '$');
-          const currentPosition = key === 'currency_position' ? value : (formData.currency_position || 'before');
-          const currentDecimals = key === 'decimal_places' ? parseInt(value) : parseInt(formData.decimal_places || '2');
-          const currentCode = key === 'currency_code' ? value : (formData.currency_code || 'USD');
-          
-          // Apply currency settings to CSS custom properties for global use
-          document.documentElement.style.setProperty('--currency-symbol', currentSymbol);
-          document.documentElement.style.setProperty('--currency-position', currentPosition);
-          document.documentElement.style.setProperty('--currency-decimals', currentDecimals.toString());
-          document.documentElement.style.setProperty('--currency-code', currentCode);
-          
-          // Create a sample formatted currency value
-          const sample = 1234.56;
-          let formatted = '';
-          if (currentPosition === 'before') {
-            formatted = `${currentSymbol}${sample.toFixed(currentDecimals)}`;
-          } else if (currentPosition === 'after') {
-            formatted = `${sample.toFixed(currentDecimals)}${currentSymbol}`;
-          } else if (currentPosition === 'before_space') {
-            formatted = `${currentSymbol} ${sample.toFixed(currentDecimals)}`;
-          } else if (currentPosition === 'after_space') {
-            formatted = `${sample.toFixed(currentDecimals)} ${currentSymbol}`;
+          {
+            const currentSymbol = key === 'currency_symbol' ? value : (formData.currency_symbol || '$');
+            const currentPosition = key === 'currency_position' ? value : (formData.currency_position || 'before');
+            const currentDecimals = key === 'decimal_places' ? parseInt(value) : parseInt(formData.decimal_places || '2');
+            const currentCode = key === 'currency_code' ? value : (formData.currency_code || 'USD');
+            
+            // Apply currency settings to CSS custom properties for global use
+            document.documentElement.style.setProperty('--currency-symbol', currentSymbol);
+            document.documentElement.style.setProperty('--currency-position', currentPosition);
+            document.documentElement.style.setProperty('--currency-decimals', currentDecimals.toString());
+            document.documentElement.style.setProperty('--currency-code', currentCode);
+            
+            // Create a sample formatted currency value
+            const sample = 1234.56;
+            let formatted = '';
+            if (currentPosition === 'before') {
+              formatted = `${currentSymbol}${sample.toFixed(currentDecimals)}`;
+            } else if (currentPosition === 'after') {
+              formatted = `${sample.toFixed(currentDecimals)}${currentSymbol}`;
+            } else if (currentPosition === 'before_space') {
+              formatted = `${currentSymbol} ${sample.toFixed(currentDecimals)}`;
+            } else if (currentPosition === 'after_space') {
+              formatted = `${sample.toFixed(currentDecimals)} ${currentSymbol}`;
+            }
+            
+            // Show preview with currency settings applied
+            const previewElement = document.createElement('div');
+            previewElement.className = 'currency-preview';
+            previewElement.innerHTML = `
+              <strong>💰 Currency Preview:</strong> ${formatted}
+              <br><small>Code: ${currentCode} | Decimals: ${currentDecimals}</small>
+            `;
+            
+            toast.success(`Currency settings updated`, {
+              icon: '💰',
+              duration: 4000
+            });
           }
-          
-          // Show preview with currency settings applied
-          const previewElement = document.createElement('div');
-          previewElement.className = 'currency-preview';
-          previewElement.innerHTML = `
-            <strong>💰 Currency Preview:</strong> ${formatted}
-            <br><small>Code: ${currentCode} | Decimals: ${currentDecimals}</small>
-          `;
-          
-          toast.success(`Currency settings updated`, {
-            icon: '💰',
-            duration: 4000
-          });
           break;
           
         case 'compact_mode':
           // Apply compact mode immediately
-          if (value === 'true' || value === true) {
-            document.documentElement.classList.add('compact-mode');
-            document.documentElement.style.setProperty('--spacing-scale', '0.75');
-          } else {
-            document.documentElement.classList.remove('compact-mode');
-            document.documentElement.style.setProperty('--spacing-scale', '1');
+          {
+            if (value === 'true' || value === true) {
+              document.documentElement.classList.add('compact-mode');
+              document.documentElement.style.setProperty('--spacing-scale', '0.75');
+            } else {
+              document.documentElement.classList.remove('compact-mode');
+              document.documentElement.style.setProperty('--spacing-scale', '1');
+            }
+            toast.success(`Compact mode ${(value === 'true' || value === true) ? 'enabled' : 'disabled'}`, {
+              icon: (value === 'true' || value === true) ? '📦' : '🏠',
+              duration: 2000
+            });
           }
-          toast.success(`Compact mode ${(value === 'true' || value === true) ? 'enabled' : 'disabled'}`, {
-            icon: (value === 'true' || value === true) ? '📦' : '🏠',
-            duration: 2000
-          });
           break;
           
         case 'sidebar_position':
           // Apply sidebar position change
-          document.documentElement.style.setProperty('--sidebar-position', value);
-          document.documentElement.setAttribute('data-sidebar-position', value);
-          toast.success(`Sidebar position changed to ${value}`, {
-            icon: '📍',
-            duration: 2000
-          });
+          {
+            document.documentElement.style.setProperty('--sidebar-position', value);
+            document.documentElement.setAttribute('data-sidebar-position', value);
+            toast.success(`Sidebar position changed to ${value}`, {
+              icon: '📍',
+              duration: 2000
+            });
+          }
           break;
           
         case 'color_scheme':
           // Apply color scheme change with proper CSS custom properties
-          const colorSchemes = {
-            blue: { primary: '#3b82f6', secondary: '#1e40af', accent: '#60a5fa' },
-            green: { primary: '#10b981', secondary: '#059669', accent: '#34d399' },
-            purple: { primary: '#8b5cf6', secondary: '#7c3aed', accent: '#a78bfa' },
-            red: { primary: '#ef4444', secondary: '#dc2626', accent: '#f87171' },
-            orange: { primary: '#f59e0b', secondary: '#d97706', accent: '#fbbf24' },
-            teal: { primary: '#14b8a6', secondary: '#0d9488', accent: '#5eead4' },
-            pink: { primary: '#ec4899', secondary: '#db2777', accent: '#f472b6' },
-            gray: { primary: '#6b7280', secondary: '#4b5563', accent: '#9ca3af' }
-          };
-          
-          const scheme = colorSchemes[value as keyof typeof colorSchemes];
-          if (scheme) {
-            document.documentElement.style.setProperty('--primary', scheme.primary);
-            document.documentElement.style.setProperty('--primary-dark', scheme.secondary);
-            document.documentElement.style.setProperty('--accent', scheme.accent);
-            document.documentElement.setAttribute('data-color-scheme', value);
+          {
+            const colorSchemes = {
+              blue: { primary: '#3b82f6', secondary: '#1e40af', accent: '#60a5fa' },
+              green: { primary: '#10b981', secondary: '#059669', accent: '#34d399' },
+              purple: { primary: '#8b5cf6', secondary: '#7c3aed', accent: '#a78bfa' },
+              red: { primary: '#ef4444', secondary: '#dc2626', accent: '#f87171' },
+              orange: { primary: '#f59e0b', secondary: '#d97706', accent: '#fbbf24' },
+              teal: { primary: '#14b8a6', secondary: '#0d9488', accent: '#5eead4' },
+              pink: { primary: '#ec4899', secondary: '#db2777', accent: '#f472b6' },
+              gray: { primary: '#6b7280', secondary: '#4b5563', accent: '#9ca3af' }
+            };
             
-            toast.success(`Color scheme changed to ${value}`, {
-              icon: '🎨',
-              duration: 2000
-            });
+            const scheme = colorSchemes[value as keyof typeof colorSchemes];
+            if (scheme) {
+              document.documentElement.style.setProperty('--primary', scheme.primary);
+              document.documentElement.style.setProperty('--primary-dark', scheme.secondary);
+              document.documentElement.style.setProperty('--accent', scheme.accent);
+              document.documentElement.setAttribute('data-color-scheme', value);
+              
+              toast.success(`Color scheme changed to ${value}`, {
+                icon: '🎨',
+                duration: 2000
+              });
+            }
           }
           break;
           
         case 'layout_density':
           // Apply layout density changes
-          const densities = {
-            compact: { scale: '0.8', spacing: '0.5rem' },
-            comfortable: { scale: '1', spacing: '1rem' },
-            spacious: { scale: '1.2', spacing: '1.5rem' }
-          };
-          
-          const density = densities[value as keyof typeof densities];
-          if (density) {
-            document.documentElement.style.setProperty('--layout-scale', density.scale);
-            document.documentElement.style.setProperty('--layout-spacing', density.spacing);
-            document.documentElement.setAttribute('data-layout-density', value);
+          {
+            const densities = {
+              compact: { scale: '0.8', spacing: '0.5rem' },
+              comfortable: { scale: '1', spacing: '1rem' },
+              spacious: { scale: '1.2', spacing: '1.5rem' }
+            };
             
-            toast.success(`Layout density changed to ${value}`, {
-              icon: value === 'compact' ? '📦' : value === 'spacious' ? '🏠' : '🎯',
-              duration: 2000
-            });
+            const density = densities[value as keyof typeof densities];
+            if (density) {
+              document.documentElement.style.setProperty('--layout-scale', density.scale);
+              document.documentElement.style.setProperty('--layout-spacing', density.spacing);
+              document.documentElement.setAttribute('data-layout-density', value);
+              
+              toast.success(`Layout density changed to ${value}`, {
+                icon: value === 'compact' ? '📦' : value === 'spacious' ? '🏠' : '🎯',
+                duration: 2000
+              });
+            }
           }
           break;
           
         case 'date_format':
           // Apply date format changes
-          document.documentElement.style.setProperty('--date-format', value);
-          toast.success(`Date format changed to ${value}`, {
-            icon: '📅',
-            duration: 2000
-          });
+          {
+            document.documentElement.style.setProperty('--date-format', value);
+            toast.success(`Date format changed to ${value}`, {
+              icon: '📅',
+              duration: 2000
+            });
+          }
           break;
           
         case 'time_format':
           // Apply time format changes
-          document.documentElement.style.setProperty('--time-format', value);
-          toast.success(`Time format changed to ${value}`, {
-            icon: '🕐',
-            duration: 2000
-          });
+          {
+            document.documentElement.style.setProperty('--time-format', value);
+            toast.success(`Time format changed to ${value}`, {
+              icon: '🕐',
+              duration: 2000
+            });
+          }
           break;
           
         default:
@@ -767,7 +773,7 @@ export default function SettingsPage() {
           { value: 'thermal', label: '🧾 Thermal Printer (Receipt/POS)' },
           { value: 'inkjet', label: '🖨️ Inkjet Printer (Color/Photo)' },
           { value: 'laser', label: '⚡ Laser Printer (Fast/Text)' },
-          { value: 'dot_matrix', label: '📠 Dot Matrix Printer (Multi-copy)' },
+          { value: 'dot_matrix', label: '�� Dot Matrix Printer (Multi-copy)' },
           { value: 'label', label: '🏷️ Label Printer (Barcode/Shipping)' },
           { value: 'wide_format', label: '📐 Wide Format Printer (Posters/Plans)' },
           { value: '3d', label: '🎯 3D Printer' },
@@ -1327,27 +1333,14 @@ export default function SettingsPage() {
       const result = await window.database.settings.updateCurrencyToDZD();
       if (result.success) {
         toast.success(t('settings.currencyUpdated', 'Currency updated to Algerian Dinar (دج)'));
-        refreshSettings();
-        refreshCache();
+        refresh();
+        await settingsCache.refreshCache();
       } else {
         toast.error(t('settings.currencyUpdateError', 'Failed to update currency'));
       }
     } catch (error) {
       console.error('Failed to update currency:', error);
       toast.error(t('settings.currencyUpdateError', 'Failed to update currency'));
-    }
-  };
-
-  // Function to check current currency
-  const checkCurrency = async () => {
-    try {
-      const result = await window.database.settings.checkCurrentCurrency();
-      if (result.success) {
-        console.log('Current currency settings:', result);
-        toast.success(`Current currency: ${result.currencyCode} (${result.currencySymbol})`);
-      }
-    } catch (error) {
-      console.error('Failed to check currency:', error);
     }
   };
 

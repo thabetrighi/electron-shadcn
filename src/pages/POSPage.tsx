@@ -19,7 +19,6 @@ import {
   Minimize2,
   Users,
   Clock,
-  DollarSign,
   Package,
   Trash2,
   Save,

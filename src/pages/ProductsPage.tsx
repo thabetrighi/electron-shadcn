@@ -1,34 +1,20 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrudPageTemplate } from '../components/CrudPageTemplate';
-import { Column, Action, BulkAction, Stats, FilterField } from '../components/AdvancedDataTable';
+import { Column, Action, Stats, FilterField } from '../components/AdvancedDataTable';
 import { FormField, createTextField, createNumberField, createSelectField, createTextareaField, createCurrencyField } from '../components/FormModal';
-import { Badge } from '../components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { toast } from 'react-hot-toast';
 import { exportData } from '../utils/export';
 import { 
   Package, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  Copy, 
-  Download, 
-  Upload, 
-  Archive, 
-  RefreshCw, 
   CheckCircle2, 
-  Clock, 
   AlertTriangle,
-  TrendingUp,
-  TrendingDown,
   Coins,
-  Activity,
-  BarChart3,
   XCircle,
   Printer
 } from 'lucide-react';
-import { formatCurrency, formatNumber } from '../utils/formatters';
+import { formatCurrency } from '../utils/formatters';
 import { renderCurrency, renderDate, renderStock, renderStatus } from '../utils/renderers';
 import { useSettingsCache } from '../hooks/useSettingsCache';
 
@@ -282,11 +268,11 @@ export default function ProductsPage() {
   // Enhanced statistics
   const stats: Stats[] = useMemo(() => {
     const totalProducts = products.length;
-    const activeProducts = products.filter(p => p.isActive === true).length;
-    const lowStockProducts = products.filter(p => p.isLowStock).length;
-    const outOfStockProducts = products.filter(p => p.currentStock <= 0).length;
-    const totalValue = products.reduce((sum, p) => sum + (p.sellingPrice * p.currentStock), 0);
-    const avgPrice = totalProducts > 0 ? products.reduce((sum, p) => sum + p.sellingPrice, 0) / totalProducts : 0;
+    const activeProducts = products.filter((p: Product) => p.isActive === true).length;
+    const lowStockProducts = products.filter((p: Product) => p.isLowStock).length;
+    const outOfStockProducts = products.filter((p: Product) => p.currentStock <= 0).length;
+    const totalValue = products.reduce((sum: number, p: Product) => sum + (p.sellingPrice * p.currentStock), 0);
+    const avgPrice = totalProducts > 0 ? products.reduce((sum: number, p: Product) => sum + p.sellingPrice, 0) / totalProducts : 0;
 
     return [
       {
@@ -302,56 +288,40 @@ export default function ProductsPage() {
         value: activeProducts,
         icon: CheckCircle2,
         color: 'text-green-600',
-        format: 'number' as const,
-        comparison: {
-          value: totalProducts > 0 ? Math.round((activeProducts / totalProducts) * 100) : 0,
-          label: t('stats.ofTotal', 'of total')
-        }
+        format: 'number' as const
       },
       {
-        label: t('stats.totalValue', 'Total Inventory Value'),
-        value: totalValue,
-        icon: Coins,
-        color: 'text-purple-600',
-        format: 'currency' as const
-      },
-      {
-        label: t('stats.avgPrice', 'Average Price'),
-        value: avgPrice,
-        icon: BarChart3,
-        color: 'text-indigo-600',
-        format: 'currency' as const
-      },
-      {
-        label: t('stats.lowStock', 'Low Stock Items'),
+        label: t('stats.lowStock', 'Low Stock'),
         value: lowStockProducts,
         icon: AlertTriangle,
-        color: 'text-yellow-600',
-        format: 'number' as const,
-        clickable: true
+        color: 'text-orange-600',
+        format: 'number' as const
       },
       {
         label: t('stats.outOfStock', 'Out of Stock'),
         value: outOfStockProducts,
         icon: XCircle,
         color: 'text-red-600',
-        format: 'number' as const,
-        clickable: true
+        format: 'number' as const
+      },
+      {
+        label: t('stats.totalValue', 'Total Inventory Value'),
+        value: totalValue,
+        icon: Coins,
+        color: 'text-purple-600',
+        format: 'currency' as const,
+        render: () => formatCurrency(totalValue)
+      },
+      {
+        label: t('stats.avgPrice', 'Average Price'),
+        value: avgPrice,
+        icon: Coins,
+        color: 'text-indigo-600',
+        format: 'currency' as const,
+        render: () => formatCurrency(avgPrice)
       }
     ];
   }, [products, t]);
-
-  // Data transformation for edit modal
-  const transformProductForEdit = (product: Product) => ({
-    ...product,
-    // Transform database fields to form field names
-    price: product.sellingPrice,
-    stock: product.currentStock,
-    lowStockThreshold: product.minStock || 10,
-    // Ensure categoryId and unitId are available
-    categoryId: product.categoryId || product.category?.id || null,
-    unitId: product.unitId || product.unit?.id || null
-  });
 
   // CRUD operations
   const handleAdd = async (formData: Record<string, any>) => {
