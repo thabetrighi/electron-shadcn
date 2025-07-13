@@ -904,6 +904,40 @@ export const translations = {
       addOrder: "Add Order",
       deleteOrder: "Delete Order",
 
+      // Keyboard shortcuts
+      keyboardShortcuts: "Keyboard Shortcuts & Quick Actions",
+      functionKeys: "Function Keys",
+      actionKeys: "Action Keys",
+      toggleViewMode: "Toggle View Mode",
+      toggleFullscreen: "Toggle Fullscreen",
+      focusSearch: "Focus Search",
+      barcodeScan: "Barcode Scan",
+      showAllProducts: "Show All Products",
+      clearCart: "Clear Cart",
+      saveCart: "Save Cart",
+      checkoutAndPrint: "Checkout & Print",
+      clearSearch: "Clear Search",
+      quickCheckout: "Quick Checkout",
+      proTip: "Pro tip: Use drag & drop to add products to cart",
+      gotIt: "Got it!",
+      // Receipt
+      receipt: "Receipt",
+      posSystem: "POS SYSTEM",
+      thankYou: "Thank you for your purchase!",
+      pleaseComeAgain: "Please come again",
+      // Pending carts
+      pendingCarts: "Pending Carts",
+      noPendingCarts: "No Pending Carts",
+      saveYourCurrentCart: "Save your current cart to create pending orders",
+      items: "Items",
+      moreItems: "more items",
+      load: "Load",
+      payAndPrint: "Pay & Print",
+      payNoPrint: "Pay No Print",
+      clearAllPendingCarts: "Clear All Pending Carts",
+      // Direct print test
+      directPrintTest: "Direct Print Test",
+
       // Empty States
       emptyState: {
         description: "Get started by adding your first {{entity}}",
@@ -1904,6 +1938,40 @@ export const translations = {
       addOrder: "Ajouter une commande",
       deleteOrder: "Supprimer la commande",
 
+      // Keyboard shortcuts
+      keyboardShortcuts: "Raccourcis clavier et actions rapides",
+      functionKeys: "Touches de fonction",
+      actionKeys: "Touches d'action",
+      toggleViewMode: "Basculer le mode d'affichage",
+      toggleFullscreen: "Basculer plein écran",
+      focusSearch: "Focus sur la recherche",
+      barcodeScan: "Scan de code-barres",
+      showAllProducts: "Afficher tous les produits",
+      clearCart: "Vider le panier",
+      saveCart: "Sauvegarder le panier",
+      checkoutAndPrint: "Payer et imprimer",
+      clearSearch: "Effacer la recherche",
+      quickCheckout: "Paiement rapide",
+      proTip: "Conseil : Utilisez le glisser-déposer pour ajouter des produits au panier",
+      gotIt: "Compris !",
+      // Receipt
+      receipt: "Reçu",
+      posSystem: "SYSTÈME POS",
+      thankYou: "Merci pour votre achat !",
+      pleaseComeAgain: "Revenez bientôt",
+      // Pending carts
+      pendingCarts: "Paniers en attente",
+      noPendingCarts: "Aucun panier en attente",
+      saveYourCurrentCart: "Sauvegardez votre panier actuel pour créer des commandes en attente",
+      items: "Articles",
+      moreItems: "articles supplémentaires",
+      load: "Charger",
+      payAndPrint: "Payer et imprimer",
+      payNoPrint: "Payer sans imprimer",
+      clearAllPendingCarts: "Effacer tous les paniers en attente",
+      // Direct print test
+      directPrintTest: "Test d'impression directe",
+
       // Empty States
       emptyState: {
         description: "Commencez par ajouter votre premier {{entity}}",
@@ -2903,6 +2971,40 @@ export const translations = {
       noOrders: "لا توجد طلبات",
       addOrder: "إضافة طلب",
       deleteOrder: "حذف الطلب",
+
+      // Keyboard shortcuts
+      keyboardShortcuts: "اختصارات لوحة المفاتيح والإجراءات السريعة",
+      functionKeys: "مفاتيح الوظائف",
+      actionKeys: "مفاتيح الإجراءات",
+      toggleViewMode: "تبديل وضع العرض",
+      toggleFullscreen: "تبديل ملء الشاشة",
+      focusSearch: "تركيز البحث",
+      barcodeScan: "مسح الباركود",
+      showAllProducts: "عرض جميع المنتجات",
+      clearCart: "تفريغ العربة",
+      saveCart: "حفظ العربة",
+      checkoutAndPrint: "الدفع والطباعة",
+      clearSearch: "مسح البحث",
+      quickCheckout: "الدفع السريع",
+      proTip: "نصيحة: استخدم السحب والإفلات لإضافة المنتجات إلى العربة",
+      gotIt: "فهمت!",
+      // Receipt
+      receipt: "الإيصال",
+      posSystem: "نظام نقاط البيع",
+      thankYou: "شكراً لك على الشراء!",
+      pleaseComeAgain: "يرجى العودة مرة أخرى",
+      // Pending carts
+      pendingCarts: "عربات معلقة",
+      noPendingCarts: "لا توجد عربات معلقة",
+      saveYourCurrentCart: "احفظ عربتك الحالية لإنشاء طلبات معلقة",
+      items: "العناصر",
+      moreItems: "عناصر إضافية",
+      load: "تحميل",
+      payAndPrint: "الدفع والطباعة",
+      payNoPrint: "الدفع بدون طباعة",
+      clearAllPendingCarts: "مسح جميع العربات المعلقة",
+      // Direct print test
+      directPrintTest: "اختبار الطباعة المباشرة",
 
       // Empty States
       emptyState: {

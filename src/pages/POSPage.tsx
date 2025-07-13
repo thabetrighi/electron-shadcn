@@ -1837,7 +1837,7 @@ export default function POSPage() {
                     }
                   }}
                   className="h-12 w-12 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 shadow-lg border-0 text-white p-0 transform transition-all duration-200 hover:scale-110 active:scale-95 hover:rotate-3 hover:shadow-xl"
-                  title="Direct Print Test"
+                  title={t('directPrintTest', 'Direct Print Test')}
                 >
                   <Printer className="w-5 h-5" />
               </Button>
@@ -1942,7 +1942,7 @@ export default function POSPage() {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Clock className="w-5 h-5 text-blue-600" />
-                  Pending Carts ({pendingCarts.length})
+                  {t('pendingCarts', 'Pending Carts')} ({pendingCarts.length})
                 </CardTitle>
                 <Button
                   variant="ghost"
@@ -1958,8 +1958,8 @@ export default function POSPage() {
               {pendingCarts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center p-8 text-gray-500">
                   <Clock className="w-12 h-12 mb-4 text-gray-300" />
-                  <p className="text-lg font-medium mb-2">No Pending Carts</p>
-                  <p className="text-sm text-center">Save your current cart to create pending orders</p>
+                  <p className="text-lg font-medium mb-2">{t('noPendingCarts', 'No Pending Carts')}</p>
+                  <p className="text-sm text-center">{t('saveYourCurrentCart', 'Save your current cart to create pending orders')}</p>
                 </div>
               ) : (
                 <div className="max-h-96 overflow-y-auto">
@@ -1970,7 +1970,7 @@ export default function POSPage() {
                           <div className="flex-1">
                             <h4 className="font-semibold text-sm text-gray-900">{pendingCart.name}</h4>
                             <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                              <span>{pendingCart.items.length} items</span>
+                              <span>{pendingCart.items.length} {t('items', 'items')}</span>
                               <span>{new Date(pendingCart.createdAt).toLocaleDateString()}</span>
                               {pendingCart.customerName && (
                                 <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
@@ -1988,7 +1988,7 @@ export default function POSPage() {
                         
                         {/* Items Preview */}
                         <div className="mb-3">
-                          <div className="text-xs text-gray-500 mb-1">Items:</div>
+                          <div className="text-xs text-gray-500 mb-1">{t('items', 'Items')}:</div>
                           <div className="space-y-1">
                             {pendingCart.items.slice(0, 3).map((item, index) => (
                               <div key={index} className="flex items-center justify-between text-xs bg-gray-50 rounded px-2 py-1">
@@ -2002,7 +2002,7 @@ export default function POSPage() {
                             ))}
                             {pendingCart.items.length > 3 && (
                               <div className="text-xs text-gray-400 text-center py-1">
-                                +{pendingCart.items.length - 3} more items
+                                +{pendingCart.items.length - 3} {t('moreItems', 'more items')}
                               </div>
                             )}
                           </div>
@@ -2019,7 +2019,7 @@ export default function POSPage() {
                               }}
                               className="flex-1 h-7 text-xs bg-blue-600 hover:bg-blue-700"
                             >
-                              Load
+                              {t('load', 'Load')}
                             </Button>
                             <Button
                               size="sm"
@@ -2029,7 +2029,7 @@ export default function POSPage() {
                               className="flex-1 h-7 text-xs bg-green-600 hover:bg-green-700"
                             >
                               <CheckCircle2 className="w-3 h-3 mr-1" />
-                              Pay & Print
+                              {t('payAndPrint', 'Pay & Print')}
                             </Button>
                             <Button
                               size="sm"
@@ -2051,7 +2051,7 @@ export default function POSPage() {
                             className="w-full h-6 text-xs border-green-300 text-green-700 hover:bg-green-50"
                           >
                             <Receipt className="w-3 h-3 mr-1" />
-                            Pay No Print
+                            {t('payNoPrint', 'Pay No Print')}
                           </Button>
                         </div>
                       </div>
@@ -2072,7 +2072,7 @@ export default function POSPage() {
                         className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
-                        Clear All Pending Carts
+                        {t('clearAllPendingCarts', 'Clear All Pending Carts')}
                       </Button>
                     </div>
                   )}
@@ -2092,19 +2092,19 @@ export default function POSPage() {
                 <div className="p-2 bg-blue-600 rounded-lg">
                   <Keyboard className="w-5 h-5 text-white" />
                 </div>
-                Keyboard Shortcuts & Quick Actions
+                {t('keyboardShortcuts', 'Keyboard Shortcuts & Quick Actions')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Function Keys */}
                 <div>
-                  <h3 className="font-semibold text-lg mb-3 text-blue-600">Function Keys</h3>
+                  <h3 className="font-semibold text-lg mb-3 text-blue-600">{t('functionKeys', 'Function Keys')}</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">F1</kbd>
-                        <span className="text-sm">Toggle View Mode</span>
+                        <span className="text-sm">{t('toggleViewMode', 'Toggle View Mode')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Grid3X3 className="w-3 h-3" />
@@ -2114,28 +2114,28 @@ export default function POSPage() {
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">F2</kbd>
-                        <span className="text-sm">Toggle Fullscreen</span>
+                        <span className="text-sm">{t('toggleFullscreen', 'Toggle Fullscreen')}</span>
                       </div>
                       <Maximize2 className="w-4 h-4" />
                     </div>
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">F3</kbd>
-                        <span className="text-sm">Focus Search</span>
+                        <span className="text-sm">{t('focusSearch', 'Focus Search')}</span>
                       </div>
                       <Search className="w-4 h-4" />
                     </div>
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">F4</kbd>
-                        <span className="text-sm">Barcode Scan</span>
+                        <span className="text-sm">{t('barcodeScan', 'Barcode Scan')}</span>
                       </div>
                       <Scan className="w-4 h-4" />
                     </div>
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">F5</kbd>
-                        <span className="text-sm">Show All Products</span>
+                        <span className="text-sm">{t('showAllProducts', 'Show All Products')}</span>
                       </div>
                       <Package className="w-4 h-4" />
                     </div>
@@ -2144,26 +2144,26 @@ export default function POSPage() {
 
                 {/* Action Keys */}
                 <div>
-                  <h3 className="font-semibold text-lg mb-3 text-green-600">Action Keys</h3>
+                  <h3 className="font-semibold text-lg mb-3 text-green-600">{t('actionKeys', 'Action Keys')}</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">F8</kbd>
-                        <span className="text-sm">Clear Cart</span>
+                        <span className="text-sm">{t('clearCart', 'Clear Cart')}</span>
                       </div>
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </div>
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">F9</kbd>
-                        <span className="text-sm">Save Cart</span>
+                        <span className="text-sm">{t('saveCart', 'Save Cart')}</span>
                       </div>
                       <Save className="w-4 h-4 text-blue-500" />
                     </div>
                     <div className="flex justify-between items-center p-2 bg-green-50 rounded border border-green-200">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-green-200 rounded text-xs font-mono">F10</kbd>
-                        <span className="text-sm font-semibold">Checkout & Print</span>
+                        <span className="text-sm font-semibold">{t('checkoutAndPrint', 'Checkout & Print')}</span>
                       </div>
                       <Receipt className="w-4 h-4 text-green-600" />
                     </div>
@@ -2171,14 +2171,14 @@ export default function POSPage() {
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">ESC</kbd>
-                        <span className="text-sm">Clear Search</span>
+                        <span className="text-sm">{t('clearSearch', 'Clear Search')}</span>
                       </div>
                       <X className="w-4 h-4" />
                     </div>
                     <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <div className="flex items-center gap-2">
                         <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">Enter</kbd>
-                        <span className="text-sm">Quick Checkout</span>
+                        <span className="text-sm">{t('quickCheckout', 'Quick Checkout')}</span>
                       </div>
                       <Zap className="w-4 h-4 text-yellow-500" />
                     </div>
@@ -2190,13 +2190,13 @@ export default function POSPage() {
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-gray-600 flex items-center gap-2">
                     <Star className="w-4 h-4 text-yellow-500" />
-                    Pro tip: Use drag & drop to add products to cart
+                    {t('proTip', 'Pro tip: Use drag & drop to add products to cart')}
                   </p>
                   <Button 
                     onClick={() => setShowKeyboardHelp(false)} 
                     className="px-6"
                   >
-                    Got it!
+                    {t('gotIt', 'Got it!')}
                   </Button>
                 </div>
               </div>
@@ -2213,7 +2213,7 @@ export default function POSPage() {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Receipt className="w-5 h-5 text-green-600" />
-                  Receipt - {receiptData.orderData.orderNumber}
+                  {t('receipt', 'Receipt')} - {receiptData.orderData.orderNumber}
                 </CardTitle>
                 <Button
                   variant="ghost"
@@ -2229,8 +2229,8 @@ export default function POSPage() {
               <div className="font-mono text-sm space-y-3">
                 {/* Header */}
                 <div className="text-center border-b border-dashed border-gray-300 pb-3">
-                  <div className="font-bold text-lg">POS SYSTEM</div>
-                  <div>Receipt</div>
+                  <div className="font-bold text-lg">{t('posSystem', 'POS SYSTEM')}</div>
+                  <div>{t('receipt', 'Receipt')}</div>
                   <div className="text-xs text-gray-500">
                     {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}
                   </div>
@@ -2238,10 +2238,10 @@ export default function POSPage() {
                 
                 {/* Order Info */}
                 <div className="space-y-1">
-                  <div><strong>Order:</strong> {receiptData.orderData.orderNumber}</div>
-                  <div><strong>Customer:</strong> {receiptData.orderData.customerName || 'Walk-in Customer'}</div>
+                  <div><strong>{t('order', 'Order')}:</strong> {receiptData.orderData.orderNumber}</div>
+                  <div><strong>{t('customer', 'Customer')}:</strong> {receiptData.orderData.customerName || 'Walk-in Customer'}</div>
                   {receiptData.orderData.userAssigned && (
-                    <div><strong>Staff:</strong> {receiptData.orderData.userAssigned}</div>
+                    <div><strong>{t('staff', 'Staff')}:</strong> {receiptData.orderData.userAssigned}</div>
                   )}
                 </div>
                 
@@ -2260,26 +2260,26 @@ export default function POSPage() {
                 {/* Totals */}
                 <div className="border-t border-dashed border-gray-300 pt-3 space-y-1">
                   <div className="flex justify-between">
-                    <div>Subtotal:</div>
+                    <div>{t('subtotal', 'Subtotal')}:</div>
                     <div>{formatCurrency(receiptData.orderData.subtotal)}</div>
                   </div>
                   {receiptData.orderData.taxAmount > 0 && (
                     <div className="flex justify-between">
-                      <div>Tax:</div>
+                      <div>{t('tax', 'Tax')}:</div>
                       <div>{formatCurrency(receiptData.orderData.taxAmount)}</div>
                     </div>
                   )}
                   <div className="flex justify-between font-bold text-lg border-t border-gray-300 pt-2">
-                    <div>TOTAL:</div>
+                    <div>{t('total', 'TOTAL')}:</div>
                     <div>{formatCurrency(receiptData.orderData.totalAmount)}</div>
                   </div>
                 </div>
                 
                 {/* Footer */}
-                <div className="text-center text-xs text-gray-500 pt-3">
-                  <div>Thank you for your purchase!</div>
-                  <div>Please come again</div>
-                </div>
+                                  <div className="text-center text-xs text-gray-500 pt-3">
+                    <div>{t('thankYou', 'Thank you for your purchase!')}</div>
+                    <div>{t('pleaseComeAgain', 'Please come again')}</div>
+                  </div>
               </div>
               
               {/* Actions */}
@@ -2306,13 +2306,13 @@ export default function POSPage() {
                         </head>
                         <body>
                           <div class="header">
-                            <div class="title">POS SYSTEM</div>
-                            <div>Receipt</div>
+                            <div class="title">{t('posSystem', 'POS SYSTEM')}</div>
+                            <div>{t('receipt', 'Receipt')}</div>
                             <div>${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
                           </div>
-                          <div><strong>Order:</strong> ${receiptData.orderData.orderNumber}</div>
-                          <div><strong>Customer:</strong> ${receiptData.orderData.customerName || 'Walk-in Customer'}</div>
-                          ${receiptData.orderData.userAssigned ? `<div><strong>Staff:</strong> ${receiptData.orderData.userAssigned}</div>` : ''}
+                          <div><strong>{t('order', 'Order')}:</strong> ${receiptData.orderData.orderNumber}</div>
+                          <div><strong>{t('customer', 'Customer')}:</strong> ${receiptData.orderData.customerName || 'Walk-in Customer'}</div>
+                          ${receiptData.orderData.userAssigned ? `<div><strong>${t('staff', 'Staff')}:</strong> ${receiptData.orderData.userAssigned}</div>` : ''}
                           <div style="margin: 10px 0;">
                             ${receiptData.cartItems.map(item => `
                               <div class="item">
@@ -2322,24 +2322,24 @@ export default function POSPage() {
                             `).join('')}
                           </div>
                           <div class="totals">
-                            <div class="total-row">
-                              <div>Subtotal:</div>
+                                                        <div class="total-row">
+                              <div>{t('subtotal', 'Subtotal')}:</div>
                               <div>{formatCurrency(receiptData.orderData.subtotal)}</div>
                             </div>
                             ${receiptData.orderData.taxAmount > 0 ? `
                               <div class="total-row">
-                                <div>Tax:</div>
+                                <div>{t('tax', 'Tax')}:</div>
                                 <div>{formatCurrency(receiptData.orderData.taxAmount)}</div>
                               </div>
                             ` : ''}
                             <div class="total-row grand-total">
-                              <div>TOTAL:</div>
-                                                              <div>{formatCurrency(receiptData.orderData.totalAmount)}</div>
+                              <div>{t('total', 'TOTAL')}:</div>
+                              <div>{formatCurrency(receiptData.orderData.totalAmount)}</div>
                             </div>
                           </div>
                           <div class="footer">
-                            <div>Thank you for your purchase!</div>
-                            <div>Please come again</div>
+                            <div>{t('thankYou', 'Thank you for your purchase!')}</div>
+                            <div>{t('pleaseComeAgain', 'Please come again')}</div>
                           </div>
                         </body>
                         </html>
@@ -2355,14 +2355,14 @@ export default function POSPage() {
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
                   <Receipt className="w-4 h-4 mr-2" />
-                  Print Receipt
+                  {t('printReceipt', 'Print Receipt')}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setShowReceiptModalState(false)}
                   className="flex-1"
                 >
-                  Close
+                  {t('close', 'Close')}
                 </Button>
               </div>
             </CardContent>
