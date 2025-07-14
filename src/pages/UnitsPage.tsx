@@ -146,7 +146,7 @@ export default function UnitsPage() {
     },
     {
       key: 'nameEn',
-      header: 'English Name',
+      header: t('units.englishName', 'English Name'),
       render: (nameEn: string) => (
         <span className="text-gray-700">{nameEn || '-'}</span>
       ),
@@ -182,7 +182,7 @@ export default function UnitsPage() {
     },
     {
       key: 'conversionRate',
-      header: 'Conversion Rate',
+      header: t('units.conversionRate', 'Conversion Rate'),
       render: (rate: number) => (
         <span className="font-mono text-right block">{rate.toFixed(2)}</span>
       ),
@@ -193,7 +193,7 @@ export default function UnitsPage() {
     },
     {
       key: 'baseUnit',
-      header: 'Base Unit',
+      header: t('units.baseUnit', 'Base Unit'),
       render: (baseUnit: any) => baseUnit ? (
         <div className="flex items-center space-x-2">
           <span className="font-medium">{baseUnit.name}</span>
@@ -227,8 +227,8 @@ export default function UnitsPage() {
         placeholder: t('units.namePlaceholder', 'Enter unit name (e.g., Kilogram)'),
         width: 'half'
       }),
-      createTextField('nameEn', 'English Name', {
-        placeholder: 'Enter English name',
+      createTextField('nameEn', t('units.englishName', 'English Name'), {
+        placeholder: t('units.englishNamePlaceholder', 'Enter English name'),
         width: 'half'
       }),
       createTextField('symbol', t('units.symbol', 'Symbol'), {
@@ -237,25 +237,25 @@ export default function UnitsPage() {
         width: 'half'
       }),
       createSelectField('type', t('units.type', 'Type'), [
-        { value: 'piece', label: 'Piece' },
-        { value: 'weight', label: 'Weight' },
-        { value: 'volume', label: 'Volume' },
-        { value: 'length', label: 'Length' }
+        { value: 'piece', label: t('units.piece', 'Piece') },
+        { value: 'weight', label: t('units.weight', 'Weight') },
+        { value: 'volume', label: t('units.volume', 'Volume') },
+        { value: 'length', label: t('units.length', 'Length') }
       ], {
         validation: { required: true },
         placeholder: t('units.selectType', 'Select unit type'),
         defaultValue: 'piece',
         width: 'half'
       }),
-      createNumberField('conversionRate', 'Conversion Rate', {
+      createNumberField('conversionRate', t('units.conversionRate', 'Conversion Rate'), {
         validation: { required: true, positive: true },
         placeholder: '1.0',
         defaultValue: 1,
         width: 'half',
-        helpText: 'Rate to convert to base unit'
+        helpText: t('units.rateToConvert', 'Rate to convert to base unit')
       }),
-      createSelectField('baseUnitId', 'Base Unit', baseUnits, {
-        placeholder: 'Select base unit (optional)',
+      createSelectField('baseUnitId', t('units.baseUnit', 'Base Unit'), baseUnits, {
+        placeholder: t('units.selectBaseUnit', 'Select base unit (optional)'),
         searchable: true,
         clearable: true,
         width: 'half'
@@ -457,11 +457,11 @@ export default function UnitsPage() {
 
       <div className="grid grid-cols-2 gap-4 text-sm">
         <div className="space-y-1">
-          <span className="text-gray-500 font-medium">Type:</span>
+          <span className="text-gray-500 font-medium">{t('units.type', 'Type')}:</span>
           <div>{unitsColumns[3].render?.(unit.type, unit)}</div>
         </div>
         <div className="space-y-1">
-          <span className="text-gray-500 font-medium">Conversion Rate:</span>
+          <span className="text-gray-500 font-medium">{t('units.conversionRate', 'Conversion Rate')}:</span>
           <div className="font-mono">{unit.conversionRate.toFixed(2)}</div>
         </div>
       </div>
@@ -469,7 +469,7 @@ export default function UnitsPage() {
       {unit.baseUnit && (
         <div className="pt-2 border-t border-gray-100">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500">Base Unit:</span>
+            <span className="text-gray-500">{t('units.baseUnit', 'Base Unit')}:</span>
             <div className="flex items-center space-x-2">
               <span className="font-medium">{unit.baseUnit.name}</span>
               <span className="font-mono bg-gray-100 px-1 py-0.5 rounded text-xs">({unit.baseUnit.symbol})</span>

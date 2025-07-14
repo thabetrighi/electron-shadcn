@@ -65,6 +65,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['better-sqlite3'],
     },
+    chunkSizeWarningLimit: 1600,
   },
   plugins: [copyMigrationsPlugin()],
 });
