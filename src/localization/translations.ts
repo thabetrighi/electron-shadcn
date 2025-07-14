@@ -1006,7 +1006,7 @@ export const translations = {
         systemOnline: "System Online",
         version: "Version {{version}}",
         modernPOS: "Modern POS",
-        electronReact: "Electron + React",
+        electronReact: "RT DEV",
       },
 
       reports: {
@@ -2046,7 +2046,7 @@ export const translations = {
         systemOnline: "Système en ligne",
         version: "Version {{version}}",
         modernPOS: "PDV moderne",
-        electronReact: "Electron + React",
+        electronReact: "RT DEV",
       },
 
       reports: {
@@ -3086,7 +3086,7 @@ export const translations = {
         systemOnline: "النظام متصل",
         version: "الإصدار {{version}}",
         modernPOS: "نقاط البيع الحديثة",
-        electronReact: "Electron + React",
+        electronReact: "RT DEV",
       },
 
       reports: {

@@ -229,7 +229,7 @@ export default function POSPage() {
         }));
         
         setCart(cartItems);
-        toast.success(`Loaded ${cartItems.length} items from order`);
+        // toast.success(`Loaded ${cartItems.length} items from order`);
       }
     } catch (error) {
       console.error('Failed to load order items for editing:', error);
@@ -370,8 +370,8 @@ export default function POSPage() {
   // Product image component with fallback
   const ProductImage = ({ product, size = 'md' }: { product: Product; size?: 'sm' | 'md' | 'lg' }) => {
     const sizeClasses = {
-      sm: 'w-10 h-10 text-xs',
-      md: 'w-16 h-16 text-sm',
+      sm: 'w-12 h-12 text-xs',
+      md: 'w-20 h-20 text-sm',
       lg: 'w-24 h-24 text-lg'
     };
 
@@ -432,7 +432,7 @@ export default function POSPage() {
       return [...prev, newItem];
     });
     
-    toast.success(`${product.name} added to cart`);
+    // toast.success(`${product.name} added to cart`);
   }, []);
 
   const addCustomItemToCart = (customItem: { name: string; price: number; description?: string }, quantity: number = 1) => {
@@ -447,7 +447,7 @@ export default function POSPage() {
     };
     
     setCart(prev => [...prev, newItem]);
-    toast.success(`${customItem.name} added to cart`);
+    // toast.success(`${customItem.name} added to cart`);
   };
 
   const handleAddCustomItem = () => {
@@ -522,7 +522,7 @@ export default function POSPage() {
     setCart([]);
     setCurrentPendingCartId(null);
     setCustomerName('');
-    toast.success('Cart cleared');
+    // toast.success('Cart cleared');
   };
 
   // Cart calculations
@@ -564,7 +564,7 @@ export default function POSPage() {
     const updatedCarts = [...pendingCarts, newCart];
     savePendingCarts(updatedCarts);
     clearCart();
-    toast.success('Cart saved successfully');
+    // toast.success('Cart saved successfully');
   };
 
   const loadPendingCart = (cartId: string) => {
@@ -574,14 +574,14 @@ export default function POSPage() {
       setCustomerName(pendingCart.customerName || '');
       setCurrentPendingCartId(cartId);
 
-      toast.success('Cart loaded successfully');
+      // toast.success('Cart loaded successfully');
     }
   };
 
   const deletePendingCart = (cartId: string) => {
     const updatedCarts = pendingCarts.filter(cart => cart.id !== cartId);
     savePendingCarts(updatedCarts);
-    toast.success('Cart deleted successfully');
+    // toast.success('Cart deleted successfully');
   };
 
   // Quick checkout from pending cart without loading it to current cart
@@ -650,7 +650,7 @@ export default function POSPage() {
         }
         
         const assignedText = selectedUser ? ` (Assigned to: ${selectedUser.name})` : '';
-        toast.success(`Sale completed! Order #${orderData.orderNumber}${assignedText}`);
+        // toast.success(`Sale completed! Order #${orderData.orderNumber}${assignedText}`);
         
         // Remove the pending cart after checkout
         const updatedCarts = pendingCarts.filter(cart => cart.id !== pendingCart.id);
@@ -676,7 +676,7 @@ export default function POSPage() {
       addToCart(product);
       setSearchTerm('');
       setBarcodeInput('');
-      toast.success('Product found and added to cart');
+      // toast.success('Product found and added to cart');
     } else {
       toast.error('Product not found');
     }
@@ -752,13 +752,13 @@ export default function POSPage() {
         
         const assignedText = selectedUser ? ` (Assigned to: ${selectedUser.name})` : '';
         const printText = printReceipt ? ' [Receipt Printed]' : ' [No Receipt]';
-        toast.success(`Sale completed! Order #${orderData.orderNumber}${assignedText}${printText}`);
+        // toast.success(`Sale completed! Order #${orderData.orderNumber}${assignedText}${printText}`);
         
         // If this cart was loaded from pending carts, remove it from pending carts
         if (currentPendingCartId) {
           const updatedCarts = pendingCarts.filter(cart => cart.id !== currentPendingCartId);
           savePendingCarts(updatedCarts);
-          toast.success('Pending cart removed after checkout');
+          // toast.success('Pending cart removed after checkout');
         }
         
         // Print receipt if requested
@@ -813,10 +813,10 @@ export default function POSPage() {
       if (result.success) {
         const printerName = result.data?.printer || 'default printer';
         
-        toast.success(`Receipt printed successfully to ${printerName}`, {
-          icon: '🖨️',
-          duration: 3000
-        });
+        // toast.success(`Receipt printed successfully to ${printerName}`, {
+        //   icon: '🖨️',
+        //   duration: 3000
+        // });
       } else {
         // Fallback to modal if printing fails
         showReceiptModal(orderData, cartItems);
@@ -953,7 +953,7 @@ export default function POSPage() {
       }
       
       addToCart(product);
-      toast.success(`${product.name} added to cart via drag & drop!`);
+      // toast.success(`${product.name} added to cart via drag & drop!`);
     } catch (error) {
       console.error('Failed to add item via drag & drop:', error);
       toast.error('Failed to add item to cart - please try clicking instead');
@@ -1038,14 +1038,14 @@ export default function POSPage() {
               <span className="text-sm font-bold text-green-600">
                 {formatCurrency(product.sellingPrice)}
               </span>
-              {product.discountRate && product.discountRate > 0 && (
+              {/* {product.discountRate && product.discountRate > 0 && (
                 <Badge variant="destructive" className="text-xs px-1 py-0">
                   -{product.discountRate}%
                 </Badge>
-              )}
+              )} */}
             </div>
             
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex flex-col items-center justify-between text-xs gap-1">
               <span className={`flex items-center gap-0.5 ${
                 product.currentStock <= 0 ? 'text-red-500' : 
                 product.currentStock <= (product.minStock || 5) ? 'text-orange-500' : 'text-green-500'
@@ -1372,7 +1372,7 @@ export default function POSPage() {
                             setSelectedUser(user);
                             setCustomerName(user.name); // Auto-set customer name to user name
                             setSearchTerm('');
-                            toast.success(t('pos.assignedToUser', 'Assigned to {{user}}', { user: user.name }));
+                            // toast.success(t('pos.assignedToUser', 'Assigned to {{user}}', { user: user.name }));
                           }}
                         >
                           <Avatar className="w-6 h-6">
@@ -1487,7 +1487,7 @@ export default function POSPage() {
                                 setSelectedUser(null);
                                 setCustomerName('');
                                 setShowUserSelector(false);
-                                toast.success('User assignment cleared');
+                                // toast.success('User assignment cleared');
                               }}
                               className="flex items-center gap-2 p-2 rounded cursor-pointer text-sm transition-colors bg-red-50 hover:bg-red-100 border border-red-200 mb-2"
                             >
@@ -1506,7 +1506,7 @@ export default function POSPage() {
                                 setSelectedUser(user);
                                 setCustomerName(user.name); // Auto-set customer name to user name
                                 setShowUserSelector(false);
-                                toast.success(t('pos.assignedToUser', 'Assigned to {{user}}', { user: user.name }));
+                                // toast.success(t('pos.assignedToUser', 'Assigned to {{user}}', { user: user.name }));
                               }}
                               className={`flex items-center gap-2 p-2 rounded cursor-pointer text-sm transition-colors ${
                                 selectedUser?.id === user.id 
@@ -1661,8 +1661,8 @@ export default function POSPage() {
                 view === 'grid' 
                   ? `grid gap-2 ${
                       isFullscreen 
-                        ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 2xl:grid-cols-12'
-                        : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8'
+                        ? 'grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8'
+                        : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6'
                     }`
                   : 'space-y-1.5'
               }`}>
@@ -2066,7 +2066,7 @@ export default function POSPage() {
                         onClick={() => {
                           setPendingCarts([]);
                           savePendingCarts([]);
-                          toast.success('All pending carts cleared');
+                          // toast.success('All pending carts cleared');
                           setShowPendingModal(false);
                         }}
                         className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"

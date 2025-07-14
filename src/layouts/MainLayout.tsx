@@ -215,8 +215,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 {/* Version & Copyright */}
                 <div className="text-xs text-gray-500 space-y-1 mb-3">
                   <p className="font-medium">Version 1.0.0</p>
-                  <p className="text-gray-400">© 2024 Modern POS</p>
-                  <p className="text-gray-400">Electron + React</p>
+                  <p className="text-gray-400">© 2025 Modern POS</p>
+                  <p className="text-gray-400">RT DEV</p>
                 </div>
 
                 {/* Action Buttons */}
@@ -469,8 +469,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 {/* Version & Copyright */}
                 <div className="text-xs text-gray-500 space-y-1 mb-3">
                   <p className="font-medium">Version 1.0.0</p>
-                  <p className="text-gray-400">© 2024 Modern POS</p>
-                  <p className="text-gray-400">Electron + React</p>
+                  <p className="text-gray-400">© 2025 Modern POS</p>
+                  <p className="text-gray-400">RT DEV</p>
                 </div>
 
                 {/* Action Buttons */}
