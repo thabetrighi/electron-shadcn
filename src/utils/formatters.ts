@@ -20,7 +20,7 @@ export const formatCurrency = (amount: number | null | undefined): string => {
   
   const settings = getCurrencySettings();
   const formattedAmount = amount.toFixed(settings.decimals);
-  
+  console.log('settings', settings);
   switch (settings.position) {
     case 'before':
       return `${settings.symbol}${formattedAmount}`;

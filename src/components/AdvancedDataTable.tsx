@@ -33,6 +33,7 @@ import {
   Package,
   BarChart3,
 } from 'lucide-react';
+import { formatCurrency } from '@/utils/formatters';
 
 export interface Column<T> {
   key: keyof T;
@@ -574,7 +575,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
     
     switch (stat.format) {
       case 'currency':
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+        return formatCurrency(value);
       case 'percentage':
         return `${value.toFixed(1)}%`;
       case 'number':
@@ -812,7 +813,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
 
           {/* Stats */}
           {stats.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {enhancedStats.map((stat, index) => {
                 const Icon = stat.icon;
                 return (
@@ -995,7 +996,7 @@ export function AdvancedDataTable<T extends Record<string, any>>({
 
           {/* View Mode */}
           {viewModes.length > 1 && (
-            <div className="flex items-center border border-gray-300 rounded-md">
+            <div className="flex flex-row items-center border border-gray-300 rounded-md">
               {viewModes.map((mode) => (
                 <Button
                   key={mode}

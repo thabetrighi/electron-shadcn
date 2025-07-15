@@ -575,16 +575,6 @@ export function CrudPageTemplate<T extends Record<string, any>>({
     { format: "print", label: "Print", icon: Printer, includeFilters: false },
   ];
 
-  // Currency formatting utility
-  const formatCurrency = useCallback((amount: number, currency = "USD") => {
-    return new Intl.NumberFormat(navigator.language || "en-US", {
-      style: "currency",
-      currency: currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount || 0);
-  }, []);
-
   // Event handlers
   const handleAdd = useCallback(() => {
     if (!permissions.create) return;

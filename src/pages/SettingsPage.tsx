@@ -34,8 +34,6 @@ import {
   Type
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
-import SettingsTest from '../components/SettingsTest';
-import SettingsCacheStatus from '../components/SettingsCacheStatus';
 
 
 type SettingCategory = 'general' | 'printing' | 'pos' | 'appearance' | 'currency';
@@ -1390,7 +1388,7 @@ export default function SettingsPage() {
             </Badge>
           )}
           
-          <Button
+          {/* <Button
             variant="outline"
             onClick={initializeDefaultSettings}
             className="border-blue-300 text-blue-600 hover:bg-blue-50"
@@ -1442,7 +1440,7 @@ export default function SettingsPage() {
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Reset Category
-          </Button>
+          </Button> */}
           
           <Button
             onClick={handleSave}
@@ -1463,14 +1461,6 @@ export default function SettingsPage() {
           </Button>
         </div>
       </div>
-      
-      {/* Settings Test Panel - Only show in development */}
-      {process.env.NODE_ENV === 'development' && (
-        <>
-          <SettingsTest />
-          <SettingsCacheStatus />
-        </>
-      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar Navigation */}
