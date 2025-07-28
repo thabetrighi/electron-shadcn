@@ -1143,7 +1143,7 @@ export default function POSPage() {
           )}
         </div>
         
-        {/* Quantity - Simple */}
+        {/* Quantity - Editable */}
         <div className="flex items-center gap-1">
           <Button
             size="sm"
@@ -1153,7 +1153,28 @@ export default function POSPage() {
           >
             <Minus className="w-3 h-3" />
           </Button>
-          <span className="w-8 text-center font-bold text-sm">{item.quantity}</span>
+          {editingItem === `qty-${item.id}` ? (
+            <Input
+              type="number"
+              min="1"
+              value={item.quantity}
+              onChange={(e) => item.product && updateQuantity(item.product.id, parseInt(e.target.value) || 1)}
+              onBlur={() => setEditingItem(null)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') setEditingItem(null);
+              }}
+              className="w-12 h-6 text-center text-sm font-bold border-blue-300"
+              autoFocus
+            />
+          ) : (
+            <span 
+              className="w-8 text-center font-bold cursor-pointer hover:text-blue-600 text-sm bg-blue-50 hover:bg-blue-100 rounded px-1 py-0.5 transition-colors"
+              onClick={() => setEditingItem(`qty-${item.id}`)}
+              title="Click to edit quantity"
+            >
+              {item.quantity}
+            </span>
+          )}
           <Button
             size="sm"
             variant="outline"
@@ -1164,9 +1185,31 @@ export default function POSPage() {
           </Button>
         </div>
 
-        {/* Total - Prominent */}
+        {/* Total Price - Editable */}
         <div className="text-right min-w-[70px]">
-          <div className="text-sm font-bold text-green-600">{formatCurrency(item.total)}</div>
+          {editingItem === item.id ? (
+            <Input
+              type="number"
+              step="0.01"
+              value={item.unitPrice}
+              onChange={(e) => updatePrice(item.id, parseFloat(e.target.value) || 0)}
+              onBlur={() => setEditingItem(null)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') setEditingItem(null);
+              }}
+              className="w-full h-8 text-center text-sm font-bold border-blue-300"
+              autoFocus
+              title="Edit unit price"
+            />
+          ) : (
+            <div 
+              onClick={() => setEditingItem(item.id)}
+              className="text-sm font-bold cursor-pointer hover:text-blue-600 transition-colors"
+              title="Click to edit unit price"
+            >
+              {formatCurrency(item.total)}
+            </div>
+          )}
         </div>
 
         {/* Remove */}
@@ -1184,7 +1227,7 @@ export default function POSPage() {
 
   const CartGridItem = ({ item }: { item: CartItem }) => (
     <div className={`flex-shrink-0 bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-lg p-2 hover:shadow-md transition-all duration-200 ${
-      isFullscreen ? 'w-44 mb-2' : 'w-44'
+      isFullscreen ? 'w-36 sm:w-40 md:w-44 mb-2' : 'w-32 sm:w-36 md:w-40 lg:w-44'
     }`}>
       {/* Compact Vertical Card */}
       <div className="flex flex-col h-full">
@@ -1565,9 +1608,9 @@ export default function POSPage() {
             </div>
             
             {/* Big Total Display */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-3 rounded-xl border border-green-200">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-xl border border-green-200">
               <div className="text-xs text-green-700 font-medium mb-1">TOTAL</div>
-              <div className="text-4xl font-bold text-green-600">
+              <div className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-green-600">
                 {formatCurrency(getCartTotal())}
               </div>
             </div>
@@ -1578,7 +1621,7 @@ export default function POSPage() {
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Products Section - Main Area */}
-        <div className="flex flex-col overflow-hidden flex-1">
+        <div className="flex flex-col overflow-hidden w-1/2 md:w-3/5 lg:w-1/2">
           {/* Product Controls */}
           <div className="flex-none bg-white border-b border-gray-200 px-4 py-3">
             <div className="flex items-center justify-between">
@@ -1661,8 +1704,8 @@ export default function POSPage() {
                 view === 'grid' 
                   ? `grid gap-2 ${
                       isFullscreen 
-                        ? 'grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8'
-                        : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6'
+                        ? 'grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-8'
+                        : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-6'
                     }`
                   : 'space-y-1.5'
               }`}>
@@ -1679,8 +1722,8 @@ export default function POSPage() {
         </div>
 
         {/* Cart & Orders List - Always Right Side */}
-        <div className={`bg-white border-gray-200 flex flex-col overflow-hidden ${
-          isFullscreen ? 'w-96' : 'w-80'
+        <div className={`bg-gray-50 shadow-lg flex flex-col overflow-hidden ${
+          isFullscreen ? 'w-1/2' : 'w-1/2 md:w-2/5 lg:w-1/2'
         }`}>
           {/* Sidebar Header */}
           <div className="flex-none px-3 py-2 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
@@ -1806,10 +1849,12 @@ export default function POSPage() {
                 {/* Main Checkout Button */}
               <Button
                   onClick={() => handleCheckout(false)}
-                  className="flex-1 h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 font-bold text-lg shadow-lg border-0 text-white transform transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-xl"
+                  className="flex-1 h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 font-bold text-sm sm:text-base md:text-lg shadow-lg border-0 text-white transform transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-xl"
               >
-                  <CheckCircle2 className="w-5 h-5 mr-2 animate-pulse" />
-                  {t('pos.checkout', 'Checkout')} ({formatCurrency(getCartTotal())})
+                  <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 animate-pulse" />
+                  <span className="hidden sm:inline">{t('pos.checkout', 'Checkout')} </span>
+                  <span className="sm:hidden">Pay </span>
+                  ({formatCurrency(getCartTotal())})
               </Button>
               
                 {/* Print Button */}

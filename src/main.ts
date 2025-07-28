@@ -20,7 +20,7 @@ function createWindow() {
     width: 1200,
     height: 800,
     webPreferences: {
-      devTools: false, // Always enable devTools for debugging
+      devTools: true, // Always enable devTools for debugging
       contextIsolation: true,
       nodeIntegration: true,
       nodeIntegrationInSubFrames: false,
