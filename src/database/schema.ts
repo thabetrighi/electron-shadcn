@@ -153,6 +153,10 @@ export const orderItems = sqliteTable("order_items", {
   taxAmount: real("tax_amount").default(0),
   totalPrice: real("total_price").notNull(),
   
+  // Box information
+  boxCount: integer("box_count"),
+  boxType: text("box_type", { enum: ["K", "M", "G"] }), // K=كرطونة، M=ميسي، G=قاجو
+  
   createdAt: text("created_at").default(sql`(datetime('now'))`),
 });
 

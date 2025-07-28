@@ -89,6 +89,8 @@ interface CartItem {
   discount: number;
   total: number;
   isCustom: boolean;
+  boxCount?: number;
+  boxType?: 'K' | 'M' | 'G' | null; // K = كرطونة، M = ميسي، G = قاجو
 }
 
 interface PendingCart {
@@ -207,26 +209,30 @@ export default function POSPage() {
     try {
       const response = await window.database.orderItems.getByOrderId(orderId);
       if (response.success && response.data) {
-        const cartItems: CartItem[] = response.data.map((item: any) => ({
-          id: Date.now().toString() + Math.random(),
-          product: item.productId ? {
-            id: item.productId,
-            name: item.productName,
-            sellingPrice: item.unitPrice,
-            currentStock: 999, // We don't have stock info for editing
-            sku: item.productSku,
-          } : undefined,
-          customItem: !item.productId ? {
-            name: item.productName,
-            price: item.unitPrice,
-            description: '',
-          } : undefined,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          discount: item.discountAmount,
-          total: item.totalPrice,
-          isCustom: !item.productId,
-        }));
+        const cartItems: CartItem[] = response.data.map((item: any) => {
+          return {
+            id: Date.now().toString() + Math.random(),
+            product: item.productId ? {
+              id: item.productId,
+              name: item.productName,
+              sellingPrice: item.unitPrice,
+              currentStock: 999, // We don't have stock info for editing
+              sku: item.productSku,
+            } : undefined,
+            customItem: !item.productId ? {
+              name: item.productName,
+              price: item.unitPrice,
+              description: '',
+            } : undefined,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            discount: item.discountAmount,
+            total: item.totalPrice,
+            isCustom: !item.productId,
+            boxCount: item.boxCount || undefined,
+            boxType: item.boxType || null
+          };
+        });
         
         setCart(cartItems);
         // toast.success(`Loaded ${cartItems.length} items from order`);
@@ -426,7 +432,9 @@ export default function POSPage() {
         unitPrice,
         discount,
         total: (unitPrice - discount) * quantity,
-        isCustom: false
+        isCustom: false,
+        boxCount: undefined,
+        boxType: null
       };
       
       return [...prev, newItem];
@@ -443,7 +451,9 @@ export default function POSPage() {
       unitPrice: customItem.price,
       discount: 0,
       total: customItem.price * quantity,
-      isCustom: true
+      isCustom: true,
+      boxCount: undefined,
+      boxType: null
     };
     
     setCart(prev => [...prev, newItem]);
@@ -492,6 +502,21 @@ export default function POSPage() {
             ...item,
             quantity: newQuantity,
             total: (item.unitPrice - item.discount) * newQuantity
+          };
+        }
+        return item;
+      })
+    );
+  };
+
+  const updateBoxInfo = (itemId: string, boxCount: number, boxType: 'K' | 'M' | 'G' | null) => {
+    setCart(prev =>
+      prev.map(item => {
+        if (item.id === itemId) {
+          return {
+            ...item,
+            boxCount: boxCount > 0 ? boxCount : undefined,
+            boxType: boxCount > 0 ? boxType : null
           };
         }
         return item;
@@ -628,19 +653,25 @@ export default function POSPage() {
       const result = await window.database.orders.create(orderData);
       if (result.success) {
         // Create order items after order is successfully created
-        const orderItems = pendingCart.items.map(item => ({
-          orderId: result.data.id,
-          productId: item.product?.id || null,
-          productName: item.product?.name || item.customItem?.name,
-          productSku: item.product?.sku || '',
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          discountRate: 0,
-          discountAmount: item.discount,
-          taxRate: item.product?.taxRate || 0,
-          taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
-          totalPrice: item.total,
-        }));
+        const orderItems = pendingCart.items.map(item => {
+          const baseName = item.product?.name || item.customItem?.name;
+          
+          return {
+            orderId: result.data.id,
+            productId: item.product?.id || null,
+            productName: baseName,
+            productSku: item.product?.sku || '',
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            discountRate: 0,
+            discountAmount: item.discount,
+            taxRate: item.product?.taxRate || 0,
+            taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
+            totalPrice: item.total,
+            boxCount: item.boxCount || null,
+            boxType: item.boxType || null,
+          };
+        });
 
         const itemsResult = await window.database.orderItems.createMultiple(orderItems);
         if (itemsResult.success) {
@@ -729,19 +760,25 @@ export default function POSPage() {
       const result = await window.database.orders.create(orderData);
       if (result.success) {
         // Create order items after order is successfully created
-        const orderItems = cart.map(item => ({
-          orderId: result.data.id,
-          productId: item.product?.id || null,
-          productName: item.product?.name || item.customItem?.name,
-          productSku: item.product?.sku || '',
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          discountRate: 0,
-          discountAmount: item.discount,
-          taxRate: item.product?.taxRate || 0,
-          taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
-          totalPrice: item.total,
-        }));
+        const orderItems = cart.map(item => {
+          const baseName = item.product?.name || item.customItem?.name;
+          
+          return {
+            orderId: result.data.id,
+            productId: item.product?.id || null,
+            productName: baseName,
+            productSku: item.product?.sku || '',
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            discountRate: 0,
+            discountAmount: item.discount,
+            taxRate: item.product?.taxRate || 0,
+            taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
+            totalPrice: item.total,
+            boxCount: item.boxCount || null,
+            boxType: item.boxType || null,
+          };
+        });
 
         const itemsResult = await window.database.orderItems.createMultiple(orderItems);
         if (itemsResult.success) {
@@ -795,12 +832,20 @@ export default function POSPage() {
         subtotal: orderData.subtotal,
         taxAmount: orderData.taxAmount,
         totalAmount: orderData.totalAmount,
-        items: cartItems.map(item => ({
-          name: item.product?.name || item.customItem?.name,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          total: item.total
-        })),
+        items: cartItems.map(item => {
+          const baseName = item.product?.name || item.customItem?.name;
+          const boxInfo = item.boxCount && item.boxType ? 
+            ` [${item.boxCount} ${item.boxType === 'K' ? 'كرطونة' : item.boxType === 'M' ? 'ميسي' : 'قاجو'}]` : '';
+          
+          return {
+            name: baseName + boxInfo,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            total: item.total,
+            boxCount: item.boxCount,
+            boxType: item.boxType
+          };
+        }),
         date: new Date().toISOString(),
         receiptNumber: `R-${Date.now()}`,
         printerName: printerName // Use printer from cache
@@ -1141,6 +1186,55 @@ export default function POSPage() {
           {item.product?.category && (
             <div className="text-xs text-blue-600">{item.product.category.name}</div>
           )}
+          
+          {/* Box Info */}
+          <div className="flex items-center gap-1 mt-1">
+            {editingItem === `box-${item.id}` ? (
+              <div className="flex items-center gap-1">
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="عدد"
+                  value={item.boxCount || ''}
+                  onChange={(e) => {
+                    const count = parseInt(e.target.value) || 0;
+                    updateBoxInfo(item.id, count, item.boxType || null);
+                  }}
+                  className="w-24 h-8 text-center text-base font-bold border-2 border-blue-400"
+                  autoFocus
+                />
+                <select
+                  value={item.boxType || ''}
+                  onChange={(e) => updateBoxInfo(item.id, item.boxCount || 0, e.target.value as 'K' | 'M' | 'G' | null)}
+                  onBlur={() => setEditingItem(null)}
+                  className="h-8 text-base border-2 border-blue-400 rounded px-3 font-bold bg-white min-w-[120px]"
+                >
+                  <option value="">نوع</option>
+                  <option value="K">كرطونة</option>
+                  <option value="M">ميسي</option>
+                  <option value="G">قاجو</option>
+                </select>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setEditingItem(null)}
+                  className="h-8 w-10 p-0 text-base font-bold text-green-600 hover:bg-green-100"
+                >
+                  ✓
+                </Button>
+              </div>
+            ) : (
+              <div 
+                onClick={() => setEditingItem(`box-${item.id}`)}
+                className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5 transition-colors"
+                title="اضغط لتعديل الصناديق"
+              >
+                <span className="text-xs text-gray-600">
+                  📦 {item.boxCount || 0} {item.boxType === 'K' ? 'كرطونة' : item.boxType === 'M' ? 'ميسي' : item.boxType === 'G' ? 'قاجو' : ''}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
         
         {/* Quantity - Editable */}
@@ -1163,7 +1257,7 @@ export default function POSPage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') setEditingItem(null);
               }}
-              className="w-12 h-6 text-center text-sm font-bold border-blue-300"
+              className="w-20 h-9 text-center text-base font-bold border-2 border-blue-400"
               autoFocus
             />
           ) : (
@@ -1197,7 +1291,7 @@ export default function POSPage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') setEditingItem(null);
               }}
-              className="w-full h-8 text-center text-sm font-bold border-blue-300"
+              className="w-full h-12 text-center text-lg font-bold border-2 border-green-400 bg-green-50"
               autoFocus
               title="Edit unit price"
             />
@@ -1249,6 +1343,47 @@ export default function POSPage() {
             {item.product?.category && (
               <div className="text-xs text-blue-600 truncate">{item.product.category.name}</div>
             )}
+            
+            {/* Box Info - Compact */}
+            <div className="mt-1">
+              {editingItem === `box-${item.id}` ? (
+                <div className="flex flex-col gap-1">
+                  <Input
+                    type="number"
+                    min="0"
+                    placeholder="عدد"
+                    value={item.boxCount || ''}
+                    onChange={(e) => {
+                      const count = parseInt(e.target.value) || 0;
+                      updateBoxInfo(item.id, count, item.boxType || null);
+                    }}
+                    className="w-full h-8 text-center text-base font-bold border-2 border-blue-400"
+                    autoFocus
+                  />
+                  <select
+                    value={item.boxType || ''}
+                    onChange={(e) => updateBoxInfo(item.id, item.boxCount || 0, e.target.value as 'K' | 'M' | 'G' | null)}
+                    onBlur={() => setEditingItem(null)}
+                    className="w-full h-8 text-base border-2 border-blue-400 rounded text-center font-bold bg-white"
+                  >
+                    <option value="">نوع</option>
+                    <option value="K">كرطونة</option>
+                    <option value="M">ميسي</option>
+                    <option value="G">قاجو</option>
+                  </select>
+                </div>
+              ) : (
+                <div 
+                  onClick={() => setEditingItem(`box-${item.id}`)}
+                  className="cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5 transition-colors text-center"
+                  title="اضغط لتعديل الصناديق"
+                >
+                  <span className="text-xs text-gray-600">
+                    📦 {item.boxCount || 0} {item.boxType === 'K' ? 'ك' : item.boxType === 'M' ? 'م' : item.boxType === 'G' ? 'ق' : ''}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
           <Button
             size="sm"
@@ -1280,7 +1415,7 @@ export default function POSPage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') setEditingItem(null);
               }}
-              className="w-10 h-5 text-center text-xs font-bold border-blue-300"
+              className="w-18 h-8 text-center text-base font-bold border-2 border-blue-400"
               autoFocus
             />
           ) : (
@@ -1313,7 +1448,7 @@ export default function POSPage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') setEditingItem(null);
               }}
-              className="w-full h-5 text-center text-xs font-bold"
+              className="w-full h-10 text-center text-base font-bold border-2 border-green-400 bg-green-50"
               autoFocus
             />
           ) : (

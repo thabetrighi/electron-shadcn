@@ -1076,6 +1076,9 @@ export default function OrdersPage() {
               <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Quantity
               </th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                📦 Boxes
+              </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Unit Price
               </th>
@@ -1108,6 +1111,15 @@ export default function OrdersPage() {
                   <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium">
                     {item.quantity}
                   </span>
+                </td>
+                <td className="px-4 py-3 text-center">
+                  {item.boxCount && item.boxType ? (
+                    <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">
+                      {item.boxCount} {item.boxType === 'K' ? 'كرطونة' : item.boxType === 'M' ? 'ميسي' : 'قاجو'}
+                    </span>
+                  ) : (
+                    <span className="text-gray-400 text-xs">-</span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-right text-sm font-medium">
                   {formatCurrency(item.unitPrice)}

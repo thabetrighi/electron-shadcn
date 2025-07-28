@@ -15,6 +15,13 @@
       "when": 1750705534226,
       "tag": "0001_round_mephisto",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1753724917581,
+      "tag": "0002_numerous_frightful_four",
+      "breakpoints": true
     }
   ]
 }
