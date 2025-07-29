@@ -577,19 +577,39 @@ export default function POSPage() {
       return;
     }
 
-    const newCart: PendingCart = {
-      id: Date.now().toString(),
-      name: customerName || `Cart ${pendingCarts.length + 1}`,
-      items: [...cart],
-      total: getCartTotal(),
-      createdAt: new Date(),
-      customerName
-    };
+    if (currentPendingCartId) {
+      // Update existing cart
+      const updatedCarts = pendingCarts.map(pendingCart => 
+        pendingCart.id === currentPendingCartId 
+          ? {
+              ...pendingCart,
+              name: customerName || pendingCart.name,
+              items: [...cart],
+              total: getCartTotal(),
+              customerName
+            }
+          : pendingCart
+      );
+      savePendingCarts(updatedCarts);
+      clearCart();
+      setCurrentPendingCartId(null);
+      // toast.success('Cart updated successfully');
+    } else {
+      // Create new cart
+      const newCart: PendingCart = {
+        id: Date.now().toString(),
+        name: customerName || `Cart ${pendingCarts.length + 1}`,
+        items: [...cart],
+        total: getCartTotal(),
+        createdAt: new Date(),
+        customerName
+      };
 
-    const updatedCarts = [...pendingCarts, newCart];
-    savePendingCarts(updatedCarts);
-    clearCart();
-    // toast.success('Cart saved successfully');
+      const updatedCarts = [...pendingCarts, newCart];
+      savePendingCarts(updatedCarts);
+      clearCart();
+      // toast.success('Cart saved successfully');
+    }
   };
 
   const loadPendingCart = (cartId: string) => {
@@ -1899,7 +1919,7 @@ export default function POSPage() {
                     size="sm"
                     onClick={savePendingCart}
                     className="h-6 px-2 text-xs text-blue-600 hover:bg-blue-50"
-                    title={t('pos.saveCart', 'Save Cart')}
+                    title={currentPendingCartId ? t('pos.updateCart', 'Update Cart') : t('pos.saveCart', 'Save Cart')}
                   >
                     <Save className="w-3 h-3" />
                   </Button>
