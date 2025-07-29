@@ -596,19 +596,19 @@ export default function POSPage() {
       // toast.success('Cart updated successfully');
     } else {
       // Create new cart
-      const newCart: PendingCart = {
-        id: Date.now().toString(),
-        name: customerName || `Cart ${pendingCarts.length + 1}`,
-        items: [...cart],
-        total: getCartTotal(),
-        createdAt: new Date(),
-        customerName
-      };
+    const newCart: PendingCart = {
+      id: Date.now().toString(),
+      name: customerName || `Cart ${pendingCarts.length + 1}`,
+      items: [...cart],
+      total: getCartTotal(),
+      createdAt: new Date(),
+      customerName
+    };
 
-      const updatedCarts = [...pendingCarts, newCart];
-      savePendingCarts(updatedCarts);
-      clearCart();
-      // toast.success('Cart saved successfully');
+    const updatedCarts = [...pendingCarts, newCart];
+    savePendingCarts(updatedCarts);
+    clearCart();
+    // toast.success('Cart saved successfully');
     }
   };
 
@@ -2169,102 +2169,88 @@ export default function POSPage() {
             </CardHeader>
             <CardContent className="p-0">
               {pendingCarts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-8 text-gray-500">
-                  <Clock className="w-12 h-12 mb-4 text-gray-300" />
-                  <p className="text-lg font-medium mb-2">{t('noPendingCarts', 'No Pending Carts')}</p>
-                  <p className="text-sm text-center">{t('saveYourCurrentCart', 'Save your current cart to create pending orders')}</p>
+                <div className="flex flex-col items-center justify-center p-12 text-gray-500">
+                  <div className="bg-gray-100 rounded-full p-6 mb-6">
+                    <ShoppingCart className="w-12 h-12 text-gray-400" />
+                  </div>
+                  <p className="text-lg font-semibold mb-2 text-gray-700">{t('noPendingCarts', 'No Pending Carts')}</p>
+                  <p className="text-sm text-center text-gray-500 max-w-md leading-relaxed">
+                    {t('saveYourCurrentCart', 'Save your current cart to create pending orders and complete them later')}
+                  </p>
+                  <div className="mt-4 text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded-lg">
+                    💡 {t('tip', 'Tip')}: {t('pressF9ToSave', 'Press F9 to quickly save current cart')}
+                  </div>
                 </div>
               ) : (
                 <div className="max-h-96 overflow-y-auto">
-                  <div className="p-4 space-y-3">
+                  <div className="p-2 space-y-2">
                     {pendingCarts.map((pendingCart) => (
-                      <div key={pendingCart.id} className="bg-white border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-sm text-gray-900">{pendingCart.name}</h4>
-                            <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
-                              <span>{pendingCart.items.length} {t('items', 'items')}</span>
-                              <span>{new Date(pendingCart.createdAt).toLocaleDateString()}</span>
+                      <div key={pendingCart.id} className="bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-blue-300 transition-all duration-200 cursor-pointer group">
+                        {/* Header - Clickable to load cart */}
+                        <div 
+                          className="p-3 pb-2 flex items-center justify-between hover:bg-blue-50 rounded-t-lg transition-colors"
+                          onClick={() => {
+                            loadPendingCart(pendingCart.id);
+                            setShowPendingModal(false);
+                          }}
+                          title={t('clickToLoad', 'Click to load this cart')}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-semibold text-sm text-gray-900 truncate">
+                                {pendingCart.name}
+                              </h4>
+                              <div className="flex items-center gap-1 text-xs text-gray-500">
+                                <ShoppingCart className="w-3 h-3" />
+                                <span>{pendingCart.items.length}</span>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 flex-wrap">
                               {pendingCart.customerName && (
-                                <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                                  {pendingCart.customerName}
+                                <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">
+                                  👤 {pendingCart.customerName}
                                 </span>
                               )}
+                              <span className="text-xs text-gray-500">
+                                🕒 {new Date(pendingCart.createdAt).toLocaleDateString('en-US')}
+                              </span>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className="font-bold text-green-600 text-sm">
+                          
+                          <div className="text-right ml-3">
+                            <div className="font-bold text-green-600 text-lg">
                               {formatCurrency(pendingCart.total)}
                             </div>
+                            <div className="text-xs text-gray-500">
+                              {t('total', 'Total')}
                           </div>
-                        </div>
-                        
-                        {/* Items Preview */}
-                        <div className="mb-3">
-                          <div className="text-xs text-gray-500 mb-1">{t('items', 'Items')}:</div>
-                          <div className="space-y-1">
-                            {pendingCart.items.slice(0, 3).map((item, index) => (
-                              <div key={index} className="flex items-center justify-between text-xs bg-gray-50 rounded px-2 py-1">
-                                <span className="truncate">
-                                  {item.product?.name || item.customItem?.name} × {item.quantity}
-                                </span>
-                                <span className="font-medium text-green-600">
-                                  {formatCurrency(item.total)}
-                                </span>
-                              </div>
-                            ))}
-                            {pendingCart.items.length > 3 && (
-                              <div className="text-xs text-gray-400 text-center py-1">
-                                +{pendingCart.items.length - 3} {t('moreItems', 'more items')}
-                              </div>
-                            )}
                           </div>
                         </div>
 
-                        {/* Actions */}
-                        <div className="space-y-2">
-                          <div className="flex gap-1">
+                        {/* Quick Actions */}
+                        <div className="px-3 pb-3 flex gap-2" onClick={(e) => e.stopPropagation()}>
                             <Button
                               size="sm"
-                              onClick={() => {
-                                loadPendingCart(pendingCart.id);
-                                setShowPendingModal(false);
-                              }}
-                              className="flex-1 h-7 text-xs bg-blue-600 hover:bg-blue-700"
-                            >
-                              {t('load', 'Load')}
-                            </Button>
-                            <Button
-                              size="sm"
+                            variant="outline"
                               onClick={() => {
                                 quickCheckoutPendingCart(pendingCart, true);
                               }}
-                              className="flex-1 h-7 text-xs bg-green-600 hover:bg-green-700"
+                            className="flex-1 h-8 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100 hover:border-green-300"
                             >
                               <CheckCircle2 className="w-3 h-3 mr-1" />
-                              {t('payAndPrint', 'Pay & Print')}
+                            {t('quickPay', 'Quick Pay')}
                             </Button>
+                          
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={() => {
                                 deletePendingCart(pendingCart.id);
                               }}
-                              className="h-7 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="h-8 px-3 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
                             >
                               <Trash2 className="w-3 h-3" />
-                            </Button>
-                          </div>
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              quickCheckoutPendingCart(pendingCart, false);
-                            }}
-                            variant="outline"
-                            className="w-full h-6 text-xs border-green-300 text-green-700 hover:bg-green-50"
-                          >
-                            <Receipt className="w-3 h-3 mr-1" />
-                            {t('payNoPrint', 'Pay No Print')}
                           </Button>
                         </div>
                       </div>
@@ -2272,20 +2258,22 @@ export default function POSPage() {
                   </div>
                   
                   {/* Clear All Button */}
-                  {pendingCarts.length > 0 && (
-                    <div className="border-t border-gray-200 p-4">
+                  {pendingCarts.length > 1 && (
+                    <div className="border-t bg-gray-50 border-gray-200 p-4">
                       <Button
                         variant="outline"
                         onClick={() => {
+                          if (confirm(t('confirmClearAllCarts', 'Are you sure you want to clear all pending carts? This action cannot be undone.'))) {
                           setPendingCarts([]);
                           savePendingCarts([]);
                           // toast.success('All pending carts cleared');
                           setShowPendingModal(false);
+                          }
                         }}
-                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 transition-colors"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
-                        {t('clearAllPendingCarts', 'Clear All Pending Carts')}
+                        {t('clearAllPendingCarts', 'Clear All')} ({pendingCarts.length} {t('carts', 'carts')})
                       </Button>
                     </div>
                   )}
