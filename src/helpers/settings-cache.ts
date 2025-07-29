@@ -92,11 +92,6 @@ export class SettingsCacheManager {
         
         console.log(`✅ Settings cache initialized with ${settingsCache.settings.size} settings`);
         this.notifyListeners();
-        
-        toast.success(`Settings cache loaded (${settingsCache.settings.size} settings)`, {
-          icon: '⚡',
-          duration: 2000
-        });
       } else {
         throw new Error(result.error || 'Failed to load settings');
       }

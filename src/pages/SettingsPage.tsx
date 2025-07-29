@@ -88,10 +88,6 @@ export default function SettingsPage() {
           // Apply language change immediately
           if (value && value !== i18n.language) {
             setAppLanguage(value, i18n);
-            toast.success(`Language changed to ${value}`, {
-              icon: '🌐',
-              duration: 2000
-            });
           }
           break;
           
@@ -104,10 +100,6 @@ export default function SettingsPage() {
             document.documentElement.classList.remove('light', 'dark');
             document.documentElement.classList.add(theme);
             localStorage.setItem('theme', value);
-            toast.success(`Theme changed to ${value}`, {
-              icon: '🎨',
-              duration: 2000
-            });
           }
           break;
           
@@ -117,10 +109,6 @@ export default function SettingsPage() {
             const fontSizes = { small: '14px', medium: '16px', large: '18px' };
             const newFontSize = fontSizes[value as keyof typeof fontSizes] || '16px';
             document.documentElement.style.fontSize = newFontSize;
-            toast.success(`Font size changed to ${value} (${newFontSize})`, {
-              icon: '🔤',
-              duration: 2000
-            });
           }
           break;
           
@@ -161,11 +149,6 @@ export default function SettingsPage() {
               <strong>💰 Currency Preview:</strong> ${formatted}
               <br><small>Code: ${currentCode} | Decimals: ${currentDecimals}</small>
             `;
-            
-            toast.success(`Currency settings updated`, {
-              icon: '💰',
-              duration: 4000
-            });
           }
           break;
           
@@ -179,10 +162,6 @@ export default function SettingsPage() {
               document.documentElement.classList.remove('compact-mode');
               document.documentElement.style.setProperty('--spacing-scale', '1');
             }
-            toast.success(`Compact mode ${(value === 'true' || value === true) ? 'enabled' : 'disabled'}`, {
-              icon: (value === 'true' || value === true) ? '📦' : '🏠',
-              duration: 2000
-            });
           }
           break;
           
@@ -191,10 +170,6 @@ export default function SettingsPage() {
           {
             document.documentElement.style.setProperty('--sidebar-position', value);
             document.documentElement.setAttribute('data-sidebar-position', value);
-            toast.success(`Sidebar position changed to ${value}`, {
-              icon: '📍',
-              duration: 2000
-            });
           }
           break;
           
@@ -218,11 +193,6 @@ export default function SettingsPage() {
               document.documentElement.style.setProperty('--primary-dark', scheme.secondary);
               document.documentElement.style.setProperty('--accent', scheme.accent);
               document.documentElement.setAttribute('data-color-scheme', value);
-              
-              toast.success(`Color scheme changed to ${value}`, {
-                icon: '🎨',
-                duration: 2000
-              });
             }
           }
           break;
@@ -241,11 +211,6 @@ export default function SettingsPage() {
               document.documentElement.style.setProperty('--layout-scale', density.scale);
               document.documentElement.style.setProperty('--layout-spacing', density.spacing);
               document.documentElement.setAttribute('data-layout-density', value);
-              
-              toast.success(`Layout density changed to ${value}`, {
-                icon: value === 'compact' ? '📦' : value === 'spacious' ? '🏠' : '🎯',
-                duration: 2000
-              });
             }
           }
           break;
@@ -254,10 +219,6 @@ export default function SettingsPage() {
           // Apply date format changes
           {
             document.documentElement.style.setProperty('--date-format', value);
-            toast.success(`Date format changed to ${value}`, {
-              icon: '📅',
-              duration: 2000
-            });
           }
           break;
           
@@ -265,10 +226,6 @@ export default function SettingsPage() {
           // Apply time format changes
           {
             document.documentElement.style.setProperty('--time-format', value);
-            toast.success(`Time format changed to ${value}`, {
-              icon: '🕐',
-              duration: 2000
-            });
           }
           break;
           
@@ -276,39 +233,19 @@ export default function SettingsPage() {
           // For other settings, show appropriate feedback
           if (['printer.printerName', 'printer_type', 'paper_size', 'invoice_printer'].includes(key)) {
             if (value === 'none') {
-              toast.success(`${key.replace(/[_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} cleared`, {
-                icon: '🖨️',
-                duration: 2000
-              });
             } else {
               // Apply printer settings to system (store for later use)
               document.documentElement.style.setProperty(`--${key.replace(/_/g, '-')}`, value);
-              toast.success(`Printer setting updated: ${key.replace(/[_]/g, ' ')}`, {
-                icon: '🖨️',
-                duration: 2000
-              });
             }
           } else if (key.includes('tax') || key.includes('currency')) {
             // Apply tax/financial settings
             document.documentElement.style.setProperty(`--${key.replace(/_/g, '-')}`, value);
-            toast.success(`Financial setting updated: ${key.replace(/[_]/g, ' ')}`, {
-              icon: '💼',
-              duration: 2000
-            });
           } else if (key.includes('font') || key.includes('margin')) {
             // Apply typography/spacing settings
             document.documentElement.style.setProperty(`--${key.replace(/_/g, '-')}`, value);
-            toast.success(`Display setting updated: ${key.replace(/[_]/g, ' ')}`, {
-              icon: '📐',
-              duration: 2000
-            });
           } else {
             // Generic setting update
             document.documentElement.style.setProperty(`--${key.replace(/_/g, '-')}`, value);
-            toast.success(`Setting updated: ${key.replace(/[_]/g, ' ')}`, {
-              icon: '⚙️',
-              duration: 2000
-            });
           }
           break;
       }
@@ -363,11 +300,6 @@ export default function SettingsPage() {
         
         // Refresh cache to get the new settings
         await settingsCache.refreshCache();
-        
-        toast.success(`Settings initialized: ${result.created || 0} created, ${result.updated || 0} updated`, {
-          icon: '✅',
-          duration: 3000
-        });
       } else {
         console.error('❌ Failed to initialize default settings:', result.error);
         toast.error(`Failed to initialize settings: ${result.error}`, {
@@ -485,7 +417,6 @@ export default function SettingsPage() {
       }
       
       if (fixedCount > 0) {
-        toast.success(`Fixed categories for ${fixedCount} settings`);
         await refresh();
       } else {
         toast('All settings already have correct categories', {
@@ -513,10 +444,6 @@ export default function SettingsPage() {
         // Set the printer as default in the system
         const result = await (window as any).printer.setDefaultPrinter(value);
         if (result.success) {
-          toast.success(`Default printer set to ${value}`, {
-            icon: '🖨️',
-            duration: 2000
-          });
         } else {
           toast.error(`Failed to set default printer: ${result.error}`, {
             icon: '❌',
@@ -1135,7 +1062,6 @@ export default function SettingsPage() {
       
       if (result.success) {
         setAvailablePrinters(result.data);
-        toast.success(`Found ${result.data.length} printers`);
       } else {
         toast.error('Failed to detect printers');
         console.error('Printer detection failed:', result.error);
@@ -1169,10 +1095,6 @@ export default function SettingsPage() {
       const result = await (window as any).printer.testPrinter(targetPrinter);
       
       if (result.success) {
-        toast.success(`Test print completed successfully to ${result.data.printer}`, {
-          icon: '✅',
-          duration: 3000
-        });
       } else {
         toast.error(`Test print failed: ${result.error}`, {
           icon: '❌',
@@ -1200,10 +1122,6 @@ export default function SettingsPage() {
       const result = await (window as any).printer.testPrinter(currentPrinter);
       
       if (result.success) {
-        toast.success(`Test print completed successfully to ${result.data.printer}`, {
-          icon: '✅',
-          duration: 3000
-        });
       } else {
         toast.error(`Test print failed: ${result.error}`, {
           icon: '❌',
@@ -1287,7 +1205,6 @@ export default function SettingsPage() {
       }
       
       console.log('=== END DEBUG ===');
-      toast.success('Printer settings logged to console');
     } catch (error) {
       console.error('Error debugging printer settings:', error);
       toast.error('Failed to debug printer settings');
@@ -1307,10 +1224,7 @@ export default function SettingsPage() {
       const result = await window.database.settings.set(testKey, testValue);
       
       if (result.success) {
-        console.log('Manual save successful');
-        toast.success('Manual printer setting save successful');
-        
-        // Try to retrieve it
+        console.log('Manual save successful');        
         const retrieved = await window.database.settings.get(testKey);
         console.log(`Retrieved value: ${retrieved}`);
         
@@ -1330,7 +1244,6 @@ export default function SettingsPage() {
     try {
       const result = await window.database.settings.updateCurrencyToDZD();
       if (result.success) {
-        toast.success(t('settings.currencyUpdated', 'Currency updated to Algerian Dinar (دج)'));
         refresh();
         await settingsCache.refreshCache();
       } else {

@@ -68,10 +68,6 @@ export default function LangToggle({
       if (success) {
         setCurrentLang(newLang);
         const langName = langs.find(l => l.key === newLang)?.nativeName || newLang;
-        toast.success(`Language changed to ${langName}`, {
-          icon: '🌐',
-          duration: 2000
-        });
       } else {
         throw new Error('Failed to change language');
       }

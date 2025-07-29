@@ -105,10 +105,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
       const success = await setAppLanguage(langCode, i18n);
       if (success) {
         const langName = languages.find(l => l.code === langCode)?.name || langCode;
-        toast.success(`Language changed to ${langName}`, {
-          icon: '🌐',
-          duration: 2000
-        });
       } else {
         throw new Error('Failed to change language');
       }

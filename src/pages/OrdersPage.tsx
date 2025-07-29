@@ -803,7 +803,6 @@ export default function OrdersPage() {
       onClick: async (order) => {
         try {
           await printReceipt(order);
-          toast.success(t('orders.receiptPrinted', 'Receipt printed successfully'));
         } catch (error) {
           console.error('Print failed:', error);
           toast.error(t('orders.printFailed', 'Failed to print receipt'));
@@ -816,7 +815,6 @@ export default function OrdersPage() {
       onClick: async (order) => {
         try {
           await printInvoice(order);
-          toast.success(t('orders.invoicePrinted', 'Invoice printed successfully'));
         } catch (error) {
           console.error('Invoice print failed:', error);
           toast.error(t('orders.invoicePrintFailed', 'Failed to print invoice'));
@@ -932,11 +930,6 @@ export default function OrdersPage() {
       
       if (result.success) {
         const printerName = result.data?.printer || 'default printer';
-        
-        toast.success(`Receipt printed successfully to ${printerName}`, {
-          icon: '🖨️',
-          duration: 3000
-        });
       } else {
         toast.error(`Print failed: ${result.error}`, {
           icon: '❌',
@@ -999,11 +992,6 @@ export default function OrdersPage() {
       
       if (result.success) {
         const printerName = result.data?.printer || 'default printer';
-        
-        toast.success(`Invoice printed successfully to ${printerName}`, {
-          icon: '📄',
-          duration: 3000
-        });
       } else {
         toast.error(`Invoice print failed: ${result.error}`, {
           icon: '❌',
@@ -1241,7 +1229,6 @@ export default function OrdersPage() {
                   onClick={async () => {
                     try {
                       await printReceipt(selectedOrder);
-                      toast.success(t('orders.receiptPrinted', 'Receipt printed successfully'));
                     } catch {
                       toast.error(t('orders.printFailed', 'Failed to print receipt'));
                     }
