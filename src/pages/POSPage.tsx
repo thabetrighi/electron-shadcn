@@ -211,24 +211,24 @@ export default function POSPage() {
       if (response.success && response.data) {
         const cartItems: CartItem[] = response.data.map((item: any) => {
           return {
-            id: Date.now().toString() + Math.random(),
-            product: item.productId ? {
-              id: item.productId,
-              name: item.productName,
-              sellingPrice: item.unitPrice,
-              currentStock: 999, // We don't have stock info for editing
-              sku: item.productSku,
-            } : undefined,
-            customItem: !item.productId ? {
-              name: item.productName,
-              price: item.unitPrice,
-              description: '',
-            } : undefined,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            discount: item.discountAmount,
-            total: item.totalPrice,
-            isCustom: !item.productId,
+          id: Date.now().toString() + Math.random(),
+          product: item.productId ? {
+            id: item.productId,
+            name: item.productName,
+            sellingPrice: item.unitPrice,
+            currentStock: 999, // We don't have stock info for editing
+            sku: item.productSku,
+          } : undefined,
+          customItem: !item.productId ? {
+            name: item.productName,
+            price: item.unitPrice,
+            description: '',
+          } : undefined,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          discount: item.discountAmount,
+          total: item.totalPrice,
+          isCustom: !item.productId,
             boxCount: item.boxCount || undefined,
             boxType: item.boxType || null
           };
@@ -657,17 +657,17 @@ export default function POSPage() {
           const baseName = item.product?.name || item.customItem?.name;
           
           return {
-            orderId: result.data.id,
-            productId: item.product?.id || null,
+          orderId: result.data.id,
+          productId: item.product?.id || null,
             productName: baseName,
-            productSku: item.product?.sku || '',
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            discountRate: 0,
-            discountAmount: item.discount,
-            taxRate: item.product?.taxRate || 0,
-            taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
-            totalPrice: item.total,
+          productSku: item.product?.sku || '',
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          discountRate: 0,
+          discountAmount: item.discount,
+          taxRate: item.product?.taxRate || 0,
+          taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
+          totalPrice: item.total,
             boxCount: item.boxCount || null,
             boxType: item.boxType || null,
           };
@@ -764,17 +764,17 @@ export default function POSPage() {
           const baseName = item.product?.name || item.customItem?.name;
           
           return {
-            orderId: result.data.id,
-            productId: item.product?.id || null,
+          orderId: result.data.id,
+          productId: item.product?.id || null,
             productName: baseName,
-            productSku: item.product?.sku || '',
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            discountRate: 0,
-            discountAmount: item.discount,
-            taxRate: item.product?.taxRate || 0,
-            taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
-            totalPrice: item.total,
+          productSku: item.product?.sku || '',
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          discountRate: 0,
+          discountAmount: item.discount,
+          taxRate: item.product?.taxRate || 0,
+          taxAmount: (item.total * (item.product?.taxRate || 0)) / 100,
+          totalPrice: item.total,
             boxCount: item.boxCount || null,
             boxType: item.boxType || null,
           };
@@ -824,6 +824,13 @@ export default function POSPage() {
       const printerName = settingsCache.getSetting('printer.printerName') || 'Microsoft Print to PDF';
       console.log('Printer settings from cache:', printerName);
       
+      // Get POS settings from cache
+      const currencyCode = settingsCache.getSetting('currency_code') || 'DZD';
+      const receiptTitle = settingsCache.getSetting('pos_receipt_title') || 'POS SYSTEM';
+      const companyName = settingsCache.getSetting('company_name') || '';
+      
+      console.log('POS settings from cache:', { currencyCode, receiptTitle, companyName });
+      
       // Create receipt data with printer information
       const receiptData = {
         orderNumber: orderData.orderNumber,
@@ -832,23 +839,29 @@ export default function POSPage() {
         subtotal: orderData.subtotal,
         taxAmount: orderData.taxAmount,
         totalAmount: orderData.totalAmount,
+        language: localStorage.getItem('i18nextLng') || 'ar', // Add current language
         items: cartItems.map(item => {
           const baseName = item.product?.name || item.customItem?.name;
-          const boxInfo = item.boxCount && item.boxType ? 
-            ` [${item.boxCount} ${item.boxType === 'K' ? 'كرطونة' : item.boxType === 'M' ? 'ميسي' : 'قاجو'}]` : '';
           
           return {
-            name: baseName + boxInfo,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
+            name: baseName,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
             total: item.total,
             boxCount: item.boxCount,
             boxType: item.boxType
           };
         }),
-        date: new Date().toISOString(),
+        date: orderData.createdAt || new Date().toISOString(),
         receiptNumber: `R-${Date.now()}`,
-        printerName: printerName // Use printer from cache
+        printerName: printerName, // Use printer from cache
+        orderData: orderData, // Include full order data for date/time reference
+        // Add POS settings
+        appSettings: {
+          currencyCode: currencyCode,
+          receiptTitle: receiptTitle,
+          companyName: companyName
+        }
       };
       
       console.log('Receipt data with printer:', receiptData);
@@ -2425,16 +2438,43 @@ export default function POSPage() {
                   )}
                 </div>
                 
-                {/* Items */}
-                <div className="space-y-1">
+                {/* Items Table */}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-gray-300">
+                        <th className="text-left py-1">{t('item', 'Item')}</th>
+                        <th className="text-center py-1 w-12">{t('quantity', 'Qty')}</th>
+                        <th className="text-center py-1 w-16">{t('boxes', 'Boxes')}</th>
+                        <th className="text-right py-1 w-20">{t('total', 'Total')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                   {receiptData.cartItems.map((item, index) => (
-                    <div key={index} className="flex justify-between">
-                      <div className="flex-1">
-                        {item.product?.name || item.customItem?.name} × {item.quantity}
+                        <tr key={index} className="border-b border-gray-200">
+                          <td className="py-1">
+                            <div className="font-medium">{item.product?.name || item.customItem?.name}</div>
+                            <div className="text-gray-500 text-xs">
+                              {t('unitPrice', 'Unit Price')}: {formatCurrency(item.unitPrice)}
                       </div>
-                      <div className="text-right">{formatCurrency(item.total)}</div>
-                    </div>
+                          </td>
+                          <td className="text-center py-1">{item.quantity}</td>
+                          <td className="text-center py-1">
+                            {item.boxCount && item.boxType ? (
+                              <span className="bg-purple-100 text-purple-800 px-1 py-0.5 rounded text-xs">
+                                {item.boxCount} {item.boxType === 'K' ? t('carton', 'كرطونة') : 
+                                                 item.boxType === 'M' ? t('mesh', 'ميسي') : 
+                                                 item.boxType === 'G' ? t('cashew', 'قاجو') : ''}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400">-</span>
+                            )}
+                          </td>
+                          <td className="text-right py-1 font-medium">{formatCurrency(item.total)}</td>
+                        </tr>
                   ))}
+                    </tbody>
+                  </table>
                 </div>
                 
                 {/* Totals */}
@@ -2493,14 +2533,33 @@ export default function POSPage() {
                           <div><strong>{t('order', 'Order')}:</strong> ${receiptData.orderData.orderNumber}</div>
                           <div><strong>{t('customer', 'Customer')}:</strong> ${receiptData.orderData.customerName || 'Walk-in Customer'}</div>
                           ${receiptData.orderData.userAssigned ? `<div><strong>${t('staff', 'Staff')}:</strong> ${receiptData.orderData.userAssigned}</div>` : ''}
-                          <div style="margin: 10px 0;">
-                            ${receiptData.cartItems.map(item => `
-                              <div class="item">
-                                <div>${item.product?.name || item.customItem?.name} × ${item.quantity}</div>
-                                <div>{formatCurrency(item.total)}</div>
-                              </div>
-                            `).join('')}
-                          </div>
+                          <table style="width: 100%; margin: 10px 0; border-collapse: collapse;">
+                            <thead>
+                              <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 2px;">${t('item', 'Item')}</th>
+                                <th style="text-align: center; padding: 2px; width: 30px;">${t('quantity', 'Qty')}</th>
+                                <th style="text-align: center; padding: 2px; width: 50px;">${t('boxes', 'Boxes')}</th>
+                                <th style="text-align: right; padding: 2px; width: 60px;">${t('total', 'Total')}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              ${receiptData.cartItems.map(item => {
+                                const boxInfo = item.boxCount && item.boxType ? 
+                                  `${item.boxCount}${item.boxType === 'K' ? 'ك' : item.boxType === 'M' ? 'م' : 'ق'}` : '-';
+                                return `
+                                  <tr style="border-bottom: 1px dotted #ccc;">
+                                    <td style="padding: 2px;">
+                                      <div style="font-weight: bold;">${item.product?.name || item.customItem?.name}</div>
+                                      <div style="font-size: 10px; color: #666;">${t('unitPrice', 'Unit Price')}: ${formatCurrency(item.unitPrice)}</div>
+                                    </td>
+                                    <td style="text-align: center; padding: 2px;">${item.quantity}</td>
+                                    <td style="text-align: center; padding: 2px; font-size: 10px;">${boxInfo}</td>
+                                    <td style="text-align: right; padding: 2px; font-weight: bold;">${formatCurrency(item.total)}</td>
+                                  </tr>
+                                `;
+                              }).join('')}
+                            </tbody>
+                          </table>
                           <div class="totals">
                                                         <div class="total-row">
                               <div>{t('subtotal', 'Subtotal')}:</div>

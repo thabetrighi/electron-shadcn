@@ -895,6 +895,13 @@ export default function OrdersPage() {
       // Get printer settings from cache
       const printerName = settingsCache.getSetting('printer.printerName') || 'Microsoft Print to PDF';
       console.log('Printer settings from cache:', printerName);
+      
+      // Get POS settings from cache
+      const currencyCode = settingsCache.getSetting('currency_code') || 'DZD';
+      const receiptTitle = settingsCache.getSetting('pos_receipt_title') || 'POS SYSTEM';
+      const companyName = settingsCache.getSetting('company_name') || '';
+      
+      console.log('POS settings from cache:', { currencyCode, receiptTitle, companyName });
 
       // Create receipt data with printer information
       const receiptData = {
@@ -904,10 +911,18 @@ export default function OrdersPage() {
         subtotal: order.subtotal || 0,
         taxAmount: order.taxAmount || 0,
         totalAmount: order.total || 0,
+        language: localStorage.getItem('i18nextLng') || 'ar', // Add current language
         items: itemsResponse.data || [],
-        date: new Date().toISOString(),
+        date: order.createdAt || new Date().toISOString(),
         receiptNumber: `R-${Date.now()}`,
-        printerName: printerName // Use printer from cache
+        printerName: printerName, // Use printer from cache
+        orderData: order, // Include full order data for date/time reference
+        // Add POS settings
+        appSettings: {
+          currencyCode: currencyCode,
+          receiptTitle: receiptTitle,
+          companyName: companyName
+        }
       };
 
       console.log('Receipt data with printer:', receiptData);
@@ -948,6 +963,13 @@ export default function OrdersPage() {
       // Get printer settings from cache
       const printerName = settingsCache.getSetting('printer.printerName') || 'Microsoft Print to PDF';
       console.log('Printer settings from cache:', printerName);
+      
+      // Get POS settings from cache
+      const currencyCode = settingsCache.getSetting('currency_code') || 'DZD';
+      const receiptTitle = settingsCache.getSetting('pos_receipt_title') || 'POS SYSTEM';
+      const companyName = settingsCache.getSetting('company_name') || '';
+      
+      console.log('POS settings from cache:', { currencyCode, receiptTitle, companyName });
 
       // Create invoice data with printer information
       const invoiceData = {
@@ -958,9 +980,16 @@ export default function OrdersPage() {
         taxAmount: order.taxAmount || 0,
         totalAmount: order.total || 0,
         items: itemsResponse.data || [],
-        date: new Date().toISOString(),
+        date: order.createdAt || new Date().toISOString(),
         invoiceNumber: `INV-${Date.now()}`,
-        printerName: printerName // Use printer from cache
+        printerName: printerName, // Use printer from cache
+        orderData: order, // Include full order data for date/time reference
+        // Add POS settings
+        appSettings: {
+          currencyCode: currencyCode,
+          receiptTitle: receiptTitle,
+          companyName: companyName
+        }
       };
 
       console.log('Invoice data with printer:', invoiceData);

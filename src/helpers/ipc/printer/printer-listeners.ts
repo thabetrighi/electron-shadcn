@@ -1198,35 +1198,134 @@ String.prototype.padCenter = function(width: number): string {
 
 // Generate receipt data for PosPrinter
 function generateReceiptPrintData(receiptData: any, printer: PrinterInfo, settings: any): any[] {
+  // Get language and translations
+  const language = receiptData.language || 'ar';
+  const isArabic = language === 'ar';
+  
+  // Translation mappings
+  const translations = {
+    en: {
+      posSystem: 'POS SYSTEM',
+      receiptTitle: 'RECEIPT',
+      order: 'Order',
+      customer: 'Customer',
+      staff: 'Staff',
+      walkInCustomer: 'Walk-in Customer',
+      itemList: 'Items List',
+      item: 'Item',
+      qty: 'Qty',
+      unitPrice: 'Unit Price',
+      boxes: 'Boxes',
+      total: 'Total',
+      subtotal: 'Subtotal',
+      tax: 'Tax',
+      grandTotal: 'TOTAL',
+      thankYou: 'Thank you for your purchase!',
+      pleaseReturn: 'Please come again',
+      carton: 'Carton',
+      mesh: 'Mesh',
+      cashew: 'Cashew'
+    },
+    fr: {
+      posSystem: 'SYSTÈME POS',
+      receiptTitle: 'REÇU',
+      order: 'Commande',
+      customer: 'Client',
+      staff: 'Personnel',
+      walkInCustomer: 'Client direct',
+      itemList: 'Liste des articles',
+      item: 'Article',
+      qty: 'Qté',
+      unitPrice: 'Prix unitaire',
+      boxes: 'Boîtes',
+      total: 'Total',
+      subtotal: 'Sous-total',
+      tax: 'Taxe',
+      grandTotal: 'TOTAL',
+      thankYou: 'Merci pour votre achat!',
+      pleaseReturn: 'À bientôt',
+      carton: 'Carton',
+      mesh: 'Filet',
+      cashew: 'Cajou'
+    },
+    ar: {
+      posSystem: 'نظام نقاط البيع',
+      receiptTitle: 'فاتورة',
+      order: 'رقم الطلب',
+      customer: 'العميل',
+      staff: 'الموظف',
+      walkInCustomer: 'عميل مباشر',
+      itemList: 'قائمة العناصر',
+      item: 'العنصر',
+      qty: 'الكمية',
+      unitPrice: 'سعر الوحدة',
+      boxes: 'الصناديق',
+      total: 'الإجمالي',
+      subtotal: 'المجموع الفرعي',
+      tax: 'الضريبة',
+      grandTotal: 'الإجمالي النهائي',
+      thankYou: 'شكراً لك على الشراء!',
+      pleaseReturn: 'نتطلع لرؤيتك مرة أخرى',
+      carton: 'كرطونة',
+      mesh: 'ميسي',
+      cashew: 'قاجو'
+    }
+  };
+  
+  const t = translations[language as keyof typeof translations] || translations.ar;
+  
+  // Helper function to get currency symbol
+  const getCurrencySymbol = (currencyCode: string) => {
+    const symbols: { [key: string]: string } = {
+      'DZD': 'دج',
+      'USD': '$',
+      'EUR': '€',
+      'MAD': 'درهم',
+      'TND': 'دت'
+    };
+    return symbols[currencyCode] || currencyCode;
+  };
+  
+  // Use settings for currency and titles
+  const appSettings = receiptData.appSettings || {};
+  const currencySymbol = getCurrencySymbol(appSettings.currencyCode || 'DZD');
+  const posTitle = appSettings.receiptTitle || t.posSystem;
+  const companyName = appSettings.companyName || '';
+
   const data = [
     {
       type: 'text',
-      value: '='.repeat(32),
+      value: '='.repeat(48),
       style: { fontSize: '12px', textAlign: 'center' }
     },
     {
       type: 'text',
-      value: 'POS SYSTEM',
+      value: posTitle,
+      style: { fontSize: '16px', textAlign: 'center', fontWeight: 'bold' }
+    },
+    ...(companyName ? [{
+      type: 'text',
+      value: companyName,
+      style: { fontSize: '12px', textAlign: 'center' }
+    }] : []),
+    {
+      type: 'text',
+      value: t.receiptTitle,
       style: { fontSize: '14px', textAlign: 'center', fontWeight: 'bold' }
     },
     {
       type: 'text',
-      value: 'Receipt',
+      value: new Date(receiptData.date || receiptData.orderData?.createdAt || new Date()).toLocaleDateString('en-US'),
       style: { fontSize: '12px', textAlign: 'center' }
     },
     {
       type: 'text',
-      value: new Date().toLocaleDateString(),
+      value: new Date(receiptData.date || receiptData.orderData?.createdAt || new Date()).toLocaleTimeString('en-US'),
       style: { fontSize: '12px', textAlign: 'center' }
     },
     {
       type: 'text',
-      value: new Date().toLocaleTimeString(),
-      style: { fontSize: '12px', textAlign: 'center' }
-    },
-    {
-      type: 'text',
-      value: '='.repeat(32),
+      value: '='.repeat(48),
       style: { fontSize: '12px', textAlign: 'center' }
     },
     {
@@ -1236,12 +1335,12 @@ function generateReceiptPrintData(receiptData: any, printer: PrinterInfo, settin
     },
     {
       type: 'text',
-      value: `Order: ${receiptData.orderNumber}`,
-      style: { fontSize: '12px' }
+      value: `${t.order}: ${receiptData.orderNumber}`,
+      style: { fontSize: '12px', fontWeight: 'bold' }
     },
     {
       type: 'text',
-      value: `Customer: ${receiptData.customerName || 'Walk-in Customer'}`,
+      value: `${t.customer}: ${receiptData.customerName || t.walkInCustomer}`,
       style: { fontSize: '12px' }
     }
   ];
@@ -1249,7 +1348,7 @@ function generateReceiptPrintData(receiptData: any, printer: PrinterInfo, settin
   if (receiptData.userAssigned) {
     data.push({
       type: 'text',
-      value: `Staff: ${receiptData.userAssigned}`,
+      value: `${t.staff}: ${receiptData.userAssigned}`,
       style: { fontSize: '12px' }
     });
   }
@@ -1262,39 +1361,76 @@ function generateReceiptPrintData(receiptData: any, printer: PrinterInfo, settin
     },
           {
         type: 'text',
-        value: 'Items:',
-        style: { fontSize: '12px', textAlign: 'left', fontWeight: 'bold' }
-      },
-    {
-      type: 'text',
-      value: '-'.repeat(32),
-      style: { fontSize: '12px' }
+      value: t.itemList,
+      style: { fontSize: '14px', textAlign: 'center', fontWeight: 'bold' }
     }
   );
 
-  // Add items
+  // Create table for items
+  const tableHeader = [
+    { type: 'text', value: t.item },
+    { type: 'text', value: t.qty },
+    { type: 'text', value: t.unitPrice },
+    { type: 'text', value: t.boxes },
+    { type: 'text', value: t.total }
+  ];
+
+  const tableBody = [];
   for (const item of receiptData.items) {
-    const itemLine = `${item.name || item.productName} x${item.quantity}`;
+    const itemName = (item.name || item.productName || '').substring(0, 25);
+    const quantity = item.quantity || 0;
     const total = item.total || item.totalPrice || 0;
-    const priceLine = `دج${total.toFixed(2)}`;
-    const padding = 32 - itemLine.length - priceLine.length;
     
-    data.push({
-      type: 'text',
-      value: itemLine + ' '.repeat(padding) + priceLine,
-      style: { fontSize: '12px' }
-    });
+    // Box information
+    let boxInfo = '-';
+    if (item.boxCount && item.boxType) {
+      const boxTypeText = item.boxType === 'K' ? t.carton : 
+                         item.boxType === 'M' ? t.mesh : 
+                         item.boxType === 'G' ? t.cashew : '';
+      boxInfo = `${item.boxCount} ${boxTypeText}`;
+    }
+    
+    // Main item row
+    tableBody.push([
+      { type: 'text', value: itemName },
+      { type: 'text', value: quantity.toString() },
+      { type: 'text', value: `${currencySymbol}${(item.unitPrice || 0).toFixed(2)}` },
+      { type: 'text', value: boxInfo },
+      { type: 'text', value: `${currencySymbol}${total.toFixed(2)}` }
+    ]);
   }
+
+  // Add the table to data (cast as any due to incomplete TypeScript definitions)
+  data.push({
+    type: 'table',
+    tableHeader: tableHeader,
+    tableBody: tableBody,
+    tableFooter: [], // Empty footer as required
+    tableHeaderStyle: { 
+      backgroundColor: '#000', 
+      color: 'white'
+    },
+    tableBodyStyle: {},
+    tableFooterStyle: {},
+    tableHeaderCellStyle: {
+      textAlign: 'center',
+      fontSize: '10px'
+    },
+    tableBodyCellStyle: {
+      fontSize: '10px'
+    },
+    tableFooterCellStyle: {}
+  } as any);
 
   data.push(
     {
       type: 'text',
-      value: '-'.repeat(32),
+      value: '-'.repeat(48),
       style: { fontSize: '12px' }
     },
     {
       type: 'text',
-      value: `Subtotal:`.padEnd(24) + `دج${(receiptData.subtotal || 0).toFixed(2)}`.padStart(8),
+      value: `${t.subtotal}:`.padEnd(35) + `${currencySymbol}${(receiptData.subtotal || 0).toFixed(2)}`.padStart(13),
       style: { fontSize: '12px' }
     }
   );
@@ -1302,7 +1438,7 @@ function generateReceiptPrintData(receiptData: any, printer: PrinterInfo, settin
   if ((receiptData.taxAmount || 0) > 0) {
     data.push({
       type: 'text',
-      value: `Tax:`.padEnd(24) + `دج${(receiptData.taxAmount || 0).toFixed(2)}`.padStart(8),
+      value: `${t.tax}:`.padEnd(35) + `${currencySymbol}${(receiptData.taxAmount || 0).toFixed(2)}`.padStart(13),
       style: { fontSize: '12px' }
     });
   }
@@ -1310,9 +1446,19 @@ function generateReceiptPrintData(receiptData: any, printer: PrinterInfo, settin
   data.push(
           {
         type: 'text',
-        value: `TOTAL:`.padEnd(24) + `دج${(receiptData.totalAmount || receiptData.total || 0).toFixed(2)}`.padStart(8),
-        style: { fontSize: '14px', textAlign: 'left', fontWeight: 'bold' }
+      value: '='.repeat(48),
+      style: { fontSize: '12px' }
       },
+    {
+      type: 'text',
+      value: `${t.grandTotal}:`.padEnd(35) + `${currencySymbol}${(receiptData.totalAmount || receiptData.total || 0).toFixed(2)}`.padStart(13),
+      style: { fontSize: '14px', fontWeight: 'bold' }
+    },
+    {
+      type: 'text',
+      value: '='.repeat(48),
+      style: { fontSize: '12px' }
+    },
     {
       type: 'text',
       value: '',
@@ -1320,22 +1466,17 @@ function generateReceiptPrintData(receiptData: any, printer: PrinterInfo, settin
     },
     {
       type: 'text',
-      value: '='.repeat(32),
+      value: t.thankYou,
       style: { fontSize: '12px', textAlign: 'center' }
     },
     {
       type: 'text',
-      value: 'Thank you for your purchase!',
+      value: t.pleaseReturn,
       style: { fontSize: '12px', textAlign: 'center' }
     },
     {
       type: 'text',
-      value: 'Please come again',
-      style: { fontSize: '12px', textAlign: 'center' }
-    },
-    {
-      type: 'text',
-      value: '='.repeat(32),
+      value: '='.repeat(48),
       style: { fontSize: '12px', textAlign: 'center' }
     }
   );
