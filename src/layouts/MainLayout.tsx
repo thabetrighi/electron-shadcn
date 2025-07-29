@@ -55,7 +55,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   // Navigation items with translations
   const navigation = [
     { name: t('navigation.dashboard', 'Dashboard'), href: '/', icon: Home },
-    { name: t('navigation.pos', 'POS'), href: '/pos', icon: ShoppingCart, badge: 2 },
+    { name: t('navigation.pos', 'POS'), href: '/pos', icon: ShoppingCart, badge: 0 },
     { name: t('navigation.products', 'Products'), href: '/products', icon: Package },
     { name: t('navigation.categories', 'Categories'), href: '/categories', icon: FolderTree },
     { name: t('navigation.units', 'Units'), href: '/units', icon: Ruler },
