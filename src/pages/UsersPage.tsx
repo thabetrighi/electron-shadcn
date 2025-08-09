@@ -92,7 +92,7 @@ const usersFormFields: FormField[] = [
     width: 'full'
   }),
   createEmailField('email', 'Email Address', {
-    validation: { required: false, email: true },
+    validation: { email: true },
     placeholder: 'user@example.com',
     width: 'half'
   }),
@@ -200,7 +200,7 @@ export default function UsersPage() {
       width: 'full'
     }),
     createEmailField('email', t('users.email', 'Email Address'), {
-      validation: { required: true, email: true },
+      validation: { email: true },
       placeholder: t('users.emailPlaceholder', 'Enter email address'),
       width: 'half'
     }),

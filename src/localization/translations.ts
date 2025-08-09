@@ -877,7 +877,69 @@ export const translations = {
         settings: "Settings",
         settingsSubtitle: "Configure system preferences and options",
       },
-
+      reportsSection: {
+        title: "Reports",
+        subtitle: "View business analytics and reports",
+        salesReport: "Sales Report",
+        inventoryReport: "Inventory Report",
+        customerReport: "Customer Report",
+        supplierPaymentReport: "Supplier Payment Report",
+        dateFrom: "Date From",
+        dateTo: "Date To",
+        generateReport: "Generate Report",
+        generating: "Generating...",
+        comingSoon: "Coming Soon",
+        dashboard: "Reports Dashboard",
+        advancedReportsComingSoon: "Advanced Reports Coming Soon",
+        description:
+          "This page will include detailed analytics, charts, and exportable reports about sales, inventory, and customers.",
+        viewDashboard: "View Dashboard",
+        // Supplier Payment Report
+        supplierPaymentDescription:
+          "Calculate supplier payments based on orders, weights, and expenses",
+        supplier: "Supplier",
+        allSuppliers: "All Suppliers",
+        transactionPrice: "Transaction Price",
+        laborCost: "Labor Cost",
+        taxValue: "Tax Value",
+        totalPayment: "Total Payment",
+        totalOrdersAmount: "Total Orders Amount",
+        totalWeights: "Total Weights",
+        totalQuantities: "Total Quantities",
+        totalExpenses: "Total Expenses",
+        totalOrders: "Total Orders",
+        paymentAmount: "Payment Amount",
+        supplierPaymentDetails: "Supplier Payment Details",
+        orderCount: "Order Count",
+        filters: "Filters",
+        saveReport: "Save Report",
+        loading: "Loading...",
+        noDataFound: "No Data Found",
+        // Sales Report
+        salesReportDescription:
+          "View sales statistics and top-performing products",
+        dateRange: "Date Range",
+        dateRangeSummary: "Date Range Summary",
+        todaySales: "Today's Sales",
+        todayOrders: "Today's Orders",
+        averageOrderValue: "Average Order Value",
+        perOrder: "Per Order",
+        orders: "Orders",
+        totalSales: "Total Sales",
+        topSellingProducts: "Top Selling Products",
+        product: "Product",
+        quantity: "Quantity",
+        revenue: "Revenue",
+        rank: "Rank",
+        // General
+        totalSuppliers: "Total Suppliers",
+        activeSuppliers: "Active Suppliers",
+        totalProducts: "Total Products",
+        activeProducts: "Active Products",
+        inventoryReportDescription:
+          "Track inventory levels, stock movement, and product performance",
+        unknownSupplier: "Unknown Supplier",
+      },
       // Entity Names (Singular)
       product: "Product",
       category: "Category",
@@ -939,7 +1001,7 @@ export const translations = {
       staff: "Staff",
       boxes: "Boxes",
       carton: "Carton",
-      mesh: "Mesh", 
+      mesh: "Mesh",
       cashew: "Cashew",
       item: "Item",
       posSystem: "POS SYSTEM",
@@ -1034,15 +1096,61 @@ export const translations = {
         salesReport: "Sales Report",
         inventoryReport: "Inventory Report",
         customerReport: "Customer Report",
+        supplierPaymentReport: "Supplier Payment Report",
         dateFrom: "Date From",
         dateTo: "Date To",
         generateReport: "Generate Report",
+        generating: "Generating...",
         comingSoon: "Coming Soon",
         dashboard: "Reports Dashboard",
         advancedReportsComingSoon: "Advanced reports coming soon",
         description:
           "This page will include detailed analytics, charts, and exportable reports on sales, inventory, and customers.",
         viewDashboard: "View Dashboard",
+        // Supplier Payment Report
+        supplierPaymentDescription:
+          "Calculate supplier payments based on orders, weights, and expenses",
+        supplier: "Supplier",
+        allSuppliers: "All Suppliers",
+        transactionPrice: "Transaction Price",
+        laborCost: "Labor Cost",
+        taxValue: "Tax Value",
+        totalPayment: "Total Payment",
+        totalOrdersAmount: "Total Orders Amount",
+        totalWeights: "Total Weights",
+        totalQuantities: "Total Quantities",
+        totalExpenses: "Total Expenses",
+        totalOrders: "Total Orders",
+        paymentAmount: "Payment Amount",
+        supplierPaymentDetails: "Supplier Payment Details",
+        orderCount: "Order Count",
+        filters: "Filters",
+        saveReport: "Save Report",
+        loading: "Loading...",
+        noDataFound: "No data found",
+        // Sales Report
+        salesReportDescription:
+          "View sales statistics and top performing products",
+        dateRange: "Date Range",
+        dateRangeSummary: "Date Range Summary",
+        todaySales: "Today's Sales",
+        todayOrders: "Today's Orders",
+        averageOrderValue: "Average Order Value",
+        perOrder: "per order",
+        orders: "orders",
+        totalSales: "Total Sales",
+        topSellingProducts: "Top Selling Products",
+        product: "Product",
+        quantity: "Quantity",
+        revenue: "Revenue",
+        rank: "Rank",
+        // General
+        totalSuppliers: "Total Suppliers",
+        activeSuppliers: "Active Suppliers",
+        totalProducts: "Total Products",
+        activeProducts: "Active Products",
+        inventoryReportDescription:
+          "Track inventory levels, stock movements, and product performance",
       },
 
       // System
@@ -1144,7 +1252,8 @@ export const translations = {
       businessTimezone: "Fuseau horaire de l'entreprise",
       timeFormat: "Format horaire (12h ou 24h)",
       firstDayOfWeek: "Premier jour de la semaine",
-      dateDisplayFormat: "Format d'affichage de la date (court, moyen, long, complet)",
+      dateDisplayFormat:
+        "Format d'affichage de la date (court, moyen, long, complet)",
       regionalFormatting: "Paramètres régionaux pour le formatage",
       englishName: "Nom anglais",
       conversionRate: "Taux de conversion",
@@ -1163,14 +1272,16 @@ export const translations = {
         noDataTitle: "Aucun élément trouvé",
         noDataDescription: "Il n'y a aucun élément à afficher pour le moment.",
         emptySearchTitle: "Aucun résultat trouvé",
-        emptySearchDescription: "Essayez d'ajuster votre recherche ou vos critères de filtre.",
+        emptySearchDescription:
+          "Essayez d'ajuster votre recherche ou vos critères de filtre.",
         loadingData: "Chargement des données...",
         searching: "Recherche en cours...",
         filtering: "Filtrage en cours...",
         selectAll: "Tout sélectionner",
         selectRow: "Sélectionner la ligne",
         selectedItems: "{{count}} sélectionné(s)",
-        showingResults: "Affichage de {{start}}-{{end}} sur {{total}} résultats",
+        showingResults:
+          "Affichage de {{start}}-{{end}} sur {{total}} résultats",
         filteredResults: "(filtré à partir de {{total}} au total)",
         totalResults: "{{total}} résultats au total",
         searchPlaceholder: "Rechercher...",
@@ -1197,7 +1308,8 @@ export const translations = {
         editSelected: "Modifier la sélection",
         archiveSelected: "Archiver la sélection",
         exportSelected: "Exporter la sélection",
-        confirmBulkDelete: "Êtes-vous sûr de vouloir supprimer {{count}} éléments ?",
+        confirmBulkDelete:
+          "Êtes-vous sûr de vouloir supprimer {{count}} éléments ?",
         bulkDeleteSuccess: "{{count}} éléments supprimés avec succès",
         bulkDeleteError: "Échec de la suppression des éléments",
         rowsPerPage: "Lignes par page",
@@ -1475,7 +1587,8 @@ export const translations = {
         created: "Créé",
         products: "Produits",
         namePlaceholder: "Entrez le nom de la catégorie",
-        descriptionPlaceholder: "Entrez la description de la catégorie (optionnel)",
+        descriptionPlaceholder:
+          "Entrez la description de la catégorie (optionnel)",
         selectParent: "Sélectionnez une catégorie parente (optionnel)",
         englishName: "Nom anglais",
         frenchName: "Nom français",
@@ -1613,7 +1726,8 @@ export const translations = {
         cash: "Espèces",
         card: "Carte",
         change: "Monnaie",
-        searchPlaceholder: "Rechercher des produits, utilisateurs, code-barres...",
+        searchPlaceholder:
+          "Rechercher des produits, utilisateurs, code-barres...",
         products: "Produits",
         users: "Utilisateurs",
         keyboardShortcuts: "Raccourcis clavier",
@@ -1654,10 +1768,12 @@ export const translations = {
         totalItems: "Total des articles",
         cartEmpty: "Le panier est vide",
         addItemsToCart: "Ajoutez des articles au panier pour continuer",
-        addProductsHint: "Ajoutez des produits en cliquant ou en glissant-déposant ici",
+        addProductsHint:
+          "Ajoutez des produits en cliquant ou en glissant-déposant ici",
         dropProductHere: "Déposez le produit ici !",
         releaseToAdd: "Relâchez pour ajouter au panier",
-        tryAdjustingSearch: "Essayez d'ajuster votre recherche ou filtre de catégorie",
+        tryAdjustingSearch:
+          "Essayez d'ajuster votre recherche ou filtre de catégorie",
         checkoutAndPrint: "Payer et imprimer",
         itemName: "Nom de l'article",
         enterItemName: "Entrez le nom de l'article",
@@ -1715,8 +1831,10 @@ export const translations = {
         saving: "Enregistrement en cours...",
         unsavedChanges: "Modifications non enregistrées",
         generalSettings: "Paramètres généraux",
-        basicCompanySettings: "Paramètres de base de l'entreprise et de l'application",
-        receiptPrintingConfig: "Configuration de l'impression des reçus et rapports",
+        basicCompanySettings:
+          "Paramètres de base de l'entreprise et de l'application",
+        receiptPrintingConfig:
+          "Configuration de l'impression des reçus et rapports",
         posInterfaceSettings: "Paramètres de l'interface du point de vente",
         themeVisualCustomization: "Personnalisation visuelle du thème",
         currencyFinancialSettings: "Paramètres financiers et de devise",
@@ -1906,7 +2024,8 @@ export const translations = {
 
         // Products
         products: "Produits",
-        productsSubtitle: "Gérez votre catalogue de produits et votre inventaire",
+        productsSubtitle:
+          "Gérez votre catalogue de produits et votre inventaire",
 
         // Categories
         categories: "Catégories",
@@ -1935,6 +2054,70 @@ export const translations = {
         // Settings
         settings: "Paramètres",
         settingsSubtitle: "Configurez les préférences et options du système",
+      },
+
+      reportsSection: {
+        title: "Rapports",
+        subtitle: "Afficher les analyses et rapports commerciaux",
+        salesReport: "Rapport des ventes",
+        inventoryReport: "Rapport d'inventaire",
+        customerReport: "Rapport des clients",
+        supplierPaymentReport: "Rapport de paiement des fournisseurs",
+        dateFrom: "Date de début",
+        dateTo: "Date de fin",
+        generateReport: "Générer le rapport",
+        generating: "Génération en cours...",
+        comingSoon: "Bientôt disponible",
+        dashboard: "Tableau de bord des rapports",
+        advancedReportsComingSoon: "Rapports avancés bientôt disponibles",
+        description:
+          "Cette page comprendra des analyses détaillées, des graphiques et des rapports exportables sur les ventes, l'inventaire et les clients.",
+        viewDashboard: "Voir le tableau de bord",
+        // Supplier Payment Report
+        supplierPaymentDescription:
+          "Calculer les paiements des fournisseurs en fonction des commandes, des poids et des dépenses",
+        supplier: "Fournisseur",
+        allSuppliers: "Tous les fournisseurs",
+        transactionPrice: "Prix de transaction",
+        laborCost: "Coût de la main-d'œuvre",
+        taxValue: "Valeur de la taxe",
+        totalPayment: "Paiement total",
+        totalOrdersAmount: "Montant total des commandes",
+        totalWeights: "Poids total",
+        totalQuantities: "Quantité totale",
+        totalExpenses: "Dépenses totales",
+        totalOrders: "Total des commandes",
+        paymentAmount: "Montant du paiement",
+        supplierPaymentDetails: "Détails du paiement fournisseur",
+        orderCount: "Nombre de commandes",
+        filters: "Filtres",
+        saveReport: "Enregistrer le rapport",
+        loading: "Chargement...",
+        noDataFound: "Aucune donnée trouvée",
+        // Sales Report
+        salesReportDescription:
+          "Afficher les statistiques de ventes et les produits les plus performants",
+        dateRange: "Plage de dates",
+        dateRangeSummary: "Résumé de la plage de dates",
+        todaySales: "Ventes d'aujourd'hui",
+        todayOrders: "Commandes d'aujourd'hui",
+        averageOrderValue: "Valeur moyenne de commande",
+        perOrder: "Par commande",
+        orders: "Commandes",
+        totalSales: "Ventes totales",
+        topSellingProducts: "Meilleurs produits vendus",
+        product: "Produit",
+        quantity: "Quantité",
+        revenue: "Revenu",
+        rank: "Classement",
+        // General
+        totalSuppliers: "Nombre total de fournisseurs",
+        activeSuppliers: "Fournisseurs actifs",
+        totalProducts: "Nombre total de produits",
+        activeProducts: "Produits actifs",
+        inventoryReportDescription:
+          "Suivre les niveaux de stock, les mouvements de stock et la performance des produits",
+        unknownSupplier: "Fournisseur inconnu",
       },
 
       // Entity Names (Singular)
@@ -1977,7 +2160,8 @@ export const translations = {
       checkoutAndPrint: "Payer et imprimer",
       clearSearch: "Effacer la recherche",
       quickCheckout: "Paiement rapide",
-      proTip: "Conseil : Utilisez le glisser-déposer pour ajouter des produits au panier",
+      proTip:
+        "Conseil : Utilisez le glisser-déposer pour ajouter des produits au panier",
       gotIt: "Compris !",
       // Receipt
       receipt: "Reçu",
@@ -2006,7 +2190,8 @@ export const translations = {
       // Pending carts
       pendingCarts: "Paniers en attente",
       noPendingCarts: "Aucun panier en attente",
-      saveYourCurrentCart: "Sauvegardez votre panier actuel pour créer des commandes en attente",
+      saveYourCurrentCart:
+        "Sauvegardez votre panier actuel pour créer des commandes en attente",
       items: "Articles",
       moreItems: "articles supplémentaires",
       load: "Charger",
@@ -2442,8 +2627,7 @@ export const translations = {
         recentActivitySubtitle: "أنشطتك وتحديثاتك الأخيرة",
         chartPlaceholder: "سيتم وضع تصور الرسم البياني هنا",
         settingsIntegration: "حالة تكامل الإعدادات",
-        settingsIntegrationSubtitle:
-          "الحالة الفعلية لتكامل إعدادات النظام",
+        settingsIntegrationSubtitle: "الحالة الفعلية لتكامل إعدادات النظام",
         quickSystemInfo: "معلومات سريعة عن النظام",
         currentLanguage: "اللغة الحالية",
         themeMode: "وضع السمة",
@@ -2461,8 +2645,7 @@ export const translations = {
       // Home Page
       home: {
         title: "لوحة التحكم",
-        welcomeMessage:
-          "مرحبًا بعودتك! إليك ما يحدث في متجرك اليوم.",
+        welcomeMessage: "مرحبًا بعودتك! إليك ما يحدث في متجرك اليوم.",
         totalRevenue: "إجمالي الإيرادات",
         totalOrders: "إجمالي الطلبات",
         productsLabel: "المنتجات",
@@ -2646,8 +2829,8 @@ export const translations = {
         orderItems: "عناصر الطلب",
         noItemsFound: "لم يتم العثور على عناصر لهذا الطلب",
         customItem: "عنصر مخصص",
-        lastUpdated: "آخر تحديث"
-      },      
+        lastUpdated: "آخر تحديث",
+      },
 
       // POS (Point of Sale)
       pos: {
@@ -2996,6 +3179,69 @@ export const translations = {
         settingsSubtitle: "تكوين تفضيلات وخيارات النظام",
       },
 
+      // Reports
+      reportsSection: {
+        title: "التقارير",
+        subtitle: "عرض التحليلات والتقارير التجارية",
+        salesReport: "تقرير المبيعات",
+        inventoryReport: "تقرير المخزون",
+        customerReport: "تقرير العملاء",
+        supplierPaymentReport: "تقرير الدفع للمورد",
+        dateFrom: "التاريخ من",
+        dateTo: "التاريخ إلى",
+        generateReport: "إنشاء التقرير",
+        generating: "جاري الإنشاء...",
+        comingSoon: "قريباً",
+        dashboard: "لوحة التقارير",
+        advancedReportsComingSoon: "التقارير المتقدمة قريباً",
+        description:
+          "ستتضمن هذه الصفحة تحليلات مفصلة ورسوم بيانية وتقارير قابلة للتصدير حول المبيعات والمخزون والعملاء.",
+        viewDashboard: "عرض لوحة التحكم",
+        // Supplier Payment Report
+        supplierPaymentDescription:
+          "حساب مدفوعات الموردين بناءً على الطلبات والأوزان والمصروفات",
+        supplier: "المورد",
+        allSuppliers: "جميع الموردين",
+        transactionPrice: "سعر المعاملة",
+        laborCost: "أجرة العمال",
+        taxValue: "قيمة المكس",
+        totalPayment: "إجمالي الدفع",
+        totalOrdersAmount: "إجمالي مبلغ الطلبات",
+        totalWeights: "إجمالي الأوزان",
+        totalQuantities: "إجمالي الكميات",
+        totalExpenses: "إجمالي المصروفات",
+        totalOrders: "إجمالي الطلبات",
+        paymentAmount: "مبلغ الدفع",
+        supplierPaymentDetails: "تفاصيل الدفع للمورد",
+        orderCount: "عدد الطلبات",
+        filters: "الفلاتر",
+        saveReport: "حفظ التقرير",
+        loading: "جاري التحميل...",
+        noDataFound: "لا توجد بيانات",
+        // Sales Report
+        salesReportDescription: "عرض إحصائيات المبيعات وأفضل المنتجات أداءً",
+        dateRange: "نطاق التاريخ",
+        dateRangeSummary: "ملخص نطاق التاريخ",
+        todaySales: "مبيعات اليوم",
+        todayOrders: "طلبات اليوم",
+        averageOrderValue: "متوسط قيمة الطلب",
+        perOrder: "لكل طلب",
+        orders: "طلبات",
+        totalSales: "إجمالي المبيعات",
+        topSellingProducts: "أفضل المنتجات مبيعاً",
+        product: "المنتج",
+        quantity: "الكمية",
+        revenue: "الإيرادات",
+        rank: "الترتيب",
+        // General
+        totalSuppliers: "إجمالي الموردين",
+        activeSuppliers: "الموردين النشطين",
+        totalProducts: "إجمالي المنتجات",
+        activeProducts: "المنتجات النشطة",
+        inventoryReportDescription:
+          "تتبع مستويات المخزون وحركة المخزون وأداء المنتجات",
+        unknownSupplier: "مورد غير معروف",
+      },
       // Entity Names (Singular)
       product: "منتج",
       category: "فئة",

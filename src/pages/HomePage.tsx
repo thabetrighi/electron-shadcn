@@ -496,7 +496,7 @@ export default function HomePage() {
                   <div className="text-right">
                     <p className="font-medium">{formatCurrency(order.total)}</p>
                     <Badge className={getStatusColor(order.status)}>
-                      {t(`home.${order.status}`)}
+                      {t(`status.${order.status}`)}
                     </Badge>
                   </div>
                 </div>

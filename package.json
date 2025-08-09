@@ -1,8 +1,8 @@
 {
-  "name": "electron-shadcn",
-  "productName": "electron-shadcn Template",
+  "name": "pos-desktop",
+  "productName": "POS Desktop",
   "version": "1.0.0",
-  "description": "Electron Forge with shadcn-ui (Vite + Typescript)",
+  "description": "Desktop point-of-sale application for managing sales, products, suppliers, orders, and reports",
   "main": ".vite/build/main.js",
   "private": true,
   "scripts": {

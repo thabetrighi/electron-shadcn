@@ -7,7 +7,8 @@ import { ProductsService } from '../../../database/services/products.service';
 import { OrdersService } from '../../../database/services/orders.service';
 import { OrderItemsService } from '../../../database/services/order-items.service';
 import { SettingsService } from '../../../database/services/settings.service';
-import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, ORDER_ITEM_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS, PRINTER_CHANNELS } from './database-channels';
+import { ReportsService } from '../../../database/services/reports.service';
+import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, ORDER_ITEM_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS, REPORTS_CHANNELS, PRINTER_CHANNELS } from './database-channels';
 
 export function registerDatabaseListeners() {
   console.log('Registering database IPC listeners...');
@@ -207,6 +208,31 @@ export function registerDatabaseListeners() {
 
   ipcMain.handle(SETTINGS_CHANNELS.RESET_DATABASE, async () => {
     return await SettingsService.resetDatabase();
+  });
+
+  // Reports operations
+  ipcMain.handle(REPORTS_CHANNELS.GET_SUPPLIER_PAYMENT_REPORT, async (_, filters) => {
+    return await ReportsService.getSupplierPaymentReport(filters);
+  });
+
+  ipcMain.handle(REPORTS_CHANNELS.GET_DAILY_SALES_SUMMARY, async (_, date) => {
+    return await ReportsService.getDailySalesSummary(date);
+  });
+
+  ipcMain.handle(REPORTS_CHANNELS.GET_SALES_SUMMARY, async (_, dateFrom, dateTo) => {
+    return await ReportsService.getSalesSummary(dateFrom, dateTo);
+  });
+
+  ipcMain.handle(REPORTS_CHANNELS.GET_TOP_SELLING_PRODUCTS, async (_, limit, dateFrom, dateTo) => {
+    return await ReportsService.getTopSellingProducts(limit, dateFrom, dateTo);
+  });
+
+  ipcMain.handle(REPORTS_CHANNELS.GET_SUPPLIERS, async () => {
+    return await ReportsService.getSuppliers();
+  });
+
+  ipcMain.handle(REPORTS_CHANNELS.GET_PRODUCTS_COUNT, async () => {
+    return await ReportsService.getProductsCount();
   });
 
   // Currency update operations

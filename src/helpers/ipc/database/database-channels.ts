@@ -78,6 +78,16 @@ export const DATABASE_CHANNELS = {
   INITIALIZE: 'database:initialize',
 } as const;
 
+// Reports channels
+export const REPORTS_CHANNELS = {
+  GET_SUPPLIER_PAYMENT_REPORT: 'reports:get-supplier-payment',
+  GET_DAILY_SALES_SUMMARY: 'reports:get-daily-sales-summary',
+  GET_SALES_SUMMARY: 'reports:get-sales-summary',
+  GET_TOP_SELLING_PRODUCTS: 'reports:get-top-selling-products',
+  GET_SUPPLIERS: 'reports:get-suppliers',
+  GET_PRODUCTS_COUNT: 'reports:get-products-count',
+} as const;
+
 // Printer channels
 export const PRINTER_CHANNELS = {
   GET_AVAILABLE_PRINTERS: 'printer:get-available',

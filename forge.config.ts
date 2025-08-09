@@ -7,18 +7,22 @@ import { VitePlugin } from "@electron-forge/plugin-vite";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
 import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-natives";
+import path from "path";
 
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     ignore: [],
+    icon: path.resolve(__dirname, "images/icons/icon.ico"),
   },
   rebuildConfig: {
     force: false,
     onlyModules: ["better-sqlite3"],
   },
   makers: [
-    new MakerSquirrel({}),
+    new MakerSquirrel({
+      setupIcon: path.resolve(__dirname, "images/icons/icon.ico"),
+    }),
     new MakerZIP({}, ["darwin"]),
     new MakerRpm({}),
     new MakerDeb({}),

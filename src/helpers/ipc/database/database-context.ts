@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, ORDER_ITEM_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS } from './database-channels';
+import { USER_CHANNELS, CATEGORY_CHANNELS, UNIT_CHANNELS, PRODUCT_CHANNELS, ORDER_CHANNELS, ORDER_ITEM_CHANNELS, SETTINGS_CHANNELS, DATABASE_CHANNELS, REPORTS_CHANNELS } from './database-channels';
 
 // Database API
 export const databaseAPI = {
@@ -81,6 +81,16 @@ export const databaseAPI = {
     resetDatabase: () => ipcRenderer.invoke(SETTINGS_CHANNELS.RESET_DATABASE),
     updateCurrencyToDZD: () => ipcRenderer.invoke('update-currency-to-dzd'),
     checkCurrentCurrency: () => ipcRenderer.invoke('check-current-currency'),
+  },
+
+  // Reports operations
+  reports: {
+    getSupplierPaymentReport: (filters?: any) => ipcRenderer.invoke(REPORTS_CHANNELS.GET_SUPPLIER_PAYMENT_REPORT, filters),
+    getDailySalesSummary: (date?: string) => ipcRenderer.invoke(REPORTS_CHANNELS.GET_DAILY_SALES_SUMMARY, date),
+    getSalesSummary: (dateFrom: string, dateTo: string) => ipcRenderer.invoke(REPORTS_CHANNELS.GET_SALES_SUMMARY, dateFrom, dateTo),
+    getTopSellingProducts: (limit?: number, dateFrom?: string, dateTo?: string) => ipcRenderer.invoke(REPORTS_CHANNELS.GET_TOP_SELLING_PRODUCTS, limit, dateFrom, dateTo),
+    getSuppliers: () => ipcRenderer.invoke(REPORTS_CHANNELS.GET_SUPPLIERS),
+    getProductsCount: () => ipcRenderer.invoke(REPORTS_CHANNELS.GET_PRODUCTS_COUNT),
   },
 };
 

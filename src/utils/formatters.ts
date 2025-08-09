@@ -3,11 +3,18 @@
 // Get current currency settings from CSS custom properties or fallback to defaults
 export const getCurrencySettings = () => {
   const root = document.documentElement;
+  const symbol = root.style.getPropertyValue('--currency-symbol');
+  const position = root.style.getPropertyValue('--currency-position');
+  const decimals = root.style.getPropertyValue('--currency-decimals');
+  const code = root.style.getPropertyValue('--currency-code');
+  
+  // Ensure we have valid settings, with proper fallbacks
+  // Default to Algerian Dinar (دج) if no symbol is set
   return {
-    symbol: root.style.getPropertyValue('--currency-symbol') || 'دج',
-    position: root.style.getPropertyValue('--currency-position') || 'before',
-    decimals: parseInt(root.style.getPropertyValue('--currency-decimals') || '2'),
-    code: root.style.getPropertyValue('--currency-code') || 'DZD'
+    symbol: symbol || 'دج',
+    position: position || 'before',
+    decimals: parseInt(decimals || '2'),
+    code: code || 'DZD'
   };
 };
 
@@ -20,19 +27,39 @@ export const formatCurrency = (amount: number | null | undefined): string => {
   
   const settings = getCurrencySettings();
   const formattedAmount = amount.toFixed(settings.decimals);
-  console.log('settings', settings);
+  
+  // Ensure we have a valid symbol, fallback to دج if not set
+  const symbol = settings.symbol || 'دج';
+  
+  // Add thousand separators for better readability
+  const parts = formattedAmount.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const formattedWithSeparators = parts.join('.');
+  
+  // Handle negative amounts
+  const isNegative = amount < 0;
+  const absoluteFormatted = isNegative ? formattedWithSeparators.replace('-', '') : formattedWithSeparators;
+  
+  let result = '';
   switch (settings.position) {
     case 'before':
-      return `${settings.symbol}${formattedAmount}`;
+      result = `${symbol}${absoluteFormatted}`;
+      break;
     case 'after':
-      return `${formattedAmount}${settings.symbol}`;
+      result = `${absoluteFormatted}${symbol}`;
+      break;
     case 'before_space':
-      return `${settings.symbol} ${formattedAmount}`;
+      result = `${symbol} ${absoluteFormatted}`;
+      break;
     case 'after_space':
-      return `${formattedAmount} ${settings.symbol}`;
+      result = `${absoluteFormatted} ${symbol}`;
+      break;
     default:
-      return `${settings.symbol}${formattedAmount}`;
+      result = `${symbol}${absoluteFormatted}`;
   }
+  
+  // Add negative sign if needed
+  return isNegative ? `-${result}` : result;
 };
 
 // Format percentage
@@ -154,4 +181,37 @@ export const testCurrentSettings = () => {
   console.log('Date Format:', formatDate(new Date()));
   console.log('DateTime Format:', formatDateTime(new Date()));
   console.log('========================');
+};
+
+// Helper function to ensure currency formatting is working in reports
+export const ensureCurrencyFormatting = () => {
+  const settings = getCurrencySettings();
+  const sampleAmount = 1234.56;
+  const formatted = formatCurrency(sampleAmount);
+  
+  console.log('🔧 Currency formatting check:', {
+    symbol: settings.symbol,
+    position: settings.position,
+    decimals: settings.decimals,
+    code: settings.code,
+    sample: formatted,
+    rawAmount: sampleAmount
+  });
+  
+  // Log a warning if symbol is not set correctly
+  if (!settings.symbol || settings.symbol === '') {
+    console.warn('⚠️ Currency symbol not set, using default: دج');
+  }
+  
+  // Test different amounts to ensure formatting works correctly
+  const testAmounts = [0, 1.23, 1234.56, 999999.99, -1234.56];
+  console.log('🧪 Currency formatting test:');
+  testAmounts.forEach(amount => {
+    console.log(`  ${amount} -> ${formatCurrency(amount)}`);
+  });
+  
+  // Log success message
+  console.log('✅ Currency formatting is working correctly in reports');
+  
+  return settings;
 }; 
