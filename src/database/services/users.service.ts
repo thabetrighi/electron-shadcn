@@ -65,16 +65,47 @@ export class UsersService {
 
   static async create(userData: NewUser) {
     try {
-      const existingUser = await db.select().from(users).where(eq(users.email, userData.email));
-      if (existingUser.length > 0) {
-        return { success: false, error: 'Email already exists' };
+      // Ensure email is provided and unique. If omitted/empty, generate a unique placeholder email.
+      let normalizedEmail = (userData.email || '').trim();
+
+      if (!normalizedEmail) {
+        const baseFromName = (userData.name || 'user')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '') || 'user';
+
+        // Try a few times to avoid rare collisions
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const suffix = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+          const candidate = `${baseFromName}-${suffix}@local`;
+          const exists = await db.select({ id: users.id }).from(users).where(eq(users.email, candidate));
+          if (exists.length === 0) {
+            normalizedEmail = candidate;
+            break;
+          }
+        }
+
+        // Final fallback (extremely unlikely to collide after attempts above)
+        if (!normalizedEmail) {
+          normalizedEmail = `${baseFromName}-${Math.random().toString(36).slice(2)}@local`;
+        }
+      } else {
+        // If user provided an email, ensure it's unique
+        const existingUser = await db.select().from(users).where(eq(users.email, normalizedEmail));
+        if (existingUser.length > 0) {
+          return { success: false, error: 'Email already exists' };
+        }
       }
 
-      const result = await db.insert(users).values({
-        ...userData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }).returning();
+      const result = await db
+        .insert(users)
+        .values({
+          ...userData,
+          email: normalizedEmail,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })
+        .returning();
       
       return { success: true, data: result[0] };
     } catch (error: any) {

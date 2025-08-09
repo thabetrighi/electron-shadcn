@@ -8,7 +8,6 @@ import {
   type Order,
   type OrderItem,
 } from "../schema";
-import { useTranslation } from "react-i18next";
 
 export interface SupplierPaymentReport {
   supplierId: number;
@@ -49,7 +48,6 @@ export class ReportsService {
     data?: SupplierPaymentReport[];
     error?: string;
   }> {
-    const { t } = useTranslation();
     try {
       const {
         dateFrom,
@@ -178,8 +176,7 @@ export class ReportsService {
 
       for (const item of ordersWithItems) {
         const supplierId = item.supplierId || 0;
-        const supplierName =
-          item.supplierName || t("reportsSection.unknownSupplier");
+        const supplierName = item.supplierName || "Unknown Supplier";
 
         if (!supplierGroups.has(supplierId)) {
           supplierGroups.set(supplierId, {

@@ -341,7 +341,7 @@ export default function SupplierPaymentReport() {
               <TableBody>
                 {reports.map((report) => (
                   <TableRow key={report.supplierId}>
-                    <TableCell className="font-medium">{report.supplierName}</TableCell>
+                    <TableCell className="font-medium">{report.supplierName || t('reportsSection.unknownSupplier')}</TableCell>
                     <TableCell>
                       <Badge variant="secondary">{report.orderCount}</Badge>
                     </TableCell>
