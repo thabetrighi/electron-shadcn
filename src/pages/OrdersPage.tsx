@@ -1074,7 +1074,7 @@ export default function OrdersPage() {
       return (
         <div className="p-4 text-center text-gray-500">
           <ShoppingCart className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-          <p>No items found for this order</p>
+          <p>{t('orders.noItemsFound', 'No items found for this order')}</p>
         </div>
       );
     }
@@ -1085,28 +1085,28 @@ export default function OrdersPage() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Item
+                {t('receipt.item', 'Item')}
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                SKU
+                {t('products.sku', 'SKU')}
               </th>
               <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Quantity
+                {t('pos.quantity', 'Quantity')}
               </th>
               <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                📦 Boxes
+                📦 {t('receipt.boxes', 'Boxes')}
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Unit Price
+                {t('receipt.unitPrice', 'Unit Price')}
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Discount
+                {t('pos.discount', 'Discount')}
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Tax
+                {t('receipt.tax', 'Tax')}
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total
+                {t('receipt.itemTotal', 'Total')}
               </th>
             </tr>
           </thead>
@@ -1117,7 +1117,7 @@ export default function OrdersPage() {
                   <div>
                     <div className="font-medium text-gray-900">{item.productName}</div>
                     {item.isCustomItem && (
-                      <Badge variant="outline" className="text-xs">Custom Item</Badge>
+                      <Badge variant="outline" className="text-xs">{t('orders.customItem', 'Custom Item')}</Badge>
                     )}
                   </div>
                 </td>
@@ -1132,7 +1132,7 @@ export default function OrdersPage() {
                 <td className="px-4 py-3 text-center">
                   {item.boxCount && item.boxType ? (
                     <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">
-                      {item.boxCount} {item.boxType === 'K' ? 'كرطونة' : item.boxType === 'M' ? 'ميسي' : 'قاجو'}
+                      {item.boxCount} {item.boxType === 'K' ? t('receipt.carton', 'Carton') : item.boxType === 'M' ? t('receipt.mesh', 'Mesh') : t('receipt.cashew', 'Cashew')}
                     </span>
                   ) : (
                     <span className="text-gray-400 text-xs">-</span>
@@ -1215,7 +1215,7 @@ export default function OrdersPage() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">
-                    Order Details - {selectedOrder.orderNumber}
+                    {t('receipt.orderDetails', 'Order Details')} - {selectedOrder.orderNumber}
                   </h2>
                   <p className="text-sm text-gray-500">
                     {selectedOrder.orderDate} • {selectedOrder.status}
@@ -1235,7 +1235,7 @@ export default function OrdersPage() {
                   }}
                 >
                   <Printer className="w-4 h-4 mr-2" />
-                  Print Receipt
+                  {t('orders.printReceipt', 'Print Receipt')}
                 </Button>
                 <Button
                   variant="outline"
@@ -1252,30 +1252,30 @@ export default function OrdersPage() {
                 {/* Order Information */}
                 <div className="space-y-4">
                   <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="font-semibold text-gray-900 mb-3">Order Information</h3>
+                    <h3 className="font-semibold text-gray-900 mb-3">{t('orders.orderInformation', 'Order Information')}</h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Order Number:</span>
+                        <span className="text-gray-600">{t('orders.orderNumber', 'Order Number')}:</span>
                         <span className="font-medium">{selectedOrder.orderNumber}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Date:</span>
+                        <span className="text-gray-600">{t('orders.date', 'Order Date')}:</span>
                         <span className="font-medium">{selectedOrder.orderDate}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Status:</span>
+                        <span className="text-gray-600">{t('orders.status', 'Order Status')}:</span>
                         <Badge variant={getStatusVariant(selectedOrder.status)}>
                           {selectedOrder.status}
                         </Badge>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Payment Status:</span>
+                        <span className="text-gray-600">{t('orders.paymentStatus', 'Payment Status')}:</span>
                         <Badge variant={getPaymentStatusVariant(selectedOrder.paymentStatus)}>
                           {selectedOrder.paymentStatus}
                         </Badge>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Payment Method:</span>
+                        <span className="text-gray-600">{t('orders.paymentMethod', 'Payment Method')}:</span>
                         <span className="font-medium capitalize">{selectedOrder.paymentMethod}</span>
                       </div>
                     </div>
@@ -1283,29 +1283,29 @@ export default function OrdersPage() {
 
                   {/* Customer Information */}
                   <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="font-semibold text-gray-900 mb-3">Customer Information</h3>
+                    <h3 className="font-semibold text-gray-900 mb-3">{t('orders.customerInformation', 'Customer Information')}</h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Name:</span>
+                        <span className="text-gray-600">{t('users.name', 'Name')}:</span>
                         <span className="font-medium">
-                          {selectedOrder.staff?.name || selectedOrder.customer?.name || 'Walk-in Customer'}
+                          {selectedOrder.staff?.name || selectedOrder.customer?.name || t('orders.walkInCustomer', 'Walk-in Customer')}
                         </span>
                       </div>
                       {selectedOrder.staff?.phone && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Phone:</span>
+                          <span className="text-gray-600">{t('users.phone', 'Phone')}:</span>
                           <span className="font-medium">{selectedOrder.staff.phone}</span>
                         </div>
                       )}
                       {selectedOrder.customer?.email && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Email:</span>
+                          <span className="text-gray-600">{t('users.email', 'Email')}:</span>
                           <span className="font-medium">{selectedOrder.customer.email}</span>
                         </div>
                       )}
                       {selectedOrder.staff?.role && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Role:</span>
+                          <span className="text-gray-600">{t('users.role', 'Role')}:</span>
                           <span className="font-medium capitalize">{selectedOrder.staff.role}</span>
                         </div>
                       )}
@@ -1316,19 +1316,19 @@ export default function OrdersPage() {
                 {/* Financial Summary */}
                 <div className="space-y-4">
                   <div className="bg-green-50 rounded-lg p-4">
-                    <h3 className="font-semibold text-gray-900 mb-3">Financial Summary</h3>
+                    <h3 className="font-semibold text-gray-900 mb-3">{t('orders.financialSummary', 'Financial Summary')}</h3>
                     <div className="space-y-3">
                       <div className="flex justify-between text-lg">
-                        <span className="text-gray-600">Subtotal:</span>
+                        <span className="text-gray-600">{t('receipt.subtotal', 'Subtotal')}:</span>
                         <span className="font-semibold">{formatCurrency(selectedOrder.subtotal)}</span>
                       </div>
                       <div className="flex justify-between text-lg">
-                        <span className="text-gray-600">Tax:</span>
+                        <span className="text-gray-600">{t('receipt.tax', 'Tax')}:</span>
                         <span className="font-semibold">{formatCurrency(selectedOrder.taxAmount)}</span>
                       </div>
                       <div className="border-t pt-3">
                         <div className="flex justify-between text-xl font-bold text-green-600">
-                          <span>Total:</span>
+                          <span>{t('orders.total', 'Total')}:</span>
                           <span>{formatCurrency(selectedOrder.total)}</span>
                         </div>
                       </div>
@@ -1337,21 +1337,21 @@ export default function OrdersPage() {
 
                   {/* Order Statistics */}
                   <div className="bg-blue-50 rounded-lg p-4">
-                    <h3 className="font-semibold text-gray-900 mb-3">Order Statistics</h3>
+                    <h3 className="font-semibold text-gray-900 mb-3">{t('orders.orderStatistics', 'Order Statistics')}</h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Items Count:</span>
+                        <span className="text-gray-600">{t('orders.items', 'Items')}:</span>
                         <span className="font-medium">{selectedOrder.itemsCount}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Created:</span>
+                        <span className="text-gray-600">{t('orders.created', 'Created')}:</span>
                         <span className="font-medium">
                           {new Date(selectedOrder.createdAt).toLocaleString()}
                         </span>
                       </div>
                       {selectedOrder.updatedAt && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Last Updated:</span>
+                          <span className="text-gray-600">{t('orders.lastUpdated', 'Last Updated')}:</span>
                           <span className="font-medium">
                             {new Date(selectedOrder.updatedAt).toLocaleString()}
                           </span>
@@ -1365,7 +1365,7 @@ export default function OrdersPage() {
               {/* Order Items */}
               <div className="bg-white border border-gray-200 rounded-lg">
                 <div className="px-4 py-3 border-b border-gray-200">
-                  <h3 className="font-semibold text-gray-900">Order Items</h3>
+                  <h3 className="font-semibold text-gray-900">{t('orders.orderItems', 'Order Items')}</h3>
                 </div>
                 <OrderItemsList orderId={selectedOrder.id} />
               </div>
