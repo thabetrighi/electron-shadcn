@@ -33,6 +33,11 @@ export function exposePrinterContext() {
       return await ipcRenderer.invoke(PRINTER_CHANNELS.PRINT_PRODUCT_LABEL, productData);
     },
 
+    // Print report
+    printReport: async (reportData: any) => {
+      return await ipcRenderer.invoke(PRINTER_CHANNELS.PRINT_REPORT, reportData);
+    },
+
     // Test printer
     testPrinter: async (printerName?: string) => {
       return await ipcRenderer.invoke(PRINTER_CHANNELS.TEST_PRINTER, printerName);

@@ -96,6 +96,7 @@ export const PRINTER_CHANNELS = {
   PRINT_RECEIPT: 'printer:print-receipt',
   PRINT_INVOICE: 'printer:print-invoice',
   PRINT_PRODUCT_LABEL: 'printer:print-product-label',
+  PRINT_REPORT: 'printer:print-report',
   TEST_PRINTER: 'printer:test',
   GET_PRINTER_STATUS: 'printer:get-status',
 } as const; 
